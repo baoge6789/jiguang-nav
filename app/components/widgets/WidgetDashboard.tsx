@@ -22,14 +22,12 @@ const LottieWeatherIcon = ({ code, size = 48 }: { code: number; size?: number })
     const [animationData, setAnimationData] = useState<any>(null);
 
     useEffect(() => {
-        // Determine which animation to load based on weather code
         let url = LOTTIE_WEATHER.sunny;
         if (code >= 1 && code <= 3) url = LOTTIE_WEATHER.cloudy;
         if ((code >= 51 && code <= 67) || (code >= 80 && code <= 82)) url = LOTTIE_WEATHER.rainy;
         if (code >= 71 && code <= 77) url = LOTTIE_WEATHER.snowy;
         if (code >= 95) url = LOTTIE_WEATHER.thunder;
 
-        // Fetch animation data
         fetch(url)
             .then(res => {
                 if (!res.ok) return null;
@@ -39,7 +37,6 @@ const LottieWeatherIcon = ({ code, size = 48 }: { code: number; size?: number })
             .catch(() => setAnimationData(null));
     }, [code]);
 
-    // Fallback to static icon if Lottie fails
     if (!animationData) {
         if (code === 0) return <SunMedium size={size} className="text-orange-500" />;
         if (code >= 1 && code <= 3) return <Cloud size={size} className="text-gray-400" />;
@@ -59,17 +56,14 @@ const LottieWeatherIcon = ({ code, size = 48 }: { code: number; size?: number })
     );
 };
 
-// Simple Card Wrapper (no 3D tilt)
 const TiltCard = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
     <div className={className}>
         {children}
     </div>
 );
 
-// Gradient Border Component
 const GradientBorder = ({ isDarkMode, customColor }: { isDarkMode: boolean; customColor?: string }) => (
     <>
-        {/* Animated gradient border */}
         <div className="absolute -inset-[1px] rounded-3xl bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 opacity-0 group-hover:opacity-50 transition-opacity duration-500 blur-sm animate-gradient-x" />
         <div className={`absolute inset-0 rounded-3xl ${isDarkMode ? 'bg-slate-900/90' : 'bg-gradient-to-br from-slate-100/90 to-slate-200/90'}`}
             style={customColor ? { background: customColor } : {}}
@@ -92,51 +86,48 @@ interface WidgetDashboardProps {
     };
 }
 
-// Default World Clock Timezones (fallback if widgetConfig not provided)
 const DEFAULT_WORLD_CLOCKS = [
     { name: '纽约', timezone: 'America/New_York' },
     { name: '伦敦', timezone: 'Europe/London' },
     { name: '东京', timezone: 'Asia/Tokyo' },
 ];
 
-// Holidays for countdown
 const HOLIDAYS = [
     { name: '元旦', month: 1, day: 1 },
-    { name: '春节', month: 1, day: 29 }, // 2025
+    { name: '春节', month: 1, day: 29 },
     { name: '清明', month: 4, day: 5 },
     { name: '劳动节', month: 5, day: 1 },
-    { name: '端午', month: 5, day: 31 },
-    { name: '中秋', month: 9, day: 17 },
+    { name: '端午', month: 6, day: 19 },
+    { name: '中秋', month: 10, day: 6 },
     { name: '国庆', month: 10, day: 1 },
     { name: '圣诞', month: 12, day: 25 },
 ];
 
-// Solar Terms (24节气) - 2024-2025 dates
 const SOLAR_TERMS = [
-    { name: '小寒', date: '2025-01-05' },
-    { name: '大寒', date: '2025-01-20' },
-    { name: '立春', date: '2025-02-03' },
-    { name: '雨水', date: '2025-02-18' },
-    { name: '惊蛰', date: '2025-03-05' },
-    { name: '春分', date: '2025-03-20' },
-    { name: '清明', date: '2025-04-04' },
-    { name: '谷雨', date: '2025-04-20' },
-    { name: '立夏', date: '2025-05-05' },
-    { name: '小满', date: '2025-05-21' },
-    { name: '芒种', date: '2025-06-05' },
-    { name: '夏至', date: '2025-06-21' },
-    { name: '小暑', date: '2025-07-07' },
-    { name: '大暑', date: '2025-07-22' },
-    { name: '立秋', date: '2025-08-07' },
-    { name: '处暑', date: '2025-08-23' },
-    { name: '白露', date: '2025-09-07' },
-    { name: '秋分', date: '2025-09-23' },
-    { name: '寒露', date: '2025-10-08' },
-    { name: '霜降', date: '2025-10-23' },
-    { name: '立冬', date: '2025-11-07' },
-    { name: '小雪', date: '2025-11-22' },
-    { name: '大雪', date: '2025-12-07' },
-    { name: '冬至', date: '2025-12-21' },
+    { name: '小寒', date: '2026-01-05' },
+    { name: '大寒', date: '2026-01-20' },
+    { name: '立春', date: '2026-02-04' },
+    { name: '雨水', date: '2026-02-19' },
+    { name: '惊蛰', date: '2026-03-06' },
+    { name: '春分', date: '2026-03-21' },
+    { name: '清明', date: '2026-04-05' },
+    { name: '谷雨', date: '2026-04-20' },
+    { name: '立夏', date: '2026-05-06' },
+    { name: '小满', date: '2026-05-21' },
+    { name: '芒种', date: '2026-06-06' },
+    { name: '夏至', date: '2026-06-21' },
+    { name: '小暑', date: '2026-07-07' },
+    { name: '大暑', date: '2026-07-23' },
+    { name: '立秋', date: '2026-08-07' },
+    { name: '处暑', date: '2026-08-23' },
+    { name: '白露', date: '2026-09-08' },
+    { name: '秋分', date: '2026-09-23' },
+    { name: '寒露', date: '2026-10-08' },
+    { name: '霜降', date: '2026-10-23' },
+    { name: '立冬', date: '2026-11-07' },
+    { name: '小雪', date: '2026-11-22' },
+    { name: '大雪', date: '2026-12-07' },
+    { name: '冬至', date: '2026-12-22' },
 ];
 
 export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode, sitesCount, widgetStyle = 'B', widgetConfig }: WidgetDashboardProps) {
@@ -148,42 +139,32 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
     });
     const [mounted, setMounted] = useState(false);
 
-    // Get config values with defaults
     const worldClocks = widgetConfig?.worldClocks || DEFAULT_WORLD_CLOCKS;
-    const pomodoroDuration = (widgetConfig?.pomodoroDuration || 25) * 60; // convert to seconds
+    const pomodoroDuration = (widgetConfig?.pomodoroDuration || 25) * 60;
 
-    // Pomodoro state
     const [pomodoroActive, setPomodoroActive] = useState(false);
     const [pomodoroTime, setPomodoroTime] = useState(pomodoroDuration);
 
-    // Sync pomodoro time when config changes
     useEffect(() => {
         if (!pomodoroActive) {
             setPomodoroTime(pomodoroDuration);
         }
     }, [pomodoroDuration, pomodoroActive]);
 
-    // Time mode: 'clock' | 'world' | 'pomodoro'
     const [timeMode, setTimeMode] = useState<'clock' | 'world' | 'pomodoro'>('clock');
-
-    // Tools widget mode: 'stock' | 'todo' | 'countdown' (stock first)
     const [toolsMode, setToolsMode] = useState<'stock' | 'todo' | 'countdown'>('stock');
 
-    // Todo list state
     const [todos, setTodos] = useState<{ id: string; text: string; done: boolean }[]>([]);
     const [newTodo, setNewTodo] = useState('');
     const [isAddingTodo, setIsAddingTodo] = useState(false);
 
-    // Countdown state - support multiple countdowns
     const [countdowns, setCountdowns] = useState<{ id: string; label: string; date: string }[]>([]);
     const [newCountdownLabel, setNewCountdownLabel] = useState('');
     const [newCountdownDate, setNewCountdownDate] = useState('');
     const [isAddingCountdown, setIsAddingCountdown] = useState(false);
 
-    // Market data state
-    const [marketData, setMarketData] = useState<{ id: string; name: string; price: number; change: number; percent: number; type: string }[]>([]);
+    const [marketData, setMarketData] = useState<{ id: string; name: string; price: number; change: number; percent: number; type: string; currency?: string }[]>([]);
 
-    // Fetch Todos and Countdowns on mount
     useEffect(() => {
         fetch('/api/todos')
             .then(res => {
@@ -202,7 +183,6 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
             .catch(err => console.warn('Silently failed to load countdowns', err));
     }, []);
 
-    // Animation counter for stats
     const [displayCount, setDisplayCount] = useState(0);
 
     useEffect(() => {
@@ -212,7 +192,6 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
         return () => clearInterval(t);
     }, []);
 
-    // Pomodoro timer
     useEffect(() => {
         if (pomodoroActive && pomodoroTime > 0) {
             const timer = setInterval(() => {
@@ -222,11 +201,9 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
         }
         if (pomodoroTime === 0) {
             setPomodoroActive(false);
-            // Could add notification here
         }
     }, [pomodoroActive, pomodoroTime]);
 
-    // Count-up animation for stats
     useEffect(() => {
         if (mounted && sitesCount > 0) {
             let start = 0;
@@ -245,12 +222,11 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
         }
     }, [mounted, sitesCount]);
 
-    // Fetch market data from internal proxy API
     useEffect(() => {
         const fetchMarketData = async () => {
             try {
                 const res = await fetch('/api/market');
-                if (!res.ok) return; // Silent fail
+                if (!res.ok) return;
                 const data = await res.json();
                 if (Array.isArray(data)) {
                     setMarketData(data);
@@ -264,17 +240,13 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
         return () => clearInterval(interval);
     }, []);
 
-    // Unified Location & Weather Fetching
     useEffect(() => {
         const fetchWeatherData = async (latitude: number, longitude: number) => {
             try {
-                // Faraday: Fetch Weather (Forest & Daily) + Air Quality (AQI) in parallel
-                // Open-Meteo Weather API
                 const weatherPromise = fetch(
                     `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m,relative_humidity_2m&daily=weathercode,temperature_2m_max,temperature_2m_min,uv_index_max&timezone=auto`
                 ).then(res => res.json());
 
-                // Open-Meteo Air Quality API
                 const airPromise = fetch(
                     `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${latitude}&longitude=${longitude}&current=us_aqi`
                 ).then(res => res.json());
@@ -304,7 +276,7 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                     hourly: [],
                     daily: dailyForecast,
                     uv: Math.round(uv),
-                    aqi: aqi, // Real AQI
+                    aqi: aqi,
                     loading: false,
                     error: false
                 }));
@@ -315,7 +287,6 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
         };
 
         const fetchLocationName = async (latitude?: number, longitude?: number) => {
-            // 1. Try Reverse Geocoding if coords are available (Most Accurate)
             if (latitude && longitude) {
                 try {
                     const res = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=zh`);
@@ -323,7 +294,7 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                         const data = await res.json();
                         const city = data.city || data.locality || data.principalSubdivision;
                         if (city) {
-                            setLocationName(city.replace('市', '')); // Remove 'City' suffix for cleaner look
+                            setLocationName(city.replace('市', ''));
                             return;
                         }
                     }
@@ -332,7 +303,6 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                 }
             }
 
-            // 2. Fallback to IP-based APIs
             const tryApi = async (url: string, extractor: (data: any) => string | null) => {
                 try {
                     const res = await fetch(url);
@@ -360,7 +330,6 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
         };
 
         const fetchByIP = async () => {
-            // Helper to try fetching from provider
             const tryProvider = async (url: string, parser: (d: any) => any) => {
                 try {
                     const res = await fetch(url);
@@ -372,7 +341,6 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                 }
             };
 
-            // 1. Try ipapi.co (High accuracy for city/latlong)
             const ipapiData = await tryProvider('https://ipapi.co/json/', (d) => ({
                 lat: d.latitude,
                 lon: d.longitude,
@@ -385,7 +353,6 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                 return;
             }
 
-            // 2. Try GeoJS
             const geojsData = await tryProvider('https://get.geojs.io/v1/ip/geo.json', (d) => ({
                 lat: d.latitude ? parseFloat(d.latitude) : null,
                 lon: d.longitude ? parseFloat(d.longitude) : null,
@@ -398,7 +365,6 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                 return;
             }
 
-            // 3. Try IPWhoIs (Fallback)
             const ipwhoisData = await tryProvider('https://ipwho.is/', (d) => ({
                 lat: d.latitude,
                 lon: d.longitude,
@@ -411,34 +377,22 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                 return;
             }
 
-            // All failed
             console.warn('All IP geolocation providers failed.');
             setWeather((prev: any) => ({ ...prev, loading: false, error: true }));
         };
 
         const initWeather = () => {
-            if ('geolocation' in navigator) {
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        const { latitude, longitude } = position.coords;
-                        fetchWeatherData(latitude, longitude);
-                        fetchLocationName(latitude, longitude);
-                    },
-                    () => {
-                        fetchByIP();
-                    }
-                );
-            } else {
-                fetchByIP();
-            }
+            const latitude = 36.1950;
+            const longitude = 117.1205;
+            fetchWeatherData(latitude, longitude);
+            setLocationName('泰安');
         };
 
         initWeather();
-        const interval = setInterval(initWeather, 600000); //Refresh every 10 minutes
+        const interval = setInterval(initWeather, 600000);
         return () => clearInterval(interval);
     }, []);
 
-    // Get next holiday countdown
     const getNextHoliday = useCallback(() => {
         const now = new Date();
         const year = now.getFullYear();
@@ -450,13 +404,11 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                 return { name: h.name, days: diff };
             }
         }
-        // Next year's first holiday
         const nextYear = new Date(year + 1, HOLIDAYS[0].month - 1, HOLIDAYS[0].day);
         const diff = Math.ceil((nextYear.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
         return { name: HOLIDAYS[0].name, days: diff };
     }, []);
 
-    // Get lunar date using Chinese calendar
     const getLunarDate = useCallback((date: Date) => {
         try {
             const formatter = new Intl.DateTimeFormat('zh-CN-u-ca-chinese', {
@@ -469,18 +421,15 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
         }
     }, []);
 
-    // Get solar term info - current or countdown to next
     const getSolarTermInfo = useCallback(() => {
         const now = new Date();
         const today = now.toISOString().split('T')[0];
 
-        // Check if today is a solar term
         const todayTerm = SOLAR_TERMS.find(t => t.date === today);
         if (todayTerm) {
             return { name: todayTerm.name, isToday: true, days: 0 };
         }
 
-        // Find next solar term
         for (const term of SOLAR_TERMS) {
             const termDate = new Date(term.date);
             if (termDate > now) {
@@ -489,11 +438,9 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
             }
         }
 
-        // Return first term of next year
         return { name: SOLAR_TERMS[0].name, isToday: false, days: 30 };
     }, []);
 
-    // Clothing advice based on temperature
     const getClothingAdvice = (temp: number) => {
         if (temp >= 30) return '短袖短裤';
         if (temp >= 25) return '薄款T恤';
@@ -504,23 +451,20 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
         return '严寒保暖';
     };
 
-    // Time period gradient
     const getTimePeriodGradient = () => {
         if (!time) return 'from-indigo-500/10 to-purple-500/10';
         const hour = time.getHours();
-        if (hour >= 5 && hour < 7) return 'from-orange-300/20 to-pink-300/20'; // Dawn
-        if (hour >= 7 && hour < 12) return 'from-sky-300/20 to-blue-200/20'; // Morning
-        if (hour >= 12 && hour < 17) return 'from-amber-200/20 to-yellow-200/20'; // Afternoon
-        if (hour >= 17 && hour < 20) return 'from-orange-400/20 to-red-400/20'; // Evening
-        return 'from-indigo-500/20 to-purple-600/20'; // Night
+        if (hour >= 5 && hour < 7) return 'from-orange-300/20 to-pink-300/20';
+        if (hour >= 7 && hour < 12) return 'from-sky-300/20 to-blue-200/20';
+        if (hour >= 12 && hour < 17) return 'from-amber-200/20 to-yellow-200/20';
+        if (hour >= 17 && hour < 20) return 'from-orange-400/20 to-red-400/20';
+        return 'from-indigo-500/20 to-purple-600/20';
     };
 
     const getWeatherIcon = (code: number, size = 24, className = "", useLottie = false) => {
-        // Use Lottie for larger sizes
         if (useLottie && size >= 32) {
             return <LottieWeatherIcon code={code} size={size} />;
         }
-        // Static icons for small sizes
         if (code === 0) return <SunMedium size={size} className={className || "text-orange-500"} />;
         if (code >= 1 && code <= 3) return <Cloud size={size} className={className || "text-gray-400"} />;
         if ((code >= 45 && code <= 48) || (code >= 51 && code <= 55)) return <CloudSnow size={size} className={className || "text-blue-300"} />;
@@ -556,7 +500,6 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
         return '极高';
     };
 
-    // Weather particles component
     const WeatherParticles = ({ code }: { code: number }) => {
         const isRain = code >= 51 && code <= 82;
         const isSnow = code >= 71 && code <= 77;
@@ -620,7 +563,6 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
         return null;
     };
 
-    // Daily Forecast Component
     const DailyForecast = ({ data }: { data: { max: number, min: number, code: number, time: string }[] }) => {
         if (!data.length) return null;
 
@@ -646,7 +588,6 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
         );
     };
 
-    // Style C: Smart Banner (Compact)
     if (widgetStyle === 'C') {
         return (
             <div className={`flex items-center justify-between px-5 py-2.5 rounded-2xl border backdrop-blur-xl shadow-sm ${isDarkMode ? 'bg-slate-900/60 border-white/10' : 'bg-white/60 border-white/60'}`}>
@@ -679,16 +620,12 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {/* Time Widget */}
             <TiltCard className="group">
                 <div className={cardBase}>
                     <GradientBorder isDarkMode={isDarkMode} customColor={widgetConfig?.customColors?.time} />
-                    {/* Clean Glass Effect: Removed heavy gradients for a cleaner look */}
                     <div className={`absolute inset-0 pointer-events-none ${isDarkMode ? 'bg-white/5' : 'bg-white/10'}`} />
 
-                    {/* Left: Main Info - takes full available space */}
                     <div className="flex flex-col justify-center h-full z-10 flex-1">
-                        {/* Mode Switcher */}
                         <div className="flex items-center gap-1 mb-1">
                             {[
                                 { id: 'clock', icon: Clock, label: '时钟' },
@@ -780,7 +717,6 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                         </AnimatePresence>
                     </div>
 
-                    {/* Right: Holiday Countdown - fixed width */}
                     <div className="z-10 pl-4 border-l border-white/10 dark:border-white/5 h-full flex flex-col justify-center items-center min-w-[70px]">
                         <div className="text-2xl md:text-3xl font-bold text-indigo-500">{nextHoliday.days}</div>
                         <div className={`text-xs ${isDarkMode ? 'opacity-50' : 'text-slate-500'}`}>天后</div>
@@ -789,14 +725,12 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                 </div>
             </TiltCard>
 
-            {/* Weather Widget */}
             <TiltCard className="group">
                 <div className={cardBase}>
                     <GradientBorder isDarkMode={isDarkMode} customColor={widgetConfig?.customColors?.weather} />
                     <div className={`absolute inset-0 pointer-events-none ${isDarkMode ? 'bg-white/5' : 'bg-white/10'}`} />
                     <WeatherParticles code={weather.code} />
 
-                    {/* Left: Main Info */}
                     <div className="flex flex-col justify-center h-full z-10 min-w-[120px]">
                         <div className="flex items-center gap-1.5 mb-1">
                             <MapPin size={12} className="text-cyan-500" />
@@ -815,9 +749,7 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                         </div>
                     </div>
 
-                    {/* Right: Metrics + Chart */}
                     <div className="z-10 pl-3 border-l border-white/10 dark:border-white/5 h-full flex flex-col justify-center gap-1.5 flex-1">
-                        {/* Top: AQI & UV in row */}
                         <div className="flex items-center gap-4 text-xs -ml-2">
                             <div className="flex items-center gap-1">
                                 <Shield size={12} className="text-green-500" />
@@ -833,7 +765,6 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                                 {weather.uv !== null && <span className={`${isDarkMode ? 'opacity-60' : 'text-slate-600'}`}>{getUVDesc(weather.uv)}</span>}
                             </div>
                         </div>
-                        {/* Bottom: Daily Forecast */}
                         {weather.daily?.length > 0 && (
                             <DailyForecast data={weather.daily} />
                         )}
@@ -841,14 +772,12 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                 </div>
             </TiltCard>
 
-            {/* Tools Widget - Todo / Stock / Countdown */}
             <TiltCard className="group">
                 <div className={cardBase}>
                     <GradientBorder isDarkMode={isDarkMode} customColor={widgetConfig?.customColors?.tools} />
                     <div className={`absolute inset-0 pointer-events-none ${isDarkMode ? 'bg-white/5' : 'bg-white/10'}`} />
 
                     <div className="flex flex-col justify-between h-full z-10 w-full">
-                        {/* Mode Switcher & Stats */}
                         <div className="flex items-center justify-between mb-2">
                             <div className="flex items-center gap-1">
                                 {[
@@ -866,7 +795,6 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                                     </button>
                                 ))}
                             </div>
-                            {/* Stats Display */}
                             <div className="text-[10px] font-medium opacity-50 px-2">
                                 {toolsMode === 'todo' && <span>{todos.filter(t => !t.done).length}/{todos.length}</span>}
                                 {toolsMode === 'countdown' && <span>共 {countdowns.length} 个</span>}
@@ -874,17 +802,18 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                         </div>
 
                         <AnimatePresence mode="wait">
-                            {/* Stock Mode - Comfortable Grid */}
                             {toolsMode === 'stock' && (
                                 <motion.div key="stock" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex-1 flex flex-col justify-center h-full">
                                     <div className="flex flex-row items-center gap-2 overflow-x-auto no-scrollbar px-1 pb-8 w-full h-full">
                                         {marketData.length > 0 ? marketData.map(item => {
                                             const isUp = item.change >= 0;
+                                            const currencySymbol = item.currency === 'CNY' ? '¥' : '$';
+                                            const displayPrice = item.price;
                                             return (
                                                 <div key={item.id} className="flex-shrink-0 flex flex-col items-center justify-center py-2.5 px-2 rounded-lg min-w-[80px]">
                                                     <div className="text-[12px] font-medium opacity-60 leading-normal py-0.5 mb-0.5 whitespace-nowrap">{item.name}</div>
-                                                    <div className="font-bold tabular-nums text-sm leading-tight mb-1 text-center" title={item.price.toLocaleString()}>
-                                                        {item.price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                                    <div className="font-bold tabular-nums text-sm leading-tight mb-1 text-center" title={displayPrice?.toLocaleString()}>
+                                                        {currencySymbol}{displayPrice?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                                     </div>
                                                     <div className={`text-[11px] px-1.5 py-0.5 rounded-full font-medium leading-none ${isUp ? 'bg-red-500/10 text-red-400' : 'bg-green-500/10 text-green-400'}`}>
                                                         {isUp ? '+' : ''}{(item.percent || 0).toFixed(2)}%
@@ -892,7 +821,6 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                                                 </div>
                                             );
                                         }) : (
-                                            // Loading Skeletons
                                             Array.from({ length: 5 }).map((_, i) => (
                                                 <div key={i} className="flex-shrink-0 flex flex-col items-center justify-center p-2 rounded-lg animate-pulse min-w-[80px] h-[60px]">
                                                     <div className="w-8 h-2 bg-white/10 rounded mb-1"></div>
@@ -905,7 +833,6 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                                 </motion.div>
                             )}
 
-                            {/* Todo Mode - Ultra-Compact & High Contrast */}
                             {toolsMode === 'todo' && (
                                 <motion.div key="todo" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex-1 flex flex-col h-full overflow-hidden relative">
                                     <AnimatePresence mode="wait">
@@ -966,7 +893,6 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                                                             <button
                                                                 onClick={async () => {
                                                                     const s = !todo.done;
-                                                                    // Optimistic update
                                                                     setTodos(todos.map(t => t.id === todo.id ? { ...t, done: s } : t));
                                                                     try {
                                                                         await fetch(`/api/todos/${todo.id}`, {
@@ -985,7 +911,6 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                                                             <span className={`text-[11px] truncate ${todo.done ? 'line-through opacity-40' : ''}`}>{todo.text}</span>
                                                             <button
                                                                 onClick={async () => {
-                                                                    // Optimistic delete
                                                                     setTodos(todos.filter(t => t.id !== todo.id));
                                                                     try {
                                                                         await fetch(`/api/todos/${todo.id}`, { method: 'DELETE' });
@@ -1018,7 +943,6 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                                 </motion.div>
                             )}
 
-                            {/* Countdown Mode - Ultra-Compact & High Contrast */}
                             {toolsMode === 'countdown' && (
                                 <motion.div key="countdown" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex-1 flex flex-col h-full overflow-hidden relative">
                                     <AnimatePresence mode="wait">
@@ -1086,7 +1010,6 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                                                         return (
                                                             <div key={cd.id} className="relative flex flex-col justify-between p-1.5 rounded-lg bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 hover:border-emerald-500/30 group/cd transition-all min-h-[52px]">
                                                                 <div className="text-[11px] font-medium opacity-80 truncate leading-none tracking-tight mb-0.5">{cd.label}</div>
-
                                                                 <div className="flex items-baseline justify-start gap-1.5 mt-auto">
                                                                     <div className="text-[10px] opacity-40 font-medium tracking-tighter leading-none">{new Date(cd.date).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' }).replace('/', '-')}</div>
                                                                     <div className="flex items-baseline leading-none">
@@ -1094,7 +1017,6 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                                                                         <span className="text-[9px] ml-0.5 font-normal text-white/40 transform translate-y-[-1px]">天</span>
                                                                     </div>
                                                                 </div>
-
                                                                 <button
                                                                     onClick={async () => {
                                                                         setCountdowns(countdowns.filter(c => c.id !== cd.id));
