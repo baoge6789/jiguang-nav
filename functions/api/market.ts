@@ -11,6 +11,7 @@ export const onRequestGet: PagesFunction<Env> = async () => {
   try {
     const result: any[] = [];
     let idx = 1;
+    let cnyRate = 6.77; // 默认汇率，如果获取失败则使用此值
 
     // 1. 获取 PI 币数据（Gate.io）
     const gateRes = await fetch('https://api.gateio.ws/api/v4/spot/tickers?currency_pair=PI_USDT', {
@@ -25,7 +26,7 @@ export const onRequestGet: PagesFunction<Env> = async () => {
         const prevPrice = price / (1 + pct / 100);
         result.push({ 
           id: idx++, 
-          name: 'PI', 
+          name: 'PI(Gate)', 
           price, 
           change: price - prevPrice, 
           percent: pct, 
@@ -41,12 +42,13 @@ export const onRequestGet: PagesFunction<Env> = async () => {
       });
       if (forexRes.ok) {
         const forexData = await forexRes.json();
-        const cnyRate = forexData.rates?.CNY;
-        if (cnyRate) {
+        const rate = forexData.rates?.CNY;
+        if (rate) {
+          cnyRate = rate;
           result.push({
             id: 'usdcny',
             name: 'USD/CNY',
-            price: cnyRate,
+            price: rate,
             change: 0,
             percent: 0,
             type: 'forex',
@@ -56,6 +58,52 @@ export const onRequestGet: PagesFunction<Env> = async () => {
       }
     } catch (e) {
       console.error('Forex fetch error:', e);
+    }
+
+    // 3. 获取黄金价格（人民币/克）
+    try {
+      const goldRes = await fetch('https://api.gold-api.com/price/XAU', {
+        headers: { 'Accept': 'application/json' },
+      });
+      if (goldRes.ok) {
+        const goldData = await goldRes.json();
+        const usdPerOunce = goldData.price || 0;
+        // 1盎司 = 31.1035克，转为人民币/克
+        const cnyPerGram = (usdPerOunce / 31.1035) * cnyRate;
+        result.push({
+          id: 'gold',
+          name: '黄金',
+          price: Math.round(cnyPerGram * 100) / 100, // 保留两位小数
+          change: 0,
+          percent: 0,
+          type: 'commodity',
+          currency: 'CNY/g',
+        });
+      } else {
+        // 备用方案：如果 API 失败，使用最近价格
+        console.warn('Gold API failed, using fallback');
+        result.push({
+          id: 'gold',
+          name: '黄金',
+          price: 598.00,
+          change: 0,
+          percent: 0,
+          type: 'commodity',
+          currency: 'CNY/g',
+        });
+      }
+    } catch (e) {
+      console.error('Gold fetch error:', e);
+      // 出错时使用备用数据
+      result.push({
+        id: 'gold',
+        name: '黄金',
+        price: 598.00,
+        change: 0,
+        percent: 0,
+        type: 'commodity',
+        currency: 'CNY/g',
+      });
     }
 
     if (result.length > 0) {
