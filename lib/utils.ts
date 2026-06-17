@@ -85,44 +85,13 @@ export const HARMONIOUS_COLORS = [
 
 export const getRandomColor = () => HARMONIOUS_COLORS[Math.floor(Math.random() * HARMONIOUS_COLORS.length)];
 
-import { Search, Globe, Github, Code, Youtube, Monitor, Cloud, Music } from 'lucide-react';
-
-// 百度熊掌 SVG 图标
-const BaiduIcon = ({ size = 16, className = "" }: { size?: number; className?: string }) => (
-  <svg 
-    xmlns="http://www.w3.org/2000/svg" 
-    width={size} 
-    height={size} 
-    viewBox="0 0 24 24" 
-    className={className}
-    fill="currentColor"
-  >
-    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
-    <path d="M12 5.5c-3.59 0-6.5 2.91-6.5 6.5s2.91 6.5 6.5 6.5 6.5-2.91 6.5-6.5-2.91-6.5-6.5-6.5zm0 11c-2.48 0-4.5-2.02-4.5-4.5S9.52 7.5 12 7.5s4.5 2.02 4.5 4.5-2.02 4.5-4.5 4.5z"/>
-    <path d="M9 9.5c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5S7.5 11.83 7.5 11s.67-1.5 1.5-1.5zm6 0c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5S13.5 11.83 13.5 11s.67-1.5 1.5-1.5z"/>
-  </svg>
-);
-
-// Bing 图标（蓝色圆圈带 B）
-const BingIcon = ({ size = 16, className = "" }: { size?: number; className?: string }) => (
-  <svg 
-    xmlns="http://www.w3.org/2000/svg" 
-    width={size} 
-    height={size} 
-    viewBox="0 0 24 24" 
-    className={className}
-    fill="currentColor"
-  >
-    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" fill="none"/>
-    <text x="12" y="17" textAnchor="middle" fontSize="12" fontWeight="bold" fill="currentColor">B</text>
-  </svg>
-);
+import { Search, Globe, Github, Code, Youtube, Monitor, Cloud, MapPin } from 'lucide-react';
 
 export const SEARCH_ENGINES = [
   { id: 'local', name: '本地', icon: Search, placeholder: '筛选本地导航...' },
-  { id: 'baidu', name: '百度', icon: BaiduIcon, url: 'https://www.baidu.com/s?wd=', placeholder: '百度一下，你就知道' },
-  { id: 'google', name: 'Google', icon: Search, url: 'https://www.google.com/search?q=', placeholder: 'Google Search' },
-  { id: 'bing', name: 'Bing', icon: BingIcon, url: 'https://www.bing.com/search?q=', placeholder: 'Bing Search' },
+  { id: 'baidu', name: '百度', icon: Cloud, url: 'https://www.baidu.com/s?wd=', placeholder: '百度一下，你就知道' },
+  { id: 'google', name: 'Google', icon: Globe, url: 'https://www.google.com/search?q=', placeholder: 'Google Search' },
+  { id: 'bing', name: 'Bing', icon: MapPin, url: 'https://www.bing.com/search?q=', placeholder: 'Bing Search' },
   { id: 'github', name: 'GitHub', icon: Github, url: 'https://github.com/search?q=', placeholder: 'Search GitHub' },
   { id: 'youtube', name: 'YouTube', icon: Youtube, url: 'https://www.youtube.com/results?search_query=', placeholder: 'YouTube 搜索' },
   { id: 'bilibili', name: 'B站', icon: Monitor, url: 'https://search.bilibili.com/all?keyword=', placeholder: 'B站搜索' },
