@@ -113,7 +113,7 @@ export const onRequestGet: PagesFunction<Env> = async () => {
       console.error('Gold fetch error:', e);
       result.push({
         id: 'gold',
-        name: '黄金/g',
+        name: '黄金/克',
         price: 598.00,
         change: 0,
         percent: 0,
