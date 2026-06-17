@@ -1140,7 +1140,7 @@ export function SettingsPanel({
                                         <WallpaperManager
                                             isOpen={isWallpaperManagerOpen}
                                             onClose={() => setIsWallpaperManagerOpen(false)}
-                                            onSelect={(url: string) => setLayoutSettings({ ...layoutSettings, bgUrl: url, bgType: 'custom' })}
+                                            onSelect={(url: string) => setLayoutSettings({ ...layoutSettings, bgUrl: url, bgType: 'custom', bgEnabled: true })}
                                             isDarkMode={isDarkMode}
                                             showToast={showToast}
                                         />

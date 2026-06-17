@@ -1,0 +1,38 @@
+INSERT OR IGNORE INTO Site (id, name, url, "desc", category, color, icon, iconType, "order") VALUES ('4', 'Dribbble', 'https://dribbble.com', '设计师灵感分享社区。', '设计灵感', '#EA4C89', 'ImageIcon', 'auto', 0);
+INSERT OR IGNORE INTO Site (id, name, url, "desc", category, color, icon, iconType, "order") VALUES ('7', 'Figma', 'https://figma.com', '在线协作界面设计工具。', '设计灵感', '#F24E1E', 'Palette', 'auto', 0);
+INSERT OR IGNORE INTO Site (id, name, url, "desc", category, color, icon, iconType, "order") VALUES ('301', 'Behance', 'https://www.behance.net', '展示和发现创意作品。', '设计灵感', '#1769FF', 'ImageIcon', 'auto', 0);
+INSERT OR IGNORE INTO Site (id, name, url, "desc", category, color, icon, iconType, "order") VALUES ('302', 'Pinterest', 'https://www.pinterest.com', '发现图片与灵感。', '设计灵感', '#BD081C', 'ImageIcon', 'auto', 0);
+INSERT OR IGNORE INTO Site (id, name, url, "desc", category, color, icon, iconType, "order") VALUES ('303', 'Unsplash', 'https://unsplash.com', '免费高清素材图片。', '设计灵感', '#000000', 'ImageIcon', 'auto', 0);
+INSERT OR IGNORE INTO Site (id, name, url, "desc", category, color, icon, iconType, "order") VALUES ('304', 'Pexels', 'https://www.pexels.com', '免费素材图片和视频。', '设计灵感', '#05A081', 'ImageIcon', 'auto', 0);
+INSERT OR IGNORE INTO Site (id, name, url, "desc", category, color, icon, iconType, "order") VALUES ('305', 'IconFont', 'https://www.iconfont.cn', '阿里巴巴矢量图标库。', '设计灵感', '#EC4899', 'Palette', 'auto', 0);
+INSERT OR IGNORE INTO Site (id, name, url, "desc", category, color, icon, iconType, "order") VALUES ('306', 'Awwwards', 'https://www.awwwards.com', '网页设计与创新奖项。', '设计灵感', '#222222', 'Globe', 'auto', 0);
+INSERT OR IGNORE INTO Site (id, name, url, "desc", category, color, icon, iconType, "order") VALUES ('307', 'Material Design', 'https://m3.material.io', 'Google 开源设计系统。', '设计灵感', '#7C4DFF', 'Palette', 'auto', 0);
+INSERT OR IGNORE INTO Site (id, name, url, "desc", category, color, icon, iconType, "order") VALUES ('308', 'Coolors', 'https://coolors.co', '超快速的配色生成器。', '设计灵感', '#0066FF', 'Palette', 'auto', 0);
+INSERT OR IGNORE INTO Site (id, name, url, "desc", category, color, icon, iconType, "order") VALUES ('309', 'Google Fonts', 'https://fonts.google.com', '免费开源字体库。', '设计灵感', '#4285F4', 'BookOpen', 'auto', 0);
+INSERT OR IGNORE INTO Site (id, name, url, "desc", category, color, icon, iconType, "order") VALUES ('310', 'Canva', 'https://www.canva.com', '在线平面设计工具。', '设计灵感', '#00C4CC', 'Palette', 'auto', 0);
+
+INSERT OR IGNORE INTO Site (id, name, url, "desc", category, color, icon, iconType, "order") VALUES ('3', 'Bilibili', 'https://bilibili.com', '二次元与年轻人的聚集地。', '娱乐影音', '#00AEEC', 'Youtube', 'auto', 0);
+INSERT OR IGNORE INTO Site (id, name, url, "desc", category, color, icon, iconType, "order") VALUES ('401', 'YouTube', 'https://www.youtube.com', '全球最大的视频网站。', '娱乐影音', '#FF0000', 'Youtube', 'auto', 0);
+INSERT OR IGNORE INTO Site (id, name, url, "desc", category, color, icon, iconType, "order") VALUES ('402', 'Netflix', 'https://www.netflix.com', '流媒体影视巨头。', '娱乐影音', '#E50914', 'Monitor', 'auto', 0);
+INSERT OR IGNORE INTO Site (id, name, url, "desc", category, color, icon, iconType, "order") VALUES ('403', 'Spotify', 'https://open.spotify.com', '数字音乐流媒体服务。', '娱乐影音', '#1DB954', 'Music', 'auto', 0);
+INSERT OR IGNORE INTO Site (id, name, url, "desc", category, color, icon, iconType, "order") VALUES ('404', 'Steam', 'https://store.steampowered.com', '全球最大的游戏平台。', '娱乐影音', '#171A21', 'Gamepad', 'auto', 0);
+INSERT OR IGNORE INTO Site (id, name, url, "desc", category, color, icon, iconType, "order") VALUES ('405', 'Twitch', 'https://www.twitch.tv', '游戏直播平台。', '娱乐影音', '#9146FF', 'Gamepad', 'auto', 0);
+INSERT OR IGNORE INTO Site (id, name, url, "desc", category, color, icon, iconType, "order") VALUES ('406', '豆瓣', 'https://www.douban.com', '电影书籍音乐评分。', '娱乐影音', '#007722', 'BookOpen', 'auto', 0);
+INSERT OR IGNORE INTO Site (id, name, url, "desc", category, color, icon, iconType, "order") VALUES ('407', '网易云音乐', 'https://music.163.com', '专注于发现与分享。', '娱乐影音', '#C20C0C', 'Music', 'auto', 0);
+INSERT OR IGNORE INTO Site (id, name, url, "desc", category, color, icon, iconType, "order") VALUES ('408', 'Epic Games', 'https://store.epicgames.com', '每周免费送游戏。', '娱乐影音', '#313131', 'Gamepad', 'auto', 0);
+INSERT OR IGNORE INTO Site (id, name, url, "desc", category, color, icon, iconType, "order") VALUES ('409', 'Discord', 'https://discord.com', '游戏玩家语音聊天软件。', '娱乐影音', '#5865F2', 'MessageSquare', 'auto', 0);
+INSERT OR IGNORE INTO Site (id, name, url, "desc", category, color, icon, iconType, "order") VALUES ('410', '微博', 'https://weibo.com', '随时随地发现新鲜事。', '娱乐影音', '#E6162D', 'Globe', 'auto', 0);
+INSERT OR IGNORE INTO Site (id, name, url, "desc", category, color, icon, iconType, "order") VALUES ('411', 'Apple Music', 'https://music.apple.com', '苹果音乐流媒体。', '娱乐影音', '#FA243C', 'Music', 'auto', 0);
+
+INSERT OR IGNORE INTO Site (id, name, url, "desc", category, color, icon, iconType, "order") VALUES ('5', 'ChatGPT', 'https://chat.openai.com', 'OpenAI开发的智能对话模型。', '人工智能', '#10A37F', 'Coffee', 'auto', 0);
+INSERT OR IGNORE INTO Site (id, name, url, "desc", category, color, icon, iconType, "order") VALUES ('12', 'Midjourney', 'https://midjourney.com', 'AI 图像生成工具。', '人工智能', '#000000', 'ImageIcon', 'auto', 0);
+INSERT OR IGNORE INTO Site (id, name, url, "desc", category, color, icon, iconType, "order") VALUES ('501', 'Claude', 'https://claude.ai', 'Anthropic 开发的 AI 助手。', '人工智能', '#D97757', 'Coffee', 'auto', 0);
+INSERT OR IGNORE INTO Site (id, name, url, "desc", category, color, icon, iconType, "order") VALUES ('502', 'Gemini', 'https://gemini.google.com', 'Google 最强多模态模型。', '人工智能', '#4E88F9', 'Coffee', 'auto', 0);
+INSERT OR IGNORE INTO Site (id, name, url, "desc", category, color, icon, iconType, "order") VALUES ('503', 'Hugging Face', 'https://huggingface.co', 'AI 模型开源社区。', '人工智能', '#FFD21E', 'Code', 'auto', 0);
+INSERT OR IGNORE INTO Site (id, name, url, "desc", category, color, icon, iconType, "order") VALUES ('504', 'Poe', 'https://poe.com', 'Quora 推出的 AI 聚合平台。', '人工智能', '#4C32CC', 'MessageSquare', 'auto', 0);
+INSERT OR IGNORE INTO Site (id, name, url, "desc", category, color, icon, iconType, "order") VALUES ('505', 'Perplexity', 'https://www.perplexity.ai', 'AI 驱动的搜索引擎。', '人工智能', '#115E59', 'Search', 'auto', 0);
+INSERT OR IGNORE INTO Site (id, name, url, "desc", category, color, icon, iconType, "order") VALUES ('506', 'Notion AI', 'https://www.notion.so', '集成在笔记中的 AI 助手。', '人工智能', '#000000', 'BookOpen', 'auto', 0);
+INSERT OR IGNORE INTO Site (id, name, url, "desc", category, color, icon, iconType, "order") VALUES ('507', 'Civitai', 'https://civitai.com', 'Stable Diffusion 模型库。', '人工智能', '#2A6DE9', 'ImageIcon', 'auto', 0);
+INSERT OR IGNORE INTO Site (id, name, url, "desc", category, color, icon, iconType, "order") VALUES ('508', 'Runway', 'https://runwayml.com', 'AI 视频编辑与生成。', '人工智能', '#000000', 'Monitor', 'auto', 0);
+INSERT OR IGNORE INTO Site (id, name, url, "desc", category, color, icon, iconType, "order") VALUES ('509', '通义千问', 'https://tongyi.aliyun.com', '阿里巴巴大语言模型。', '人工智能', '#6236FF', 'Coffee', 'auto', 0);
+INSERT OR IGNORE INTO Site (id, name, url, "desc", category, color, icon, iconType, "order") VALUES ('510', '文心一言', 'https://yiyan.baidu.com', '百度新一代知识增强大模型。', '人工智能', '#2932E1', 'Coffee', 'auto', 0);

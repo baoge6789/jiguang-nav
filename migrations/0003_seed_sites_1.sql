@@ -1,0 +1,25 @@
+INSERT OR IGNORE INTO Site (id, name, url, "desc", category, color, icon, iconType, "order") VALUES ('1', 'Google', 'https://google.com', '全球最大的搜索引擎。', '学习资源', '#4285F4', 'Globe', 'auto', 0);
+INSERT OR IGNORE INTO Site (id, name, url, "desc", category, color, icon, iconType, "order") VALUES ('9', 'MDN', 'https://developer.mozilla.org', 'Web 开发技术权威文档。', '学习资源', '#000000', 'BookOpen', 'auto', 0);
+INSERT OR IGNORE INTO Site (id, name, url, "desc", category, color, icon, iconType, "order") VALUES ('14', 'Stack Overflow', 'https://stackoverflow.com', '程序员问答社区。', '学习资源', '#F48024', 'Code', 'auto', 0);
+INSERT OR IGNORE INTO Site (id, name, url, "desc", category, color, icon, iconType, "order") VALUES ('101', '掘金', 'https://juejin.cn', '帮助开发者成长的社区。', '学习资源', '#1E80FF', 'BookOpen', 'auto', 0);
+INSERT OR IGNORE INTO Site (id, name, url, "desc", category, color, icon, iconType, "order") VALUES ('102', '知乎', 'https://www.zhihu.com', '有问题，就会有答案。', '学习资源', '#0084FF', 'MessageSquare', 'auto', 0);
+INSERT OR IGNORE INTO Site (id, name, url, "desc", category, color, icon, iconType, "order") VALUES ('103', 'FreeCodeCamp', 'https://www.freecodecamp.org', '免费学习编程的开源社区。', '学习资源', '#0A0A23', 'Code', 'auto', 0);
+INSERT OR IGNORE INTO Site (id, name, url, "desc", category, color, icon, iconType, "order") VALUES ('104', 'LeetCode', 'https://leetcode.cn', '海量编程算法题库。', '学习资源', '#FFA116', 'Code', 'auto', 0);
+INSERT OR IGNORE INTO Site (id, name, url, "desc", category, color, icon, iconType, "order") VALUES ('105', 'Wikipedia', 'https://www.wikipedia.org', '自由的百科全书。', '学习资源', '#636466', 'Globe', 'auto', 0);
+INSERT OR IGNORE INTO Site (id, name, url, "desc", category, color, icon, iconType, "order") VALUES ('106', 'Coursera', 'https://www.coursera.org', '世界顶级在线课程平台。', '学习资源', '#0056D2', 'BookOpen', 'auto', 0);
+INSERT OR IGNORE INTO Site (id, name, url, "desc", category, color, icon, iconType, "order") VALUES ('107', 'TED', 'https://www.ted.com', '传播有价值的思想。', '学习资源', '#E62B1E', 'Monitor', 'auto', 0);
+INSERT OR IGNORE INTO Site (id, name, url, "desc", category, color, icon, iconType, "order") VALUES ('108', 'CSDN', 'https://www.csdn.net', '专业开发者社区。', '学习资源', '#FC5531', 'Code', 'auto', 0);
+INSERT OR IGNORE INTO Site (id, name, url, "desc", category, color, icon, iconType, "order") VALUES ('109', 'InfoQ', 'https://www.infoq.cn', '促进软件开发领域知识与创新。', '学习资源', '#1D8955', 'BookOpen', 'auto', 0);
+
+INSERT OR IGNORE INTO Site (id, name, url, "desc", category, color, icon, iconType, "order") VALUES ('2', 'GitHub', 'https://github.com', '全球最大的开源社区。', '开发工具', '#181717', 'Github', 'auto', 0);
+INSERT OR IGNORE INTO Site (id, name, url, "desc", category, color, icon, iconType, "order") VALUES ('6', 'React', 'https://react.dev', '构建用户界面的库。', '开发工具', '#61DAFB', 'Code', 'auto', 0);
+INSERT OR IGNORE INTO Site (id, name, url, "desc", category, color, icon, iconType, "order") VALUES ('10', 'Vercel', 'https://vercel.com', '前端部署与托管平台。', '开发工具', '#000000', 'Code', 'auto', 0);
+INSERT OR IGNORE INTO Site (id, name, url, "desc", category, color, icon, iconType, "order") VALUES ('201', 'Vue.js', 'https://vuejs.org', '渐进式 JavaScript 框架。', '开发工具', '#4FC08D', 'Code', 'auto', 0);
+INSERT OR IGNORE INTO Site (id, name, url, "desc", category, color, icon, iconType, "order") VALUES ('202', 'Tailwind CSS', 'https://tailwindcss.com', '原子化 CSS 框架。', '开发工具', '#06B6D4', 'Palette', 'auto', 0);
+INSERT OR IGNORE INTO Site (id, name, url, "desc", category, color, icon, iconType, "order") VALUES ('203', 'Next.js', 'https://nextjs.org', 'React 生产环境框架。', '开发工具', '#000000', 'Code', 'auto', 0);
+INSERT OR IGNORE INTO Site (id, name, url, "desc", category, color, icon, iconType, "order") VALUES ('204', 'Docker', 'https://www.docker.com', '应用容器引擎。', '开发工具', '#2496ED', 'Code', 'auto', 0);
+INSERT OR IGNORE INTO Site (id, name, url, "desc", category, color, icon, iconType, "order") VALUES ('205', 'TypeScript', 'https://www.typescriptlang.org', '具有类型语法的 JavaScript。', '开发工具', '#3178C6', 'Code', 'auto', 0);
+INSERT OR IGNORE INTO Site (id, name, url, "desc", category, color, icon, iconType, "order") VALUES ('206', 'GitLab', 'https://gitlab.com', 'DevOps 生命周期工具。', '开发工具', '#FC6D26', 'Github', 'auto', 0);
+INSERT OR IGNORE INTO Site (id, name, url, "desc", category, color, icon, iconType, "order") VALUES ('207', 'Postman', 'https://www.postman.com', 'API 开发协作平台。', '开发工具', '#FF6C37', 'Zap', 'auto', 0);
+INSERT OR IGNORE INTO Site (id, name, url, "desc", category, color, icon, iconType, "order") VALUES ('208', 'NPM', 'https://www.npmjs.com', 'Node.js 包管理器。', '开发工具', '#CB3837', 'Code', 'auto', 0);
+INSERT OR IGNORE INTO Site (id, name, url, "desc", category, color, icon, iconType, "order") VALUES ('209', 'Cloudflare', 'https://www.cloudflare.com', 'Web 性能和安全公司。', '开发工具', '#F38020', 'Cloud', 'auto', 0);
