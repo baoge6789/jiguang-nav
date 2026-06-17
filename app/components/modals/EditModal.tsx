@@ -174,7 +174,8 @@ export function EditModal({ site, categories, sites, isDarkMode, onClose, onSave
                                                     setF(prev => ({
                                                         ...prev,
                                                         name: data.title || prev.name,
-                                                        desc: (urlChanged || data.description) ? data.description : prev.desc
+                                                        desc: (urlChanged || data.description) ? data.description : prev.desc,
+                                                        icon: data.icon || prev.icon,
                                                     }));
                                                 }
                                             } catch (e) {
@@ -199,7 +200,8 @@ export function EditModal({ site, categories, sites, isDarkMode, onClose, onSave
                                                     setF(prev => ({
                                                         ...prev,
                                                         name: data.title || prev.name,
-                                                        desc: (urlChanged || data.description) ? data.description : prev.desc
+                                                        desc: (urlChanged || data.description) ? data.description : prev.desc,
+                                                        icon: data.icon || prev.icon,
                                                     }));
                                                 }
                                             } catch (e) {

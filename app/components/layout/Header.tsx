@@ -46,7 +46,7 @@ export function Header({
             className={`${layoutSettings.stickyHeader ? 'fixed top-0 left-0 right-0 z-50' : 'relative z-40'} w-full transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] ${isScrolled ? 'pt-1.5 sm:pt-2 pb-2 px-2 sm:px-4' : 'pt-3 sm:pt-4 md:pt-6 pb-2 px-2 sm:px-4'}`}>
             <div
                 className={`mx-auto transition-all duration-300 ${layoutSettings.isWideMode ? 'max-w-[98%]' : 'max-w-7xl'}`}>
-                <div className={`relative flex items-center justify-between px-2 sm:px-6 rounded-2xl backdrop-blur-2xl border shadow-xl shadow-indigo-500/5 transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] overflow-x-auto custom-scrollbar
+                <div className={`relative flex items-center justify-between px-2 sm:px-6 rounded-2xl backdrop-blur-2xl border shadow-xl shadow-indigo-500/5 transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] overflow-visible
                         ${isDarkMode ? 'bg-slate-900/80 border-white/10' : 'bg-white/80 border-white/40 ring-1 ring-white/50'}
                         ${isScrolled ? 'py-2 bg-opacity-90 shadow-lg' : 'py-3'}
                     `}>
