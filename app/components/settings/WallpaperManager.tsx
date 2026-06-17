@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ImagePlus, X, RefreshCw, UploadCloud, Trash2 } from 'lucide-react';
+import { ImagePlus, X, RefreshCw, UploadCloud, Trash2, Link } from 'lucide-react';
 import { getUploadUrl } from '@/lib/upload-url';
 
 interface WallpaperManagerProps {
@@ -15,6 +15,8 @@ export function WallpaperManager({ isOpen, onClose, onSelect, isDarkMode, showTo
     const [wallpapers, setWallpapers] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
     const [selectedIds, setSelectedIds] = useState<string[]>([]);
+    const [customUrl, setCustomUrl] = useState('');
+    const [customName, setCustomName] = useState('');
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const fetchWallpapers = async (type: string) => {
@@ -37,6 +39,38 @@ export function WallpaperManager({ isOpen, onClose, onSelect, isDarkMode, showTo
 
     const handleUpload = async (e: any) => {
         showToast('CF 环境不支持文件上传，请使用 Bing 壁纸或外部 URL', 'error');
+    };
+
+    const handleAddCustomUrl = async () => {
+        if (!customUrl.trim()) {
+            showToast('请输入图片 URL', 'error');
+            return;
+        }
+
+        try {
+            showToast('正在添加壁纸...', 'loading');
+            const res = await fetch('/api/wallpapers', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    url: customUrl.trim(),
+                    type: 'custom',
+                    filename: customName.trim() || `custom-${Date.now()}.jpg`
+                })
+            });
+
+            if (res.ok) {
+                showToast('添加成功', 'success');
+                setCustomUrl('');
+                setCustomName('');
+                fetchWallpapers('custom');
+            } else {
+                const err = await res.text();
+                showToast('添加失败: ' + err, 'error');
+            }
+        } catch (e) {
+            showToast('添加失败', 'error');
+        }
     };
 
     const handleSyncBing = async () => {
@@ -104,7 +138,7 @@ export function WallpaperManager({ isOpen, onClose, onSelect, isDarkMode, showTo
                         </button>
                         <button onClick={() => setActiveTab('custom')}
                             className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all ${activeTab === 'custom' ? 'bg-white dark:bg-slate-800 shadow-sm text-indigo-500' : 'opacity-60 hover:opacity-100'}`}>
-                            自定义上传
+                            自定义
                         </button>
                     </div>
 
@@ -128,13 +162,50 @@ export function WallpaperManager({ isOpen, onClose, onSelect, isDarkMode, showTo
                                 <RefreshCw size={14} /> 同步今日壁纸
                             </button>
                         ) : (
-                            <button onClick={() => fileInputRef.current?.click()} className="px-3 py-1.5 rounded-lg bg-indigo-500 text-white text-sm font-medium hover:bg-indigo-600 transition-colors flex items-center gap-1 shadow-lg shadow-indigo-500/20">
-                                <UploadCloud size={14} /> 上传图片
-                            </button>
+                            <>
+                                <button onClick={() => fileInputRef.current?.click()} className="px-3 py-1.5 rounded-lg bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 text-sm font-medium hover:bg-indigo-500/30 transition-colors flex items-center gap-1">
+                                    <UploadCloud size={14} /> 上传图片（仅限 Bing）
+                                </button>
+                                <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleUpload} />
+                            </>
                         )}
-                        <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleUpload} />
                     </div>
                 </div>
+
+                {/* 自定义 URL 输入区域（仅在 custom Tab 显示） */}
+                {activeTab === 'custom' && (
+                    <div className="px-6 py-3 border-b border-slate-100 dark:border-white/5 bg-slate-50/30 dark:bg-white/5">
+                        <div className="flex flex-col sm:flex-row gap-2">
+                            <div className="flex-1 flex gap-2">
+                                <div className="relative flex-1">
+                                    <Link size={16} className="absolute left-3 top-1/2 -translate-y-1/2 opacity-40" />
+                                    <input
+                                        type="url"
+                                        value={customUrl}
+                                        onChange={(e) => setCustomUrl(e.target.value)}
+                                        placeholder="输入图片 URL (例如: https://example.com/wallpaper.jpg)"
+                                        className={`w-full pl-9 pr-3 py-2 rounded-lg text-sm border outline-none transition-all ${isDarkMode ? 'bg-slate-800/50 border-white/10 focus:border-indigo-500' : 'bg-white border-slate-200 focus:border-indigo-500'}`}
+                                        onKeyDown={(e) => e.key === 'Enter' && handleAddCustomUrl()}
+                                    />
+                                </div>
+                                <input
+                                    type="text"
+                                    value={customName}
+                                    onChange={(e) => setCustomName(e.target.value)}
+                                    placeholder="名称 (可选)"
+                                    className={`w-32 px-3 py-2 rounded-lg text-sm border outline-none transition-all ${isDarkMode ? 'bg-slate-800/50 border-white/10 focus:border-indigo-500' : 'bg-white border-slate-200 focus:border-indigo-500'}`}
+                                />
+                            </div>
+                            <button
+                                onClick={handleAddCustomUrl}
+                                className="px-4 py-2 rounded-lg bg-indigo-500 text-white text-sm font-medium hover:bg-indigo-600 transition-colors shadow-lg shadow-indigo-500/20 whitespace-nowrap"
+                            >
+                                添加壁纸
+                            </button>
+                        </div>
+                        <p className="text-[10px] opacity-40 mt-1">支持任意图片 URL（JPG、PNG、WebP 等）</p>
+                    </div>
+                )}
 
                 {/* Grid */}
                 <div className="flex-1 overflow-y-auto p-6 custom-scrollbar min-h-0">
@@ -146,6 +217,7 @@ export function WallpaperManager({ isOpen, onClose, onSelect, isDarkMode, showTo
                         <div className="flex flex-col items-center justify-center h-full opacity-50 gap-2">
                             <ImagePlus size={48} />
                             <p>暂无壁纸</p>
+                            {activeTab === 'custom' && <p className="text-sm">在上方输入 URL 添加自定义壁纸</p>}
                         </div>
                     ) : (
                         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 pb-20">
