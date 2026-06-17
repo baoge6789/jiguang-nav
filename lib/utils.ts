@@ -85,7 +85,7 @@ export const HARMONIOUS_COLORS = [
 
 export const getRandomColor = () => HARMONIOUS_COLORS[Math.floor(Math.random() * HARMONIOUS_COLORS.length)];
 
-import { Search, Globe, Github, Code } from 'lucide-react';
+import { Search, Globe, Github, Code, Youtube, Monitor } from 'lucide-react';
 
 export const SEARCH_ENGINES = [
   { id: 'local', name: '本地', icon: Search, placeholder: '筛选本地导航...' },
@@ -93,12 +93,6 @@ export const SEARCH_ENGINES = [
   { id: 'google', name: 'Google', icon: Search, url: 'https://www.google.com/search?q=', placeholder: 'Google Search' },
   { id: 'bing', name: 'Bing', icon: Globe, url: 'https://www.bing.com/search?q=', placeholder: 'Bing Search' },
   { id: 'github', name: 'GitHub', icon: Github, url: 'https://github.com/search?q=', placeholder: 'Search GitHub' },
-  {
-    id: 'luogu',
-    name: '洛谷',
-    icon: Code,
-    url: 'https://www.luogu.com.cn/problem/',
-    placeholder: '搜索题目或 Pxxxx 题号'
-  },
+  { id: 'youtube', name: 'YouTube', icon: Youtube, url: 'https://www.youtube.com/results?search_query=', placeholder: 'YouTube 搜索' },
+  { id: 'bilibili', name: 'B站', icon: Monitor, url: 'https://search.bilibili.com/all?keyword=', placeholder: 'B站搜索' },
 ];
-
