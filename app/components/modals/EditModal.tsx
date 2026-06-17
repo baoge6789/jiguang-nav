@@ -4,6 +4,60 @@ import {
     Edit3, Plus, X, Link as LinkIcon, Sparkles, UploadCloud, LayoutGrid,
     RefreshCw, ChevronDown, Check, CheckCircle2, Type, Search, Eye, EyeOff
 } from 'lucide-react';
+import { Icon } from '@iconify/react';
+
+const BRAND_ICONS: { id: string; name: string }[] = [
+  { id: 'logos:google-icon', name: 'Google' },
+  { id: 'logos:github-icon', name: 'GitHub' },
+  { id: 'logos:apple', name: 'Apple' },
+  { id: 'logos:microsoft-icon', name: 'Microsoft' },
+  { id: 'logos:twitter', name: 'X' },
+  { id: 'logos:telegram', name: 'Telegram' },
+  { id: 'logos:whatsapp-icon', name: 'WhatsApp' },
+  { id: 'logos:discord-icon', name: 'Discord' },
+  { id: 'logos:youtube-icon', name: 'YouTube' },
+  { id: 'logos:spotify-icon', name: 'Spotify' },
+  { id: 'logos:twitch', name: 'Twitch' },
+  { id: 'simple-icons:bilibili', name: 'B站' },
+  { id: 'logos:react', name: 'React' },
+  { id: 'logos:vue', name: 'Vue' },
+  { id: 'logos:nodejs-icon', name: 'Node.js' },
+  { id: 'logos:python', name: 'Python' },
+  { id: 'logos:typescript-icon', name: 'TypeScript' },
+  { id: 'logos:javascript', name: 'JavaScript' },
+  { id: 'logos:docker-icon', name: 'Docker' },
+  { id: 'logos:tailwindcss-icon', name: 'Tailwind' },
+  { id: 'logos:figma', name: 'Figma' },
+  { id: 'logos:notion-icon', name: 'Notion' },
+  { id: 'logos:cloudflare-icon', name: 'Cloudflare' },
+  { id: 'logos:vercel-icon', name: 'Vercel' },
+  { id: 'logos:netlify-icon', name: 'Netlify' },
+  { id: 'logos:aws', name: 'AWS' },
+  { id: 'logos:google-cloud', name: 'GCP' },
+  { id: 'logos:azure-icon', name: 'Azure' },
+  { id: 'logos:chatgpt-icon', name: 'ChatGPT' },
+  { id: 'logos:openai-icon', name: 'OpenAI' },
+  { id: 'logos:anthropic-icon', name: 'Anthropic' },
+  { id: 'logos:reddit-icon', name: 'Reddit' },
+  { id: 'logos:linkedin-icon', name: 'LinkedIn' },
+  { id: 'logos:medium-icon', name: 'Medium' },
+  { id: 'logos:slack-icon', name: 'Slack' },
+  { id: 'logos:instagram-icon', name: 'Instagram' },
+  { id: 'logos:tiktok-icon', name: 'TikTok' },
+  { id: 'logos:pinterest', name: 'Pinterest' },
+  { id: 'logos:dribbble-icon', name: 'Dribbble' },
+  { id: 'simple-icons:zhihu', name: '知乎' },
+  { id: 'simple-icons:wechat', name: '微信' },
+  { id: 'simple-icons:alipay', name: '支付宝' },
+  { id: 'simple-icons:douban', name: '豆瓣' },
+  { id: 'logos:nginx', name: 'Nginx' },
+  { id: 'logos:redis', name: 'Redis' },
+  { id: 'logos:postgresql', name: 'PostgreSQL' },
+  { id: 'logos:mysql', name: 'MySQL' },
+  { id: 'logos:mongodb-icon', name: 'MongoDB' },
+  { id: 'logos:linux-tux', name: 'Linux' },
+];
+
 import { SiteCard } from '@/app/components/site/SiteCard';
 import { NOISE_BASE64, getRandomColor } from '@/lib/utils';
 import { ICON_MAP, FONTS } from '@/lib/constants';
@@ -269,18 +323,29 @@ export function EditModal({ site, categories, sites, isDarkMode, onClose, onSave
                                         </div>
                                     )}
                                     {f.iconType === 'library' && (
-                                        <div
-                                            className="grid grid-cols-5 gap-2 w-full max-h-[120px] overflow-y-auto custom-scrollbar animate-in fade-in">
-                                            {Object.keys(ICON_MAP).map(iconName => {
-                                                const I = ICON_MAP[iconName];
-                                                return (
-                                                    <button type="button" key={iconName}
-                                                        onClick={() => setF({ ...f, icon: iconName })}
-                                                        className={`aspect-square rounded-lg flex items-center justify-center transition-all ${f.icon === iconName ? 'bg-indigo-500 text-white shadow-md' : 'hover:bg-black/5 dark:hover:bg-white/10 text-slate-400'}`}>
-                                                        <I size={18} />
+                                        <div className="w-full max-h-[200px] overflow-y-auto custom-scrollbar animate-in fade-in space-y-2">
+                                            <div className="grid grid-cols-5 gap-2">
+                                                {Object.keys(ICON_MAP).map(iconName => {
+                                                    const I = ICON_MAP[iconName];
+                                                    return (
+                                                        <button type="button" key={iconName}
+                                                            onClick={() => setF({ ...f, icon: iconName })}
+                                                            className={`aspect-square rounded-lg flex items-center justify-center transition-all ${f.icon === iconName ? 'bg-indigo-500 text-white shadow-md' : 'hover:bg-black/5 dark:hover:bg-white/10 text-slate-400'}`}>
+                                                            <I size={18} />
+                                                        </button>
+                                                    )
+                                                })}
+                                            </div>
+                                            <div className="text-[10px] opacity-40 font-medium px-1">品牌图标</div>
+                                            <div className="grid grid-cols-8 gap-1.5">
+                                                {BRAND_ICONS.map(b => (
+                                                    <button type="button" key={b.id} title={b.name}
+                                                        onClick={() => setF({ ...f, icon: b.id })}
+                                                        className={`aspect-square rounded-lg flex items-center justify-center transition-all ${f.icon === b.id ? 'bg-indigo-500 shadow-md ring-2 ring-indigo-500/30' : 'hover:bg-black/5 dark:hover:bg-white/10'}`}>
+                                                        <Icon icon={b.id} width={20} height={20} />
                                                     </button>
-                                                )
-                                            })}
+                                                ))}
+                                            </div>
                                         </div>
                                     )}
                                 </div>

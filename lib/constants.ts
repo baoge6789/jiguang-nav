@@ -1,7 +1,12 @@
 import {
     Globe, Github, Youtube, Twitter, Code, Briefcase, Coffee, Image as ImageIcon, Music,
     MessageSquare, Gamepad, BookOpen, Search, Monitor, Palette, Zap, Cloud, Activity, Lock, User,
-    Linkedin, Instagram, Facebook, Twitch, Mail, Rss, MessageCircle
+    Linkedin, Instagram, Facebook, Twitch, Mail, Rss, MessageCircle,
+    Database, Server, Wifi, ShoppingBag, Heart, Star, Bookmark, Home, Video, Camera,
+    Calendar, Clock, Settings, Shield, Rocket, Plane, Car, FileText, Newspaper,
+    Radio, Tv, Headphones, Mic, Compass, Target, Award, TrendingUp, BarChart2, Layers,
+    Box, MapPin, Navigation, Hash, AtSign, Cpu, HardDrive, PenTool, Scissors,
+    Download, Upload, Link2, Gift, Flag, Flame, Sun, Moon, Umbrella, Gem
 } from 'lucide-react';
 
 // --- Social Icons for Footer ---
@@ -140,6 +145,23 @@ export const ICON_MAP: any = {
     Coffee: Coffee, ImageIcon: ImageIcon, Music: Music, MessageSquare: MessageSquare, Gamepad: Gamepad,
     BookOpen: BookOpen, Search: Search, Monitor: Monitor, Palette: Palette, Zap: Zap, Cloud: Cloud,
     Activity: Activity, Lock: Lock, User: User,
+    // 生活
+    Home: Home, Heart: Heart, Star: Star, Bookmark: Bookmark, ShoppingBag: ShoppingBag,
+    Gift: Gift, Gem: Gem, Award: Award, Flame: Flame, Flag: Flag,
+    Sun: Sun, Moon: Moon, Umbrella: Umbrella,
+    // 媒体
+    Video: Video, Camera: Camera, Tv: Tv, Radio: Radio, Headphones: Headphones,
+    Mic: Mic, FileText: FileText, Newspaper: Newspaper,
+    // 通讯/位置
+    Mail: Mail, Calendar: Calendar, Clock: Clock, Compass: Compass,
+    MapPin: MapPin, Navigation: Navigation, Target: Target, Hash: Hash, AtSign: AtSign,
+    Link2: Link2,
+    // 科技/开发
+    Database: Database, Server: Server, Wifi: Wifi, Cpu: Cpu, HardDrive: HardDrive,
+    Rocket: Rocket, Plane: Plane, Car: Car, Shield: Shield, Settings: Settings,
+    // 工具/设计
+    PenTool: PenTool, Scissors: Scissors, Download: Download, Upload: Upload,
+    Box: Box, Layers: Layers, TrendingUp: TrendingUp, BarChart2: BarChart2,
 };
 
 export const DEFAULT_LAYOUT_SETTINGS = {

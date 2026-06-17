@@ -6,7 +6,8 @@ import NextImage from 'next/image';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Globe, MoreHorizontal, ExternalLink, Folder } from 'lucide-react';
-import { hexToRgb, getAccessibleTextColor, shouldUseTextShadow, FAVICON_PROVIDERS, getSimpleFaviconUrl } from '@/lib/utils';
+import { Icon } from '@iconify/react';
+import { hexToRgb, getAccessibleTextColor, shouldUseTextShadow, FAVICON_PROVIDERS, getSimpleFaviconUrl, isIconifyIcon } from '@/lib/utils';
 import { ICON_MAP, FONTS } from '@/lib/constants';
 import { useFonts } from '@/app/hooks/useFonts';
 import { useOnlineStatus } from '@/app/hooks/useOnlineStatus';
@@ -42,18 +43,20 @@ export const SiteCard = React.memo(function SiteCard({
     const [iconState, setIconState] = useState(0);
     const [imgSrc, setImgSrc] = useState<string | null>(null);
     const [hasError, setHasError] = useState(false);
+    const [imgLoading, setImgLoading] = useState(true);
 
     useEffect(() => {
         setIconState(0);
         setHasError(false);
+        setImgLoading(true);
     }, [site.url, site.iconType, isOnline]);
 
     useEffect(() => {
+        setImgLoading(true);
         if (site.iconType === 'upload' && site.customIconUrl) {
             setImgSrc(site.customIconUrl);
             setHasError(false);
         } else if (site.iconType === 'auto' && site.icon && (site.icon.startsWith('/') || site.icon.startsWith('http'))) {
-            // Priority 1: Local Cache
             setImgSrc(site.icon);
             setHasError(false);
         }
@@ -217,18 +220,6 @@ export const SiteCard = React.memo(function SiteCard({
         return allFonts.find(f => f.id === id)?.family || undefined;
     };
 
-    // DEBUG LOG
-    if (site.name === 'Google') {
-        console.log('[SiteCard Debug]', {
-            siteName: site.name,
-            siteTitleFont: site.titleFont,
-            globalTitleFont: settings.globalTitleFont,
-            resolvedSite: resolveFont(site.titleFont),
-            resolvedGlobal: resolveFont(settings.globalTitleFont),
-            finalTitleFont: resolveFont(site.titleFont) || resolveFont(settings.globalTitleFont)
-        });
-    }
-
     // Priority: Site Specific > Global Setting > Global App Font > Inherit
     const titleFontFamily = resolveFont(site.titleFont) || resolveFont(settings.globalTitleFont);
     const descFontFamily = resolveFont(site.descFont) || resolveFont(settings.globalDescFont);
@@ -239,14 +230,23 @@ export const SiteCard = React.memo(function SiteCard({
     const descFontSize = site.descSize || settings.globalDescSize;
 
     // ============================================================
-    // 图标渲染 - 原有逻辑（已移除 Iconify 品牌图标）
+    // 图标渲染
     // ============================================================
     let renderIcon;
 
+    // 0. Iconify 品牌图标（如 logos:github-icon）
+    if (site.iconType === 'library' && isIconifyIcon(site.icon)) {
+        renderIcon = (
+            <div className="w-full h-full rounded-xl flex items-center justify-center bg-white dark:bg-slate-700 shadow-md">
+                <Icon icon={site.icon} width={iconSizePx * 0.75} height={iconSizePx * 0.75} />
+            </div>
+        );
+    }
     // 1. 自定义上传图标
-    if (site.iconType === 'upload' && site.customIconUrl && !hasError) {
+    else if (site.iconType === 'upload' && site.customIconUrl && !hasError) {
         renderIcon = (
             <div className="w-full h-full rounded-xl overflow-hidden relative">
+                {imgLoading && <div className="absolute inset-0 bg-white/5 animate-pulse rounded-xl" />}
                 <NextImage
                     key={site.customIconUrl}
                     src={site.customIconUrl}
@@ -254,7 +254,8 @@ export const SiteCard = React.memo(function SiteCard({
                     width={40}
                     height={40}
                     className="object-contain w-full h-full"
-                    onError={() => setHasError(true)}
+                    onLoad={() => setImgLoading(false)}
+                    onError={() => { setHasError(true); setImgLoading(false); }}
                     unoptimized={true}
                 />
             </div>
@@ -265,13 +266,10 @@ export const SiteCard = React.memo(function SiteCard({
         let currentSrc = '';
         let showImage = false;
 
-        // 有本地缓存
         if (!hasError && site.icon && (site.icon.startsWith('/') || site.icon.startsWith('http'))) {
             currentSrc = site.icon;
             showImage = true;
-        }
-        // 在线获取
-        else if (isOnline) {
+        } else if (isOnline) {
             let providerIndex = iconState;
             if (site.icon && (site.icon.startsWith('/') || site.icon.startsWith('http'))) {
                 providerIndex = iconState - 1;
@@ -288,15 +286,18 @@ export const SiteCard = React.memo(function SiteCard({
         if (showImage) {
             renderIcon = (
                 <div className="w-full h-full rounded-xl overflow-hidden relative">
+                    {imgLoading && <div className="absolute inset-0 bg-white/5 animate-pulse rounded-xl" />}
                     <NextImage
                         key={currentSrc}
                         src={currentSrc}
                         alt={site.name}
                         width={40}
                         height={40}
-                        className="object-contain w-full h-full"
+                        className={`object-contain w-full h-full transition-opacity duration-300 ${imgLoading ? 'opacity-0' : 'opacity-100'}`}
+                        onLoad={() => setImgLoading(false)}
                         onError={() => {
                             setHasError(true);
+                            setImgLoading(false);
                             setIconState(prev => prev + 1);
                         }}
                         unoptimized={true}
