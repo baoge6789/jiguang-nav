@@ -25,7 +25,6 @@ export const onRequestGet: PagesFunction<Env> = async () => {
         const pct = parseFloat(gateData[0].change_percentage) || 0;
         const prevPrice = priceUSD / (1 + pct / 100);
         
-        // PI 美元价格
         result.push({ 
           id: idx++, 
           name: 'PI-USD', 
@@ -62,16 +61,15 @@ export const onRequestGet: PagesFunction<Env> = async () => {
       console.error('Forex fetch error:', e);
     }
 
-    // 3. 添加 PI 人民币价格（使用获取到的汇率）
+    // 3. 添加 PI 人民币价格
     try {
-      // 从 result 中找到 PI-USD 数据
       const piUSD = result.find((r: any) => r.id === 1);
       if (piUSD && cnyRate > 0) {
         const priceCNY = piUSD.price * cnyRate;
         result.push({
           id: 'pi-cny',
           name: 'PI-CNY',
-          price: Math.round(priceCNY * 10000) / 10000, // 保留4位小数
+          price: Math.round(priceCNY * 10000) / 10000,
           change: 0,
           percent: 0,
           type: 'crypto',
@@ -93,35 +91,34 @@ export const onRequestGet: PagesFunction<Env> = async () => {
         const cnyPerGram = (usdPerOunce / 31.1035) * cnyRate;
         result.push({
           id: 'gold',
-          name: '黄金',
+          name: '黄金/g',  // ← 名字里带单位
           price: Math.round(cnyPerGram * 100) / 100,
           change: 0,
           percent: 0,
           type: 'commodity',
-          currency: 'CNY/g',
+          currency: 'CNY',  // ← 改成 CNY
         });
       } else {
-        // 备用数据
         result.push({
           id: 'gold',
-          name: '黄金',
+          name: '黄金/g',
           price: 598.00,
           change: 0,
           percent: 0,
           type: 'commodity',
-          currency: 'CNY/g',
+          currency: 'CNY',
         });
       }
     } catch (e) {
       console.error('Gold fetch error:', e);
       result.push({
         id: 'gold',
-        name: '黄金',
+        name: '黄金/g',
         price: 598.00,
         change: 0,
         percent: 0,
         type: 'commodity',
-        currency: 'CNY/g',
+        currency: 'CNY',
       });
     }
 
