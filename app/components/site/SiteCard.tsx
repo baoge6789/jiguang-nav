@@ -307,18 +307,28 @@ export const SiteCard = React.memo(function SiteCard({
         }
     }
 
-    // 3. 兜底：首字母或图库图标
+    // 3. 兜底：Iconify 品牌图标 / Lucide 图库图标 / 首字母
     if (!renderIcon) {
-        const firstLetter = site.name ? site.name.charAt(0).toUpperCase() : '?';
-        const IconComponent = site.type === 'folder' ? Folder : (ICON_MAP[site.icon] || Globe);
-        renderIcon = (
-            <div
-                className="w-full h-full rounded-xl flex items-center justify-center text-white shadow-md font-bold relative"
-                style={{ backgroundColor: site.color || '#6366f1', fontSize: iconSizePx * 0.5 }}
-            >
-                {(site.type === 'folder' || site.iconType === 'library') && IconComponent ? <IconComponent size={iconSizePx * 0.6} /> : firstLetter}
-            </div>
-        );
+        // 3a. Iconify 品牌图标兜底（无论 iconType 是什么）
+        if (isIconifyIcon(site.icon)) {
+            renderIcon = (
+                <div className="w-full h-full rounded-xl flex items-center justify-center bg-white dark:bg-slate-700 shadow-md">
+                    <Icon icon={site.icon} width={iconSizePx * 0.75} height={iconSizePx * 0.75} />
+                </div>
+            );
+        } else {
+            // 3b. Lucide 图库图标或首字母
+            const firstLetter = site.name ? site.name.charAt(0).toUpperCase() : '?';
+            const IconComponent = site.type === 'folder' ? Folder : (ICON_MAP[site.icon] || Globe);
+            renderIcon = (
+                <div
+                    className="w-full h-full rounded-xl flex items-center justify-center text-white shadow-md font-bold relative"
+                    style={{ backgroundColor: site.color || '#6366f1', fontSize: iconSizePx * 0.5 }}
+                >
+                    {(site.type === 'folder' || site.iconType === 'library') && IconComponent ? <IconComponent size={iconSizePx * 0.6} /> : firstLetter}
+                </div>
+            );
+        }
     }
 
     // Layout Modes

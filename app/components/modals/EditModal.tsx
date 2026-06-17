@@ -340,7 +340,7 @@ export function EditModal({ site, categories, sites, isDarkMode, onClose, onSave
                                             <div className="grid grid-cols-8 gap-1.5">
                                                 {BRAND_ICONS.map(b => (
                                                     <button type="button" key={b.id} title={b.name}
-                                                        onClick={() => setF({ ...f, icon: b.id })}
+                                                        onClick={() => setF({ ...f, icon: b.id, iconType: 'library' })}
                                                         className={`aspect-square rounded-lg flex items-center justify-center transition-all ${f.icon === b.id ? 'bg-indigo-500 shadow-md ring-2 ring-indigo-500/30' : 'hover:bg-black/5 dark:hover:bg-white/10'}`}>
                                                         <Icon icon={b.id} width={20} height={20} />
                                                     </button>
