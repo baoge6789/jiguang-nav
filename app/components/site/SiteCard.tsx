@@ -6,8 +6,7 @@ import NextImage from 'next/image';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Globe, MoreHorizontal, ExternalLink, Folder } from 'lucide-react';
-import { Icon } from '@iconify/react';
-import { hexToRgb, getAccessibleTextColor, shouldUseTextShadow, FAVICON_PROVIDERS, isIconifyIcon, getSimpleFaviconUrl } from '@/lib/utils';
+import { hexToRgb, getAccessibleTextColor, shouldUseTextShadow, FAVICON_PROVIDERS, getSimpleFaviconUrl } from '@/lib/utils';
 import { ICON_MAP, FONTS } from '@/lib/constants';
 import { useFonts } from '@/app/hooks/useFonts';
 import { useOnlineStatus } from '@/app/hooks/useOnlineStatus';
@@ -240,20 +239,12 @@ export const SiteCard = React.memo(function SiteCard({
     const descFontSize = site.descSize || settings.globalDescSize;
 
     // ============================================================
-    // 图标渲染 - 支持 Iconify 品牌图标
+    // 图标渲染 - 原有逻辑（已移除 Iconify 品牌图标）
     // ============================================================
     let renderIcon;
 
-    // 1. 品牌图标（最高优先级）
-    if (site.icon && isIconifyIcon(site.icon)) {
-        renderIcon = (
-            <div className="w-full h-full rounded-xl flex items-center justify-center bg-white dark:bg-slate-800">
-                <Icon icon={site.icon} width={iconSizePx * 0.7} height={iconSizePx * 0.7} />
-            </div>
-        );
-    }
-    // 2. 自定义上传图标
-    else if (site.iconType === 'upload' && site.customIconUrl && !hasError) {
+    // 1. 自定义上传图标
+    if (site.iconType === 'upload' && site.customIconUrl && !hasError) {
         renderIcon = (
             <div className="w-full h-full rounded-xl overflow-hidden relative">
                 <NextImage
@@ -269,7 +260,7 @@ export const SiteCard = React.memo(function SiteCard({
             </div>
         );
     }
-    // 3. 自动获取 favicon
+    // 2. 自动获取 favicon
     else if (site.iconType === 'auto' && site.url) {
         let currentSrc = '';
         let showImage = false;
@@ -315,7 +306,7 @@ export const SiteCard = React.memo(function SiteCard({
         }
     }
 
-    // 4. 兜底：首字母或图库图标
+    // 3. 兜底：首字母或图库图标
     if (!renderIcon) {
         const firstLetter = site.name ? site.name.charAt(0).toUpperCase() : '?';
         const IconComponent = site.type === 'folder' ? Folder : (ICON_MAP[site.icon] || Globe);

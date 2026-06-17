@@ -4,39 +4,11 @@ import {
     Edit3, Plus, X, Link as LinkIcon, Sparkles, UploadCloud, LayoutGrid,
     RefreshCw, ChevronDown, Check, CheckCircle2, Type, Search, Eye, EyeOff
 } from 'lucide-react';
-import { Icon } from '@iconify/react';
 import { SiteCard } from '@/app/components/site/SiteCard';
 import { NOISE_BASE64, getRandomColor } from '@/lib/utils';
 import { ICON_MAP, FONTS } from '@/lib/constants';
 import { useFonts } from '@/app/hooks/useFonts';
 import { FontPickerModal } from '@/app/components/modals/FontPickerModal';
-
-const BRAND_ICONS = [
-    // 搜索/科技
-    'logos:google', 'logos:google-chrome', 'logos:google-drive', 'logos:google-photos',
-    'logos:bing', 'logos:baidu', 'logos:yandex',
-    // 社交
-    'logos:twitter', 'logos:facebook', 'logos:instagram', 'logos:linkedin',
-    'logos:pinterest', 'logos:snapchat', 'logos:tiktok', 'logos:telegram',
-    'logos:whatsapp', 'logos:wechat', 'logos:discord', 'logos:reddit',
-    // 开发/代码
-    'logos:github', 'logos:gitlab', 'logos:bitbucket', 'logos:stackoverflow',
-    'logos:vercel', 'logos:netlify', 'logos:heroku', 'logos:railway',
-    // 框架/库
-    'logos:react', 'logos:vue', 'logos:angular', 'logos:svelte',
-    'logos:nextjs', 'logos:nuxt', 'logos:tailwindcss', 'logos:bootstrap',
-    'logos:nodejs', 'logos:python', 'logos:go', 'logos:rust',
-    // 工具/平台
-    'logos:docker', 'logos:kubernetes', 'logos:aws', 'logos:google-cloud',
-    'logos:azure', 'logos:cloudflare', 'logos:figma', 'logos:notion',
-    'logos:slack', 'logos:trello', 'logos:jira', 'logos:grafana',
-    // 媒体/娱乐
-    'logos:youtube', 'logos:vimeo', 'logos:spotify', 'logos:apple-music',
-    'logos:netflix', 'logos:twitch', 'logos:bilibili', 'logos:douyin',
-    // 办公/文档
-    'logos:microsoft', 'logos:apple', 'logos:google-docs', 'logos:dropbox',
-    'logos:onedrive', 'logos:evernote', 'logos:obsidian',
-];
 
 export function EditModal({ site, categories, sites, isDarkMode, onClose, onSave, settings }: any) {
     const [f, setF] = useState({
@@ -263,8 +235,7 @@ export function EditModal({ site, categories, sites, isDarkMode, onClose, onSave
                                     {[
                                         { id: 'auto', label: '自动', icon: Sparkles },
                                         { id: 'upload', label: '上传', icon: UploadCloud },
-                                        { id: 'library', label: '图库', icon: LayoutGrid },
-                                        { id: 'brand', label: '品牌', icon: LayoutGrid }
+                                        { id: 'library', label: '图库', icon: LayoutGrid }
                                     ].map(tab => (
                                         <button
                                             key={tab.id}
@@ -310,28 +281,6 @@ export function EditModal({ site, categories, sites, isDarkMode, onClose, onSave
                                                     </button>
                                                 )
                                             })}
-                                        </div>
-                                    )}
-                                    {/* 新增：品牌图标选择器 */}
-                                    {f.iconType === 'brand' && (
-                                        <div className="w-full animate-in fade-in">
-                                            <p className="text-xs opacity-60 mb-2">选择品牌图标</p>
-                                            <div className="grid grid-cols-6 gap-2 max-h-[160px] overflow-y-auto custom-scrollbar">
-                                                {BRAND_ICONS.map((icon) => (
-                                                    <button
-                                                        key={icon}
-                                                        type="button"
-                                                        onClick={() => setF({ ...f, icon: icon, iconType: 'brand' })}
-                                                        className={`aspect-square rounded-lg flex items-center justify-center transition-all hover:bg-indigo-50 dark:hover:bg-white/10 ${
-                                                            f.icon === icon ? 'bg-indigo-500 text-white shadow-md ring-2 ring-indigo-500' : 'text-slate-400'
-                                                        }`}
-                                                        title={icon.replace('logos:', '').replace('-icon', '')}
-                                                    >
-                                                        <Icon icon={icon} width={24} height={24} />
-                                                    </button>
-                                                ))}
-                                            </div>
-                                            <p className="text-[10px] opacity-40 mt-2">点击选择品牌 Logo（会覆盖上方图标）</p>
                                         </div>
                                     )}
                                 </div>
@@ -505,8 +454,6 @@ export function EditModal({ site, categories, sites, isDarkMode, onClose, onSave
                                         placeholder="简短的描述网站用途..." />
                                 </div>
 
-
-
                                 {/* Per-Site Typography Customization */}
                                 <div className="pt-4 border-t border-slate-100 dark:border-white/5 space-y-3 animate-in slide-in-from-bottom-2 fade-in duration-500 delay-100">
                                     <label className="text-xs font-bold opacity-70 flex items-center gap-1.5"><Type size={12} /> 个性化样式 (可选)</label>
@@ -554,7 +501,6 @@ export function EditModal({ site, categories, sites, isDarkMode, onClose, onSave
                                         </div>
 
                                         {/* Desc Style */}
-
                                         <div>
                                             <label className="text-[10px] opacity-50 mb-1.5 block">简介样式</label>
                                             <div className="flex items-center gap-2">
