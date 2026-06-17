@@ -57,3 +57,7 @@ Thumbs.db
 # icons
 /public/uploads/icons
 
+# local tutorials
+*-tutorial.html
+*-教程.html
+
