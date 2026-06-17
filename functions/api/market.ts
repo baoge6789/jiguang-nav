@@ -11,9 +11,9 @@ export const onRequestGet: PagesFunction<Env> = async () => {
   try {
     const result: any[] = [];
     let idx = 1;
-    let cnyRate = 7.25; // 默认汇率
+    let cnyRate = 7.25;
 
-    // 1. 获取 PI 币数据（Gate.io）
+    // 1. PI 币（Gate.io）
     const gateRes = await fetch('https://api.gateio.ws/api/v4/spot/tickers?currency_pair=PI_USDT', {
       headers: { 'Accept': 'application/json' },
     });
@@ -24,7 +24,6 @@ export const onRequestGet: PagesFunction<Env> = async () => {
         const priceUSD = parseFloat(gateData[0].last) || 0;
         const pct = parseFloat(gateData[0].change_percentage) || 0;
         const prevPrice = priceUSD / (1 + pct / 100);
-        
         result.push({ 
           id: idx++, 
           name: 'PI-USD', 
@@ -36,7 +35,7 @@ export const onRequestGet: PagesFunction<Env> = async () => {
       }
     }
 
-    // 2. 获取美元/人民币汇率
+    // 2. USD/CNY 汇率
     try {
       const forexRes = await fetch('https://api.exchangerate-api.com/v4/latest/USD', {
         headers: { 'Accept': 'application/json' },
@@ -61,7 +60,7 @@ export const onRequestGet: PagesFunction<Env> = async () => {
       console.error('Forex fetch error:', e);
     }
 
-    // 3. 添加 PI 人民币价格
+    // 3. PI-CNY
     try {
       const piUSD = result.find((r: any) => r.id === 1);
       if (piUSD && cnyRate > 0) {
@@ -80,7 +79,7 @@ export const onRequestGet: PagesFunction<Env> = async () => {
       console.error('PI CNY calculation error:', e);
     }
 
-    // 4. 获取黄金价格（人民币/克）
+    // 4. 黄金/克
     try {
       const goldRes = await fetch('https://api.gold-api.com/price/XAU', {
         headers: { 'Accept': 'application/json' },
@@ -91,17 +90,17 @@ export const onRequestGet: PagesFunction<Env> = async () => {
         const cnyPerGram = (usdPerOunce / 31.1035) * cnyRate;
         result.push({
           id: 'gold',
-          name: '黄金/g',  // ← 名字里带单位
+          name: '黄金/克',
           price: Math.round(cnyPerGram * 100) / 100,
           change: 0,
           percent: 0,
           type: 'commodity',
-          currency: 'CNY',  // ← 改成 CNY
+          currency: 'CNY',
         });
       } else {
         result.push({
           id: 'gold',
-          name: '黄金/g',
+          name: '黄金/克',
           price: 598.00,
           change: 0,
           percent: 0,
