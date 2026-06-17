@@ -806,7 +806,10 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                                 <motion.div key="stock" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex-1 flex flex-col justify-center h-full">
                                     <div className="flex flex-row items-center gap-2 overflow-x-auto no-scrollbar px-1 pb-8 w-full h-full">
                                         {marketData.length > 0 ? marketData.map(item => {
-                                            const isUp = item.change >= 0;
+                                            const percent = item.percent || 0;
+                                            const isUp = percent > 0;
+                                            const isDown = percent < 0;
+                                            const isZero = percent === 0;
                                             const currencySymbol = item.currency === 'CNY' ? '¥' : '$';
                                             const displayPrice = item.price;
                                             return (
@@ -815,9 +818,11 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                                                     <div className="font-bold tabular-nums text-sm leading-tight mb-1 text-center" title={displayPrice?.toLocaleString()}>
                                                         {currencySymbol}{displayPrice?.toLocaleString(undefined, { minimumFractionDigits: 4, maximumFractionDigits: 4 })}
                                                     </div>
-                                                    <div className={`text-[11px] px-1.5 py-0.5 rounded-full font-medium leading-none ${isUp ? 'bg-red-500/10 text-red-400' : 'bg-green-500/10 text-green-400'}`}>
-                                                        {isUp ? '+' : ''}{(item.percent || 0).toFixed(2)}%
-                                                    </div>
+                                                    {!isZero && (
+                                                        <div className={`text-[11px] px-1.5 py-0.5 rounded-full font-medium leading-none ${isUp ? 'bg-red-500/10 text-red-400' : 'bg-green-500/10 text-green-400'}`}>
+                                                            {isUp ? '+' : ''}{percent.toFixed(2)}%
+                                                        </div>
+                                                    )}
                                                 </div>
                                             );
                                         }) : (
