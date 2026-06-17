@@ -23,6 +23,7 @@ interface SiteCardProps {
     isOverlay?: boolean;
     onFolderClick?: (folder: any) => void;
     isDropTarget?: boolean; // Visual feedback for folder drop target
+    childCount?: number; // 新增：子元素数量
 }
 
 export const SiteCard = React.memo(function SiteCard({
@@ -35,9 +36,9 @@ export const SiteCard = React.memo(function SiteCard({
     onContextMenu,
     isOverlay,
     onFolderClick,
-    childCount, // New Prop
+    childCount = 0, // 设置默认值为 0
     isDropTarget, // Visual feedback for folder drop target
-}: SiteCardProps & { childCount?: number }) {
+}: SiteCardProps) {
     const isOnline = useOnlineStatus();
     const [iconState, setIconState] = useState(0);
     const [imgSrc, setImgSrc] = useState<string | null>(null);
@@ -60,10 +61,6 @@ export const SiteCard = React.memo(function SiteCard({
     }, [site.customIconUrl, site.iconType, site.icon]);
 
     const handleClick = (e: React.MouseEvent) => {
-        // Assuming isDragging is defined elsewhere or will be added.
-        // For now, it will be undefined if not provided by useSortable or similar.
-        // if (isDragging) return; 
-
         if (site.type === 'folder') {
             e.preventDefault();
             onFolderClick?.(site);
@@ -355,6 +352,9 @@ export const SiteCard = React.memo(function SiteCard({
         </span>
     );
 
+    // Child Count Badge Logic - 修复：使用默认值
+    const showCount = site.type === 'folder' && (childCount || 0) > 0;
+
     return (
         <motion.div
             className={`spotlight-card relative h-full overflow-hidden ${isOverlay ? 'shadow-2xl scale-105 cursor-grabbing' : ''}`}
@@ -429,7 +429,7 @@ export const SiteCard = React.memo(function SiteCard({
 
                         {/* 右侧：统计数字和操作按钮 - 始终靠右 */}
                         <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
-                            {showCount && (
+                            {showCount && childCount !== undefined && childCount > 0 && (
                                 <div
                                     className="flex items-center justify-center min-w-[22px] h-[22px] px-1.5 rounded-full text-[11px] font-bold text-white shadow-lg leading-none transform scale-100"
                                     style={{
