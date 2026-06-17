@@ -60,7 +60,7 @@ export const onRequestGet: PagesFunction<Env> = async () => {
       console.error('Forex fetch error:', e);
     }
 
-    // 3. PI-CNY（继承 PI-USD 的涨跌幅）
+    // 3. PI-CNY（复用 PI-USD 的 change 和 percent）
     try {
       const piUSD = result.find((r: any) => r.id === 1);
       if (piUSD && cnyRate > 0) {
@@ -69,8 +69,8 @@ export const onRequestGet: PagesFunction<Env> = async () => {
           id: 'pi-cny',
           name: 'PI-CNY',
           price: Math.round(priceCNY * 10000) / 10000,
-          change: 0,
-          percent: piUSD.percent,  // ← 直接使用 PI-USD 的涨跌幅
+          change: piUSD.change,
+          percent: piUSD.percent,
           type: 'crypto',
           currency: 'CNY',
         });
