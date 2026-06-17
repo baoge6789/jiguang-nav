@@ -3,6 +3,7 @@ import { Search, LayoutGrid, X, ChevronDown, Plus, Settings, User, LogOut, LogIn
 import { SEARCH_ENGINES } from '@/lib/utils';
 import { ThemeToggle } from './ThemeToggle';
 import { ActionButton } from '@/app/components/ui/ActionButton';
+import { Icon } from '@iconify/react';  // ← 新增导入
 
 interface HeaderProps {
     isDarkMode: boolean;
@@ -58,7 +59,6 @@ export function Header({
                             className="relative group cursor-pointer active:scale-95 transition-transform duration-200"
                             onClick={() => window.location.reload()}>
                             <div className="flex items-center gap-3">
-                                {/* Logo Image or Default Icon */}
                                 {appConfig.logoImage ? (
                                     <img src={appConfig.logoImage} alt="Logo"
                                         className="h-10 w-auto object-contain hover:opacity-80 transition-opacity" />
@@ -70,8 +70,6 @@ export function Header({
                                         </div>
                                     </div>
                                 )}
-
-                                {/* Logo Text */}
                                 {(appConfig.logoText || appConfig.logoHighlight) && (
                                     <div
                                         className="grid transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] grid-rows-[1fr] opacity-100 ml-0">
@@ -94,7 +92,7 @@ export function Header({
                             <div className="relative shrink-0 pl-1">
                                 <button onClick={() => setIsEngineMenuOpen(!isEngineMenuOpen)}
                                     className={`flex items-center gap-2 pl-3 pr-2 py-2.5 rounded-l-full text-sm font-medium transition-all active:scale-95 ${isDarkMode ? 'text-slate-400 hover:text-white' : 'text-slate-500 hover:text-indigo-600'}`}>
-                                    {currentEngine.icon ? <currentEngine.icon size={16} /> : <Search size={16} />}
+                                    <Icon icon={currentEngine.icon} width={18} height={18} />
                                     <ChevronDown size={12} className="opacity-50" />
                                 </button>
                                 {isEngineMenuOpen && (
@@ -104,19 +102,14 @@ export function Header({
                                         <div
                                             className={`absolute top-full left-0 mt-3 w-48 rounded-xl shadow-2xl border overflow-hidden py-1.5 z-30 animate-in fade-in zoom-in-95 duration-200 ${isDarkMode ? 'bg-slate-800 border-white/10' : 'bg-white border-slate-100'}`}>
                                             {SEARCH_ENGINES.map(eng => {
-                                                // Note: lucide icons need to be handled if they are not LucideIcon type directly or if passed strangely.
-                                                // But here we import them so it is fine.
-                                                // Actually SEARCH_ENGINES in utils.tsx imports icons there.
-                                                // But we need to make sure 'eng.icon' is usable as JSX tag.
-                                                // It is, because utils.tsx imports them.
-                                                const Icon = eng.icon;
                                                 return (
                                                     <button key={eng.id} onClick={() => {
                                                         setCurrentEngineId(eng.id);
                                                         setIsEngineMenuOpen(false);
                                                     }}
                                                         className={`w-full text-left px-4 py-2.5 text-sm flex items-center gap-2 transition-colors active:bg-indigo-500/10 ${currentEngineId === eng.id ? 'bg-indigo-500/10 text-indigo-500' : 'hover:bg-slate-50 dark:hover:bg-white/5'}`}>
-                                                        {Icon && <Icon size={14} />} {eng.name}
+                                                        <Icon icon={eng.icon} width={18} height={18} />
+                                                        {eng.name}
                                                     </button>
                                                 )
                                             })}
