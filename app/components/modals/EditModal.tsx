@@ -11,14 +11,31 @@ import { ICON_MAP, FONTS } from '@/lib/constants';
 import { useFonts } from '@/app/hooks/useFonts';
 import { FontPickerModal } from '@/app/components/modals/FontPickerModal';
 
-// 品牌图标列表
 const BRAND_ICONS = [
-    'logos:google', 'logos:github', 'logos:youtube', 'logos:baidu',
-    'logos:bing', 'logos:bilibili', 'logos:twitter', 'logos:facebook',
-    'logos:instagram', 'logos:linkedin', 'logos:vercel', 'logos:nextjs',
-    'logos:react', 'logos:docker', 'logos:figma', 'logos:notion',
-    'logos:tailwindcss', 'logos:cloudflare', 'logos:aws', 'logos:apple',
-    'logos:microsoft', 'logos:spotify', 'logos:netflix', 'logos:twitch'
+    // 搜索/科技
+    'logos:google', 'logos:google-chrome', 'logos:google-drive', 'logos:google-photos',
+    'logos:bing', 'logos:baidu', 'logos:yandex',
+    // 社交
+    'logos:twitter', 'logos:facebook', 'logos:instagram', 'logos:linkedin',
+    'logos:pinterest', 'logos:snapchat', 'logos:tiktok', 'logos:telegram',
+    'logos:whatsapp', 'logos:wechat', 'logos:discord', 'logos:reddit',
+    // 开发/代码
+    'logos:github', 'logos:gitlab', 'logos:bitbucket', 'logos:stackoverflow',
+    'logos:vercel', 'logos:netlify', 'logos:heroku', 'logos:railway',
+    // 框架/库
+    'logos:react', 'logos:vue', 'logos:angular', 'logos:svelte',
+    'logos:nextjs', 'logos:nuxt', 'logos:tailwindcss', 'logos:bootstrap',
+    'logos:nodejs', 'logos:python', 'logos:go', 'logos:rust',
+    // 工具/平台
+    'logos:docker', 'logos:kubernetes', 'logos:aws', 'logos:google-cloud',
+    'logos:azure', 'logos:cloudflare', 'logos:figma', 'logos:notion',
+    'logos:slack', 'logos:trello', 'logos:jira', 'logos:grafana',
+    // 媒体/娱乐
+    'logos:youtube', 'logos:vimeo', 'logos:spotify', 'logos:apple-music',
+    'logos:netflix', 'logos:twitch', 'logos:bilibili', 'logos:douyin',
+    // 办公/文档
+    'logos:microsoft', 'logos:apple', 'logos:google-docs', 'logos:dropbox',
+    'logos:onedrive', 'logos:evernote', 'logos:obsidian',
 ];
 
 export function EditModal({ site, categories, sites, isDarkMode, onClose, onSave, settings }: any) {
@@ -304,7 +321,7 @@ export function EditModal({ site, categories, sites, isDarkMode, onClose, onSave
                                                     <button
                                                         key={icon}
                                                         type="button"
-                                                        onClick={() => setF({ ...f, icon: icon })}
+                                                        onClick={() => setF({ ...f, icon: icon, iconType: 'brand' })}
                                                         className={`aspect-square rounded-lg flex items-center justify-center transition-all hover:bg-indigo-50 dark:hover:bg-white/10 ${
                                                             f.icon === icon ? 'bg-indigo-500 text-white shadow-md ring-2 ring-indigo-500' : 'text-slate-400'
                                                         }`}

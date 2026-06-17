@@ -6,7 +6,8 @@ import NextImage from 'next/image';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Globe, MoreHorizontal, ExternalLink, Folder } from 'lucide-react';
-import { hexToRgb, getAccessibleTextColor, shouldUseTextShadow, FAVICON_PROVIDERS } from '@/lib/utils';
+import { Icon } from '@iconify/react';
+import { hexToRgb, getAccessibleTextColor, shouldUseTextShadow, FAVICON_PROVIDERS, isIconifyIcon, getSimpleFaviconUrl } from '@/lib/utils';
 import { ICON_MAP, FONTS } from '@/lib/constants';
 import { useFonts } from '@/app/hooks/useFonts';
 import { useOnlineStatus } from '@/app/hooks/useOnlineStatus';
@@ -241,86 +242,92 @@ export const SiteCard = React.memo(function SiteCard({
     const titleFontSize = site.titleSize || settings.globalTitleSize;
     const descFontSize = site.descSize || settings.globalDescSize;
 
-    // Icon Rendering
-    // Unified Logic for both Upload and Auto (with Cache)
-    // Unified Logic for both Upload and Auto (with Cache)
+    // ============================================================
+    // 图标渲染 - 支持 Iconify 品牌图标
+    // ============================================================
     let renderIcon;
-    let showImage = false;
-    let currentSrc = '';
 
-    // STRICT Logic Implementation:
-    // 1. Auto: Local Cache -> Online Fetch
-    // 2. Upload: Uploaded File -> First Char (Fallback)
-    // 3. Gallery: Icon (Handled by else block via iconType check)
-
-    if (site.iconType === 'auto') {
-        // Auto Mode
-        const hasLocalCache = site.icon && (site.icon.startsWith('/') || site.icon.startsWith('http'));
-
-        if (!hasError && hasLocalCache) {
-            // Priority 1: Local Cache
-            // We use site.icon directly. If it fails, onError will trigger and we switch to providers.
-            currentSrc = site.icon;
-            showImage = true;
-        } else {
-            // Priority 2: Online Fetch (Providers) - ONLY if Online
-            if (isOnline) {
-                let providerIndex = iconState;
-                if (hasLocalCache) {
-                    providerIndex = iconState - 1;
-                }
-
-                if (providerIndex >= 0 && providerIndex < FAVICON_PROVIDERS.length) {
-                    try {
-                        const domain = new URL(site.url).hostname;
-                        currentSrc = FAVICON_PROVIDERS[providerIndex](domain);
-                        showImage = true;
-                    } catch (e) {
-                        // Invalid URL, let it fail to text
-                    }
-                }
-            }
-        }
-    } else if (site.iconType === 'upload') {
-        // Upload Mode
-        if (site.customIconUrl && !hasError) {
-            // Priority 1: Uploaded File
-            currentSrc = site.customIconUrl;
-            showImage = true;
-        }
-        // Priority 2: Fallback to Text (First Char) comes naturally if showImage is false.
-        // We DO NOT fallback to online providers for Upload mode.
-    }
-
-    // Child Count Badge Logic
-    const showCount = site.type === 'folder' && childCount !== undefined && childCount > 0;
-
-    if (showImage) {
+    // 1. 品牌图标（最高优先级）
+    if (site.icon && isIconifyIcon(site.icon)) {
         renderIcon = (
-            <div className="w-full h-full rounded-xl shrink-0 overflow-hidden relative">
+            <div className="w-full h-full rounded-xl flex items-center justify-center bg-white dark:bg-slate-800">
+                <Icon icon={site.icon} width={iconSizePx * 0.7} height={iconSizePx * 0.7} />
+            </div>
+        );
+    }
+    // 2. 自定义上传图标
+    else if (site.iconType === 'upload' && site.customIconUrl && !hasError) {
+        renderIcon = (
+            <div className="w-full h-full rounded-xl overflow-hidden relative">
                 <NextImage
-                    key={currentSrc}
-                    src={currentSrc}
+                    key={site.customIconUrl}
+                    src={site.customIconUrl}
                     alt={site.name}
                     width={40}
                     height={40}
                     className="object-contain w-full h-full"
-                    onError={() => {
-                        setHasError(true);
-                        setIconState(prev => prev + 1);
-                    }}
+                    onError={() => setHasError(true)}
                     unoptimized={true}
                 />
             </div>
         );
-    } else {
+    }
+    // 3. 自动获取 favicon
+    else if (site.iconType === 'auto' && site.url) {
+        let currentSrc = '';
+        let showImage = false;
+
+        // 有本地缓存
+        if (!hasError && site.icon && (site.icon.startsWith('/') || site.icon.startsWith('http'))) {
+            currentSrc = site.icon;
+            showImage = true;
+        }
+        // 在线获取
+        else if (isOnline) {
+            let providerIndex = iconState;
+            if (site.icon && (site.icon.startsWith('/') || site.icon.startsWith('http'))) {
+                providerIndex = iconState - 1;
+            }
+            if (providerIndex >= 0 && providerIndex < FAVICON_PROVIDERS.length) {
+                try {
+                    const domain = new URL(site.url).hostname;
+                    currentSrc = FAVICON_PROVIDERS[providerIndex](domain);
+                    showImage = true;
+                } catch (e) {}
+            }
+        }
+
+        if (showImage) {
+            renderIcon = (
+                <div className="w-full h-full rounded-xl overflow-hidden relative">
+                    <NextImage
+                        key={currentSrc}
+                        src={currentSrc}
+                        alt={site.name}
+                        width={40}
+                        height={40}
+                        className="object-contain w-full h-full"
+                        onError={() => {
+                            setHasError(true);
+                            setIconState(prev => prev + 1);
+                        }}
+                        unoptimized={true}
+                    />
+                </div>
+            );
+        }
+    }
+
+    // 4. 兜底：首字母或图库图标
+    if (!renderIcon) {
         const firstLetter = site.name ? site.name.charAt(0).toUpperCase() : '?';
+        const IconComponent = site.type === 'folder' ? Folder : (ICON_MAP[site.icon] || Globe);
         renderIcon = (
             <div
                 className="w-full h-full rounded-xl flex items-center justify-center text-white shadow-md font-bold relative"
-                style={{ backgroundColor: site.color, fontSize: iconSizePx * 0.5 }}
+                style={{ backgroundColor: site.color || '#6366f1', fontSize: iconSizePx * 0.5 }}
             >
-                {(site.type === 'folder' || site.iconType === 'library') && Icon ? <Icon size={iconSizePx * 0.6} /> : firstLetter}
+                {(site.type === 'folder' || site.iconType === 'library') && IconComponent ? <IconComponent size={iconSizePx * 0.6} /> : firstLetter}
             </div>
         );
     }
@@ -400,19 +407,11 @@ export const SiteCard = React.memo(function SiteCard({
                     <div className={`flex ${isStandardLayout ? 'items-start' : 'items-center'} justify-between w-full ${gapClass}`}>
                         {/* 左侧：图标和名称 */}
                         <div className={`flex items-center ${gapClass} min-w-0 flex-1 overflow-hidden`}>
-                            {/* Icon Wrapper with Badge */}
+                            {/* Icon Wrapper */}
                             <div className="relative shrink-0" style={{ width: iconSizePx, height: iconSizePx }}>
-                                {site.iconType === 'library' ? (
-                                    <div className={`w-full h-full rounded-xl flex items-center justify-center text-white shadow-md`} style={{ backgroundColor: site.color }}>
-                                        <Icon size={iconSizePx * 0.6} />
-                                    </div>
-                                ) : (
-                                    <div className="w-full h-full rounded-xl overflow-hidden">
-                                        {renderIcon}
-                                    </div>
-                                )}
-
-
+                                <div className="w-full h-full rounded-xl overflow-hidden">
+                                    {renderIcon}
+                                </div>
                             </div>
 
                             <div className={`flex min-w-0 overflow-hidden ${isRowLayout ? 'flex-row items-baseline gap-1 sm:gap-2 flex-1' : 'flex-col'}`}>
@@ -484,13 +483,6 @@ export const SortableSiteCard = React.memo(function SortableSiteCard({ site, isL
             {...listeners}
             className="h-full"
         >
-            {/* Wrap SiteCard with motion.div for entry/exit animations if needed, 
-                 but SiteCard already has motion.div internally for hover/tap. 
-                 To handle AnimatePresence exit animations (filtering), we need the motion div here OR rely on SiteCard's internal motion.
-                 However, dnd-kit moves the OUTER div.
-                 If we want smooth reordering (squeeze), dnd-kit handles it via 'transition' on the outer div.
-                 So a plain div is BEST for the outer wrapper.
-             */}
             {/* Outer motion.div handles entry/exit/layout animations */}
             <motion.div
                 layout={props.settings?.enableDrag ?? true} // Enable layout animation (smooth reordering) toggle
