@@ -11,7 +11,7 @@ export const onRequestGet: PagesFunction<Env> = async () => {
   try {
     const result: any[] = [];
     let idx = 1;
-    let cnyRate = 6.77; // 默认汇率，如果获取失败则使用此值
+    let cnyRate = 7.25; // 默认汇率
 
     // 1. 获取 PI 币数据（Gate.io）
     const gateRes = await fetch('https://api.gateio.ws/api/v4/spot/tickers?currency_pair=PI_USDT', {
@@ -21,14 +21,16 @@ export const onRequestGet: PagesFunction<Env> = async () => {
     if (gateRes.ok) {
       const gateData = await gateRes.json() as Array<{ last: string; change_percentage: string }>;
       if (gateData.length > 0) {
-        const price = parseFloat(gateData[0].last) || 0;
+        const priceUSD = parseFloat(gateData[0].last) || 0;
         const pct = parseFloat(gateData[0].change_percentage) || 0;
-        const prevPrice = price / (1 + pct / 100);
+        const prevPrice = priceUSD / (1 + pct / 100);
+        
+        // PI 美元价格
         result.push({ 
           id: idx++, 
-          name: 'PI(Gate)', 
-          price, 
-          change: price - prevPrice, 
+          name: 'PI-USD', 
+          price: priceUSD, 
+          change: priceUSD - prevPrice, 
           percent: pct, 
           currency: 'USD' as const 
         });
@@ -60,7 +62,27 @@ export const onRequestGet: PagesFunction<Env> = async () => {
       console.error('Forex fetch error:', e);
     }
 
-    // 3. 获取黄金价格（人民币/克）
+    // 3. 添加 PI 人民币价格（使用获取到的汇率）
+    try {
+      // 从 result 中找到 PI-USD 数据
+      const piUSD = result.find((r: any) => r.id === 1);
+      if (piUSD && cnyRate > 0) {
+        const priceCNY = piUSD.price * cnyRate;
+        result.push({
+          id: 'pi-cny',
+          name: 'PI-CNY',
+          price: Math.round(priceCNY * 10000) / 10000, // 保留4位小数
+          change: 0,
+          percent: 0,
+          type: 'crypto',
+          currency: 'CNY',
+        });
+      }
+    } catch (e) {
+      console.error('PI CNY calculation error:', e);
+    }
+
+    // 4. 获取黄金价格（人民币/克）
     try {
       const goldRes = await fetch('https://api.gold-api.com/price/XAU', {
         headers: { 'Accept': 'application/json' },
@@ -68,20 +90,18 @@ export const onRequestGet: PagesFunction<Env> = async () => {
       if (goldRes.ok) {
         const goldData = await goldRes.json();
         const usdPerOunce = goldData.price || 0;
-        // 1盎司 = 31.1035克，转为人民币/克
         const cnyPerGram = (usdPerOunce / 31.1035) * cnyRate;
         result.push({
           id: 'gold',
           name: '黄金',
-          price: Math.round(cnyPerGram * 100) / 100, // 保留两位小数
+          price: Math.round(cnyPerGram * 100) / 100,
           change: 0,
           percent: 0,
           type: 'commodity',
           currency: 'CNY/g',
         });
       } else {
-        // 备用方案：如果 API 失败，使用最近价格
-        console.warn('Gold API failed, using fallback');
+        // 备用数据
         result.push({
           id: 'gold',
           name: '黄金',
@@ -94,7 +114,6 @@ export const onRequestGet: PagesFunction<Env> = async () => {
       }
     } catch (e) {
       console.error('Gold fetch error:', e);
-      // 出错时使用备用数据
       result.push({
         id: 'gold',
         name: '黄金',
