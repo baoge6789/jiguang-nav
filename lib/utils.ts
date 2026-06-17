@@ -91,12 +91,12 @@ export const getRandomColor = () => HARMONIOUS_COLORS[Math.floor(Math.random() *
 
 export const SEARCH_ENGINES = [
   { id: 'local', name: '本地', icon: 'material-symbols:search', placeholder: '筛选本地导航...' },
-  { id: 'baidu', name: '百度', icon: 'logos:baidu', url: 'https://www.baidu.com/s?wd=', placeholder: '百度一下，你就知道' },
+  { id: 'baidu', name: '百度', icon: 'simple-icons:baidu', url: 'https://www.baidu.com/s?wd=', placeholder: '百度一下，你就知道' },
   { id: 'google', name: 'Google', icon: 'logos:google-icon', url: 'https://www.google.com/search?q=', placeholder: 'Google Search' },
   { id: 'bing', name: 'Bing', icon: 'logos:bing', url: 'https://www.bing.com/search?q=', placeholder: 'Bing Search' },
   { id: 'github', name: 'GitHub', icon: 'logos:github-icon', url: 'https://github.com/search?q=', placeholder: 'Search GitHub' },
   { id: 'youtube', name: 'YouTube', icon: 'logos:youtube-icon', url: 'https://www.youtube.com/results?search_query=', placeholder: 'YouTube 搜索' },
-  { id: 'bilibili', name: 'B站', icon: 'logos:bilibili', url: 'https://search.bilibili.com/all?keyword=', placeholder: 'B站搜索' },
+  { id: 'bilibili', name: 'B站', icon: 'simple-icons:bilibili', url: 'https://search.bilibili.com/all?keyword=', placeholder: 'B站搜索' },
 ];
 
 // ============================================================

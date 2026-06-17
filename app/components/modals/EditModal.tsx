@@ -4,11 +4,22 @@ import {
     Edit3, Plus, X, Link as LinkIcon, Sparkles, UploadCloud, LayoutGrid,
     RefreshCw, ChevronDown, Check, CheckCircle2, Type, Search, Eye, EyeOff
 } from 'lucide-react';
+import { Icon } from '@iconify/react';
 import { SiteCard } from '@/app/components/site/SiteCard';
 import { NOISE_BASE64, getRandomColor } from '@/lib/utils';
 import { ICON_MAP, FONTS } from '@/lib/constants';
 import { useFonts } from '@/app/hooks/useFonts';
 import { FontPickerModal } from '@/app/components/modals/FontPickerModal';
+
+// 品牌图标列表
+const BRAND_ICONS = [
+    'logos:google', 'logos:github', 'logos:youtube', 'logos:baidu',
+    'logos:bing', 'logos:bilibili', 'logos:twitter', 'logos:facebook',
+    'logos:instagram', 'logos:linkedin', 'logos:vercel', 'logos:nextjs',
+    'logos:react', 'logos:docker', 'logos:figma', 'logos:notion',
+    'logos:tailwindcss', 'logos:cloudflare', 'logos:aws', 'logos:apple',
+    'logos:microsoft', 'logos:spotify', 'logos:netflix', 'logos:twitch'
+];
 
 export function EditModal({ site, categories, sites, isDarkMode, onClose, onSave, settings }: any) {
     const [f, setF] = useState({
@@ -235,7 +246,8 @@ export function EditModal({ site, categories, sites, isDarkMode, onClose, onSave
                                     {[
                                         { id: 'auto', label: '自动', icon: Sparkles },
                                         { id: 'upload', label: '上传', icon: UploadCloud },
-                                        { id: 'library', label: '图库', icon: LayoutGrid }
+                                        { id: 'library', label: '图库', icon: LayoutGrid },
+                                        { id: 'brand', label: '品牌', icon: LayoutGrid }
                                     ].map(tab => (
                                         <button
                                             key={tab.id}
@@ -281,6 +293,28 @@ export function EditModal({ site, categories, sites, isDarkMode, onClose, onSave
                                                     </button>
                                                 )
                                             })}
+                                        </div>
+                                    )}
+                                    {/* 新增：品牌图标选择器 */}
+                                    {f.iconType === 'brand' && (
+                                        <div className="w-full animate-in fade-in">
+                                            <p className="text-xs opacity-60 mb-2">选择品牌图标</p>
+                                            <div className="grid grid-cols-6 gap-2 max-h-[160px] overflow-y-auto custom-scrollbar">
+                                                {BRAND_ICONS.map((icon) => (
+                                                    <button
+                                                        key={icon}
+                                                        type="button"
+                                                        onClick={() => setF({ ...f, icon: icon })}
+                                                        className={`aspect-square rounded-lg flex items-center justify-center transition-all hover:bg-indigo-50 dark:hover:bg-white/10 ${
+                                                            f.icon === icon ? 'bg-indigo-500 text-white shadow-md ring-2 ring-indigo-500' : 'text-slate-400'
+                                                        }`}
+                                                        title={icon.replace('logos:', '').replace('-icon', '')}
+                                                    >
+                                                        <Icon icon={icon} width={24} height={24} />
+                                                    </button>
+                                                ))}
+                                            </div>
+                                            <p className="text-[10px] opacity-40 mt-2">点击选择品牌 Logo（会覆盖上方图标）</p>
                                         </div>
                                     )}
                                 </div>
@@ -568,6 +602,6 @@ export function EditModal({ site, categories, sites, isDarkMode, onClose, onSave
                 isOpen={isFontPickerOpen}
                 onClose={() => setIsFontPickerOpen(false)}
             />
-        </motion.div >
+        </motion.div>
     );
 }
