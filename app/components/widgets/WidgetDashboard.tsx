@@ -819,9 +819,9 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                                                         {currencySymbol}{displayPrice?.toLocaleString(undefined, { minimumFractionDigits: 4, maximumFractionDigits: 4 })}
                                                     </div>
                                                     {!isZero && (
-                                                        <div className={`text-[11px] px-1.5 py-0.5 rounded-full font-medium leading-none ${isUp ? 'bg-red-500/10 text-red-400' : 'bg-green-500/10 text-green-400'}`}>
-                                                            {isUp ? '+' : ''}{percent.toFixed(2)}%
-                                                        </div>
+                                                        <div className={`text-[11px] px-1.5 py-0.5 rounded-full font-medium leading-none ${isUp ? 'bg-green-500/10 text-green-400' : 'bg-red-500/10 text-red-400'}`}>
+    {isUp ? '+' : ''}{percent.toFixed(2)}%
+</div>
                                                     )}
                                                 </div>
                                             );
