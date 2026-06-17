@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-    Edit3, Plus, X, Link as LinkIcon, Sparkles, UploadCloud, LayoutGrid,
+    Edit3, Plus, X, Link as LinkIcon, Sparkles, UploadCloud, LayoutGrid, Link2,
     RefreshCw, ChevronDown, Check, CheckCircle2, Type, Search, Eye, EyeOff
 } from 'lucide-react';
 import { Icon } from '@iconify/react';
@@ -230,6 +230,7 @@ export function EditModal({ site, categories, sites, isDarkMode, onClose, onSave
                                                         name: data.title || prev.name,
                                                         desc: (urlChanged || data.description) ? data.description : prev.desc,
                                                         icon: data.icon || prev.icon,
+                                                        iconType: data.icon ? 'auto' : prev.iconType,
                                                     }));
                                                 }
                                             } catch (e) {
@@ -256,6 +257,7 @@ export function EditModal({ site, categories, sites, isDarkMode, onClose, onSave
                                                         name: data.title || prev.name,
                                                         desc: (urlChanged || data.description) ? data.description : prev.desc,
                                                         icon: data.icon || prev.icon,
+                                                        iconType: data.icon ? 'auto' : prev.iconType,
                                                     }));
                                                 }
                                             } catch (e) {
@@ -288,6 +290,7 @@ export function EditModal({ site, categories, sites, isDarkMode, onClose, onSave
                                 <div className={`p-1 rounded-xl flex ${isDarkMode ? 'bg-slate-800' : 'bg-slate-100'}`}>
                                     {[
                                         { id: 'auto', label: '自动', icon: Sparkles },
+                                        { id: 'link', label: '链接', icon: Link2 },
                                         { id: 'upload', label: '上传', icon: UploadCloud },
                                         { id: 'library', label: '图库', icon: LayoutGrid }
                                     ].map(tab => (
@@ -311,6 +314,27 @@ export function EditModal({ site, categories, sites, isDarkMode, onClose, onSave
                                                 className="w-10 h-10 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center mx-auto">
                                                 <Sparkles size={20} /></div>
                                             <p className="text-xs opacity-60">根据网址自动抓取图标</p>
+                                        </div>
+                                    )}
+                                    {f.iconType === 'link' && (
+                                        <div className="w-full space-y-3 animate-in fade-in">
+                                            <div className="relative">
+                                                <Link2 size={14} className="absolute left-3 top-3 opacity-40" />
+                                                <input
+                                                    type="url"
+                                                    className={`w-full pl-9 pr-3 py-2.5 rounded-lg text-xs border outline-none transition-all focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 ${isDarkMode ? 'bg-slate-800/50 border-white/10 placeholder:text-slate-500' : 'bg-white border-slate-200 placeholder:text-slate-400'}`}
+                                                    value={f.customIconUrl}
+                                                    onChange={e => setF({ ...f, customIconUrl: e.target.value, iconType: 'link' })}
+                                                    placeholder="输入图标图片链接 (https://...)"
+                                                />
+                                            </div>
+                                            {f.customIconUrl && (
+                                                <div className="flex items-center justify-center gap-3">
+                                                    <img src={f.customIconUrl} alt="预览" className="w-10 h-10 rounded-lg object-contain border border-white/10"
+                                                        onError={e => (e.currentTarget.style.opacity = '0.3')} />
+                                                    <span className="text-[10px] opacity-40">图标预览</span>
+                                                </div>
+                                            )}
                                         </div>
                                     )}
                                     {f.iconType === 'upload' && (

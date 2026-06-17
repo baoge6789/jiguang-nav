@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { AnimatePresence } from 'framer-motion';
+import '@/lib/iconify-init'; // 预加载品牌图标数据
 import { NoiseOverlay } from '@/app/components/ui/NoiseOverlay';
 import {
   Search, Settings, Plus, LogIn, LogOut, LayoutGrid, Edit3, Trash2,

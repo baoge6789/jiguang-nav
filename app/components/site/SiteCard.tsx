@@ -53,7 +53,7 @@ export const SiteCard = React.memo(function SiteCard({
 
     useEffect(() => {
         setImgLoading(true);
-        if (site.iconType === 'upload' && site.customIconUrl) {
+        if ((site.iconType === 'upload' || site.iconType === 'link') && site.customIconUrl) {
             setImgSrc(site.customIconUrl);
             setHasError(false);
         } else if (site.iconType === 'auto' && site.icon && (site.icon.startsWith('/') || site.icon.startsWith('http'))) {
@@ -243,7 +243,7 @@ export const SiteCard = React.memo(function SiteCard({
         );
     }
     // 1. 自定义上传图标
-    else if (site.iconType === 'upload' && site.customIconUrl && !hasError) {
+    else if ((site.iconType === 'upload' || site.iconType === 'link') && site.customIconUrl && !hasError) {
         renderIcon = (
             <div className="w-full h-full rounded-xl overflow-hidden relative">
                 {imgLoading && <div className="absolute inset-0 bg-white/5 animate-pulse rounded-xl" />}
