@@ -1,0 +1,7 @@
+1:"$Sreact.fragment"
+2:I[5610,["189","static/chunks/189-ce19a24b6dd730d2.js","177","static/chunks/app/layout-a44d85a6d41e297a.js"],"FontProvider"]
+3:I[4873,["189","static/chunks/189-ce19a24b6dd730d2.js","177","static/chunks/app/layout-a44d85a6d41e297a.js"],"CustomFontLoader"]
+4:I[7121,[],""]
+5:I[4581,[],""]
+:HL["/_next/static/css/0e29d27dac2923e8.css","style"]
+0:{"buildId":"0hPqOVj1L3Qw9kT-IhAKF","rsc":["$","$1","c",{"children":[[["$","link","0",{"rel":"stylesheet","href":"/_next/static/css/0e29d27dac2923e8.css","precedence":"next"}]],["$","html",null,{"lang":"en","children":["$","body",null,{"className":"antialiased","children":["$","$L2",null,{"children":[["$","$L3",null,{}],["$","$L4",null,{"parallelRouterKey":"children","template":["$","$L5",null,{}]}]]}]}]}]]}],"loading":null,"isPartial":false}

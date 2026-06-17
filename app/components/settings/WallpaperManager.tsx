@@ -36,27 +36,7 @@ export function WallpaperManager({ isOpen, onClose, onSelect, isDarkMode, showTo
     }, [isOpen, activeTab]);
 
     const handleUpload = async (e: any) => {
-        const file = e.target.files[0];
-        if (!file) return;
-
-        const formData = new FormData();
-        formData.append('file', file);
-
-        try {
-            showToast('正在上传...', 'loading');
-            const res = await fetch('/api/wallpapers', {
-                method: 'POST',
-                body: formData
-            });
-            if (res.ok) {
-                showToast('上传成功', 'success');
-                fetchWallpapers('custom');
-            } else {
-                showToast('上传失败', 'error');
-            }
-        } catch (e) {
-            showToast('上传出错', 'error');
-        }
+        showToast('CF 环境不支持文件上传，请使用 Bing 壁纸或外部 URL', 'error');
     };
 
     const handleSyncBing = async () => {

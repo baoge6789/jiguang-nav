@@ -738,7 +738,7 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                         </div>
                         <div className="flex items-center gap-2">
                             <span className="text-2xl md:text-3xl font-bold leading-none text-slate-900 dark:text-white">{weather.temp}°</span>
-                            {getWeatherIcon(weather.code, 32, "", true)}
+                            {getWeatherIcon(weather.code, 32, "", false)}
                         </div>
                         <div className="flex items-center gap-2 mt-1 text-xs">
                             <span className={`${isDarkMode ? 'opacity-70' : 'text-slate-700'}`}>{getWeatherDesc(weather.code)}</span>
@@ -813,7 +813,7 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                                                 <div key={item.id} className="flex-shrink-0 flex flex-col items-center justify-center py-2.5 px-2 rounded-lg min-w-[80px]">
                                                     <div className="text-[12px] font-medium opacity-60 leading-normal py-0.5 mb-0.5 whitespace-nowrap">{item.name}</div>
                                                     <div className="font-bold tabular-nums text-sm leading-tight mb-1 text-center" title={displayPrice?.toLocaleString()}>
-                                                        {currencySymbol}{displayPrice?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                                        {currencySymbol}{displayPrice?.toLocaleString(undefined, { minimumFractionDigits: 4, maximumFractionDigits: 4 })}
                                                     </div>
                                                     <div className={`text-[11px] px-1.5 py-0.5 rounded-full font-medium leading-none ${isUp ? 'bg-red-500/10 text-red-400' : 'bg-green-500/10 text-green-400'}`}>
                                                         {isUp ? '+' : ''}{(item.percent || 0).toFixed(2)}%

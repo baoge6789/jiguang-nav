@@ -7,7 +7,12 @@
     "dev": "next dev --webpack",
     "build": "next build --webpack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "cf:build": "next build --webpack",
+    "cf:deploy": "npx wrangler pages deploy cf",
+    "cf:dev": "npx wrangler pages dev cf --d1 DB=jg-nav-db",
+    "db:migrate": "npx wrangler d1 migrations apply jg-nav-db --remote",
+    "db:migrate:local": "npx wrangler d1 migrations apply jg-nav-db --local"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
@@ -70,6 +75,7 @@
     "zod": "^4.3.4"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^4.20260617.1",
     "@tailwindcss/postcss": "^4",
     "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^24",
