@@ -98,3 +98,34 @@ export const SEARCH_ENGINES = [
   { id: 'youtube', name: 'YouTube', icon: 'logos:youtube-icon', url: 'https://www.youtube.com/results?search_query=', placeholder: 'YouTube 搜索' },
   { id: 'bilibili', name: 'B站', icon: 'logos:bilibili', url: 'https://search.bilibili.com/all?keyword=', placeholder: 'B站搜索' },
 ];
+
+// ============================================================
+// Iconify 图标工具 - 用于书签图标
+// ============================================================
+
+/**
+ * 判断是否为 Iconify 图标（格式：xxx:xxx）
+ * 例如：logos:github, logos:google-icon
+ */
+export const isIconifyIcon = (icon: string): boolean => {
+  if (!icon || typeof icon !== 'string') return false;
+  return icon.includes(':') && !icon.startsWith('http') && !icon.startsWith('/');
+};
+
+/**
+ * 判断是否为 URL 图标
+ */
+export const isUrlIcon = (icon: string): boolean => {
+  if (!icon || typeof icon !== 'string') return false;
+  return icon.startsWith('http') || icon.startsWith('/');
+};
+
+/**
+ * 获取图标类型
+ */
+export const getIconType = (icon: string): 'iconify' | 'url' | 'favicon' | 'none' => {
+  if (!icon) return 'none';
+  if (isIconifyIcon(icon)) return 'iconify';
+  if (isUrlIcon(icon)) return 'url';
+  return 'favicon';
+};
