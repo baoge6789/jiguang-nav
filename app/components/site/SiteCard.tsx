@@ -22,8 +22,8 @@ interface SiteCardProps {
     onContextMenu?: (e: React.MouseEvent, id: any) => void;
     isOverlay?: boolean;
     onFolderClick?: (folder: any) => void;
-    isDropTarget?: boolean; // Visual feedback for folder drop target
-    childCount?: number; // 新增：子元素数量
+    isDropTarget?: boolean;
+    childCount?: number;
 }
 
 export const SiteCard = React.memo(function SiteCard({
@@ -36,8 +36,8 @@ export const SiteCard = React.memo(function SiteCard({
     onContextMenu,
     isOverlay,
     onFolderClick,
-    childCount = 0, // 设置默认值为 0
-    isDropTarget, // Visual feedback for folder drop target
+    childCount = 0,
+    isDropTarget,
 }: SiteCardProps) {
     const isOnline = useOnlineStatus();
     const [iconState, setIconState] = useState(0);
@@ -76,7 +76,6 @@ export const SiteCard = React.memo(function SiteCard({
     const handleImageError = () => {
         if (hasError) return;
         setHasError(true);
-        // Fallback logic handled in render
     };
 
     const Icon = site.type === 'folder' ? Folder : (ICON_MAP[site.icon] || Globe);
@@ -85,7 +84,6 @@ export const SiteCard = React.memo(function SiteCard({
     const isWallpaperMode = settings.bgEnabled && (settings.bgType === 'bing' || settings.bgType === 'custom');
     const safeOpacity = settings.glassOpacity / 100;
 
-    // --- Shadow Calculation ---
     const shadowLevel = settings.shadowIntensity ?? 4;
     const isFlat = shadowLevel === 0;
     const shadowMultiplier = shadowLevel / 4;
@@ -94,16 +92,13 @@ export const SiteCard = React.memo(function SiteCard({
     let bgColor, borderColor, boxShadow, hoverBoxShadow;
 
     if (settings.colorfulCards) {
-        // Configurable Mix Ratio & Opacity
         const mixPercent = settings.colorfulMixRatio ?? 40;
         const opacityPercent = settings.colorfulOpacity ?? 60;
         const mixRatio = mixPercent / 100;
         const overlayOpacity = opacityPercent / 100;
-        // Make gradient alpha proportional to overlay opacity but slightly lower
         const gradientAlpha = Math.max(0.1, overlayOpacity - 0.2);
 
         if (isWallpaperMode) {
-            // Mix Brand color with Base color
             const r = Math.round(bgBase[0] * (1 - mixRatio) + brandRgb.r * mixRatio);
             const g = Math.round(bgBase[1] * (1 - mixRatio) + brandRgb.g * mixRatio);
             const b = Math.round(bgBase[2] * (1 - mixRatio) + brandRgb.b * mixRatio);
@@ -113,16 +108,12 @@ export const SiteCard = React.memo(function SiteCard({
             boxShadow = isFlat ? 'none' : `0 ${8 * shadowMultiplier}px ${32 * shadowMultiplier}px -${8 * shadowMultiplier}px rgba(${brandRgb.r}, ${brandRgb.g}, ${brandRgb.b}, ${0.4 * Math.min(shadowMultiplier, 1.2)})`;
             hoverBoxShadow = isFlat ? 'none' : `0 ${12 * hoverMultiplier}px ${40 * hoverMultiplier}px -${10 * hoverMultiplier}px rgba(${brandRgb.r}, ${brandRgb.g}, ${brandRgb.b}, ${0.5 * Math.min(hoverMultiplier, 1.2)})`;
         } else {
-            // Mode: Colorful (Pure)
             bgColor = `rgba(${brandRgb.r}, ${brandRgb.g}, ${brandRgb.b}, ${safeOpacity})`;
             borderColor = `rgba(${brandRgb.r}, ${brandRgb.g}, ${brandRgb.b}, ${Math.min(safeOpacity + 0.3, 1)})`;
             boxShadow = isFlat ? 'none' : `0 ${8 * shadowMultiplier}px ${32 * shadowMultiplier}px -${8 * shadowMultiplier}px rgba(${brandRgb.r}, ${brandRgb.g}, ${brandRgb.b}, ${0.25 * Math.min(shadowMultiplier, 1.2)})`;
             hoverBoxShadow = isFlat ? 'none' : `0 ${12 * hoverMultiplier}px ${40 * hoverMultiplier}px -${10 * hoverMultiplier}px rgba(${brandRgb.r}, ${brandRgb.g}, ${brandRgb.b}, ${0.35 * Math.min(hoverMultiplier, 1.2)})`;
         }
-
-        // Overlay element injection happens in the render loop below using calculated values
     } else {
-        // Mode: Default Glassmorphism
         bgColor = `rgba(${bgBase[0]}, ${bgBase[1]}, ${bgBase[2]}, ${safeOpacity})`;
         borderColor = `rgba(${isDarkMode ? '255,255,255' : '0,0,0'}, ${isDarkMode ? 0.1 : 0.05})`;
         boxShadow = isFlat ? 'none' : (isDarkMode
@@ -133,7 +124,6 @@ export const SiteCard = React.memo(function SiteCard({
             : `0 ${12 * hoverMultiplier}px ${40 * hoverMultiplier}px -${10 * hoverMultiplier}px rgba(0,0,0,${0.15 * Math.min(hoverMultiplier, 1.5)})`);
     }
 
-    // Determine contrast
     let perceivedBg = isDarkMode ? '#1e293b' : '#ffffff';
     let forceWhiteText = false;
 
@@ -158,7 +148,6 @@ export const SiteCard = React.memo(function SiteCard({
             }
         });
         resizeObserver.observe(cardRef.current);
-        // Initial set
         setRealWidth(cardRef.current.offsetWidth);
         return () => resizeObserver.disconnect();
     }, []);
@@ -166,7 +155,6 @@ export const SiteCard = React.memo(function SiteCard({
     const textColor = forceWhiteText ? '#ffffff' : getAccessibleTextColor(perceivedBg);
     const hasShadow = forceWhiteText || shouldUseTextShadow(textColor);
 
-    // Dynamic Sizing based on Real Dimensions
     const height = settings.cardHeight;
     const width = realWidth;
 
@@ -174,7 +162,6 @@ export const SiteCard = React.memo(function SiteCard({
     const isSmallHeight = height < 110;
     const isTinyWidth = width < 140;
     const isSmallWidth = width < 200;
-
     const isMicroHeight = height < 60;
     const isMicroWidth = width < 110;
 
@@ -183,28 +170,25 @@ export const SiteCard = React.memo(function SiteCard({
     let gapClass = 'gap-3';
     let titleSizeBonus = 0;
 
-    // --- Icon Size Logic ---
-    // User Request: Height > 60 -> Original (40).
     if (isMicroHeight || isMicroWidth) {
         iconSizePx = 30;
     } else if (height < 60 || width < 140) {
         iconSizePx = 24;
     } else if (width < 200) {
-        iconSizePx = 32; // Constrained by width only
+        iconSizePx = 32;
     } else {
         iconSizePx = 40;
     }
 
-    // --- Padding/Gap Logic ---
     if (isMicroHeight || isMicroWidth) {
         paddingClass = 'p-1.5 px-2';
         gapClass = 'gap-2';
         titleSizeBonus = -3;
-    } else if (height < 85 || width < 140) { // < 85px: Compact Vertical
+    } else if (height < 85 || width < 140) {
         paddingClass = 'p-2.5';
         gapClass = 'gap-2';
         titleSizeBonus = -2;
-    } else if (height < 110 || width < 200) { // < 110px: Small
+    } else if (height < 110 || width < 200) {
         paddingClass = 'p-3';
         gapClass = 'gap-2.5';
         titleSizeBonus = -1;
@@ -213,14 +197,13 @@ export const SiteCard = React.memo(function SiteCard({
         gapClass = 'gap-3';
         titleSizeBonus = 0;
     }
-    const iconSizeClass = `w-[${iconSizePx}px] h-[${iconSizePx}px]`;
+
     const { allFonts } = useFonts();
     const resolveFont = (id: string) => {
         if (id === 'system') return undefined;
         return allFonts.find(f => f.id === id)?.family || undefined;
     };
 
-    // Priority: Site Specific > Global Setting > Global App Font > Inherit
     const titleFontFamily = resolveFont(site.titleFont) || resolveFont(settings.globalTitleFont);
     const descFontFamily = resolveFont(site.descFont) || resolveFont(settings.globalDescFont);
 
@@ -230,19 +213,19 @@ export const SiteCard = React.memo(function SiteCard({
     const descFontSize = site.descSize || settings.globalDescSize;
 
     // ============================================================
-    // 图标渲染
+    // 图标渲染 - 品牌图标优先
     // ============================================================
     let renderIcon;
 
-    // 0. Iconify 品牌图标（如 logos:github-icon）
-    if (site.iconType === 'library' && isIconifyIcon(site.icon)) {
+    // 1. 最高优先级：Iconify 品牌图标（只要有 icon 且是 Iconify 格式，就渲染）
+    if (isIconifyIcon(site.icon)) {
         renderIcon = (
             <div className="w-full h-full rounded-xl flex items-center justify-center bg-white dark:bg-slate-700 shadow-md">
                 <Icon icon={site.icon} width={iconSizePx * 0.75} height={iconSizePx * 0.75} />
             </div>
         );
     }
-    // 1. 自定义上传图标
+    // 2. 自定义上传或链接图标
     else if ((site.iconType === 'upload' || site.iconType === 'link') && site.customIconUrl && !hasError) {
         renderIcon = (
             <div className="w-full h-full rounded-xl overflow-hidden relative">
@@ -261,7 +244,7 @@ export const SiteCard = React.memo(function SiteCard({
             </div>
         );
     }
-    // 2. 自动获取 favicon
+    // 3. 自动获取 favicon
     else if (site.iconType === 'auto' && site.url) {
         let currentSrc = '';
         let showImage = false;
@@ -307,28 +290,18 @@ export const SiteCard = React.memo(function SiteCard({
         }
     }
 
-    // 3. 兜底：Iconify 品牌图标 / Lucide 图库图标 / 首字母
+    // 4. 兜底：Lucide 图库图标或首字母
     if (!renderIcon) {
-        // 3a. Iconify 品牌图标兜底（无论 iconType 是什么）
-        if (isIconifyIcon(site.icon)) {
-            renderIcon = (
-                <div className="w-full h-full rounded-xl flex items-center justify-center bg-white dark:bg-slate-700 shadow-md">
-                    <Icon icon={site.icon} width={iconSizePx * 0.75} height={iconSizePx * 0.75} />
-                </div>
-            );
-        } else {
-            // 3b. Lucide 图库图标或首字母
-            const firstLetter = site.name ? site.name.charAt(0).toUpperCase() : '?';
-            const IconComponent = site.type === 'folder' ? Folder : (ICON_MAP[site.icon] || Globe);
-            renderIcon = (
-                <div
-                    className="w-full h-full rounded-xl flex items-center justify-center text-white shadow-md font-bold relative"
-                    style={{ backgroundColor: site.color || '#6366f1', fontSize: iconSizePx * 0.5 }}
-                >
-                    {(site.type === 'folder' || site.iconType === 'library') && IconComponent ? <IconComponent size={iconSizePx * 0.6} /> : firstLetter}
-                </div>
-            );
-        }
+        const firstLetter = site.name ? site.name.charAt(0).toUpperCase() : '?';
+        const IconComponent = site.type === 'folder' ? Folder : (ICON_MAP[site.icon] || Globe);
+        renderIcon = (
+            <div
+                className="w-full h-full rounded-xl flex items-center justify-center text-white shadow-md font-bold relative"
+                style={{ backgroundColor: site.color || '#6366f1', fontSize: iconSizePx * 0.5 }}
+            >
+                {(site.type === 'folder' || site.iconType === 'library') && IconComponent ? <IconComponent size={iconSizePx * 0.6} /> : firstLetter}
+            </div>
+        );
     }
 
     // Layout Modes
@@ -336,10 +309,8 @@ export const SiteCard = React.memo(function SiteCard({
     const isTightLayout = height >= 75 && height <= 90;
     const isStandardLayout = height > 90;
 
-    // Description Limit
-    const showDesc = height > 24; // Minimal threshold
+    const showDesc = height > 24;
 
-    // Shared Description Component
     const Description = ({ className = '' }: { className?: string }) => (
         <span
             className={`opacity-70 ${hasShadow ? 'text-shadow-sm' : ''} ${className}`}
@@ -354,7 +325,6 @@ export const SiteCard = React.memo(function SiteCard({
         </span>
     );
 
-    // Child Count Badge Logic - 修复：使用默认值
     const showCount = site.type === 'folder' && (childCount || 0) > 0;
 
     return (
@@ -382,7 +352,9 @@ export const SiteCard = React.memo(function SiteCard({
         >
             <a
                 ref={cardRef}
-                href={isLoggedIn || isOverlay || site.type === 'folder' ? undefined : site.url} target="_blank" rel="noopener noreferrer"
+                href={isLoggedIn || isOverlay || site.type === 'folder' ? undefined : site.url}
+                target="_blank"
+                rel="noopener noreferrer"
                 onClick={handleClick}
                 onContextMenu={(e) => onContextMenu && onContextMenu(e, site.id)}
                 className={`group relative block h-full border transition-all duration-300 overflow-hidden isolate z-10 ${isLoggedIn ? 'cursor-grab active:cursor-grabbing' : 'cursor-pointer'} ${site.isHidden && isLoggedIn ? 'opacity-50 grayscale' : ''}`}
@@ -407,9 +379,7 @@ export const SiteCard = React.memo(function SiteCard({
 
                 <div className={`relative z-10 h-full flex flex-col ${paddingClass} ${isStandardLayout ? 'justify-between' : 'justify-center'}`}>
                     <div className={`flex ${isStandardLayout ? 'items-start' : 'items-center'} justify-between w-full ${gapClass}`}>
-                        {/* 左侧：图标和名称 */}
                         <div className={`flex items-center ${gapClass} min-w-0 flex-1 overflow-hidden`}>
-                            {/* Icon Wrapper */}
                             <div className="relative shrink-0" style={{ width: iconSizePx, height: iconSizePx }}>
                                 <div className="w-full h-full rounded-xl overflow-hidden">
                                     {renderIcon}
@@ -429,7 +399,6 @@ export const SiteCard = React.memo(function SiteCard({
                             </div>
                         </div>
 
-                        {/* 右侧：统计数字和操作按钮 - 始终靠右 */}
                         <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
                             {showCount && childCount !== undefined && childCount > 0 && (
                                 <div
@@ -453,7 +422,6 @@ export const SiteCard = React.memo(function SiteCard({
                         </div>
                     </div>
 
-                    {/* Footer Description for Standard Layout */}
                     {showDesc && isStandardLayout && site.desc && (
                         <p className={`text-xs leading-relaxed line-clamp-2 opacity-70 mt-2 ${hasShadow ? 'text-shadow-sm' : ''}`}
                             style={{ color: descColorStyle, fontFamily: descFontFamily, fontSize: descFontSize ? `${descFontSize}px` : undefined }}>
@@ -485,10 +453,9 @@ export const SortableSiteCard = React.memo(function SortableSiteCard({ site, isL
             {...listeners}
             className="h-full"
         >
-            {/* Outer motion.div handles entry/exit/layout animations */}
             <motion.div
-                layout={props.settings?.enableDrag ?? true} // Enable layout animation (smooth reordering) toggle
-                initial={false} // Disable entry animation to prevent "jump" effect when switching folders
+                layout={props.settings?.enableDrag ?? true}
+                initial={false}
                 animate={{ opacity: isDragging ? 0.5 : 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}
                 transition={{
