@@ -893,11 +893,18 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                                             const isZero = percent === 0;
                                             const currencySymbol = item.currency === 'CNY' ? '¥' : '$';
                                             const displayPrice = item.price;
+                                            
+                                            // 判断品种，保留不同小数位
+                                            let fractionDigits = 2;
+                                            if (item.id === 1 || item.id === 'pi-USD' || item.name === 'PI-USD' || item.id === 'pi-cny' || item.name === 'PI-CNY') {
+                                                fractionDigits = 4;
+                                            }
+                                            
                                             return (
                                                 <div key={item.id} className="flex-shrink-0 flex flex-col items-center justify-center py-2.5 px-2 rounded-lg min-w-[80px]">
                                                     <div className="text-[12px] font-medium opacity-60 leading-normal py-0.5 mb-0.5 whitespace-nowrap">{item.name}</div>
                                                     <div className="font-bold tabular-nums text-sm leading-tight mb-1 text-center" title={displayPrice?.toLocaleString()}>
-                                                        {currencySymbol}{displayPrice?.toLocaleString(undefined, { minimumFractionDigits: 4, maximumFractionDigits: 4 })}
+                                                        {currencySymbol}{displayPrice?.toLocaleString(undefined, { minimumFractionDigits: fractionDigits, maximumFractionDigits: fractionDigits })}
                                                     </div>
                                                     {!isZero && (
                                                         <div className={`text-[11px] px-1.5 py-0.5 rounded-full font-medium leading-none ${isUp ? 'bg-green-500/10 text-green-400' : 'bg-red-500/10 text-red-400'}`}>
