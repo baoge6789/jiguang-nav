@@ -79,7 +79,7 @@ export const onRequestGet: PagesFunction<Env> = async () => {
       console.error('PI CNY calculation error:', e);
     }
 
-    // 4. 黄金/克
+    // 4. 黄金(克)
     try {
       const goldRes = await fetch('https://api.gold-api.com/price/XAU', {
         headers: { 'Accept': 'application/json' },
@@ -90,7 +90,7 @@ export const onRequestGet: PagesFunction<Env> = async () => {
         const cnyPerGram = (usdPerOunce / 31.1035) * cnyRate;
         result.push({
           id: 'gold',
-          name: '黄金/克',
+          name: '黄金(克)',
           price: Math.round(cnyPerGram * 100) / 100,
           change: 0,
           percent: 0,
@@ -100,7 +100,7 @@ export const onRequestGet: PagesFunction<Env> = async () => {
       } else {
         result.push({
           id: 'gold',
-          name: '黄金/克',
+          name: '黄金(克)',
           price: 598.00,
           change: 0,
           percent: 0,
@@ -112,7 +112,7 @@ export const onRequestGet: PagesFunction<Env> = async () => {
       console.error('Gold fetch error:', e);
       result.push({
         id: 'gold',
-        name: '黄金/克',
+        name: '黄金(克)',
         price: 598.00,
         change: 0,
         percent: 0,
