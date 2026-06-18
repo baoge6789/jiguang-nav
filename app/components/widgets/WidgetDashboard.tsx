@@ -164,42 +164,44 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
 
     const [marketData, setMarketData] = useState<{ id: string; name: string; price: number; change: number; percent: number; type: string; currency?: string }[]>([]);
 
-    // ============================================================
-    // 从 API 加载数据
-    // ============================================================
-    const fetchTodos = useCallback(async () => {
-        try {
-            const res = await fetch('/api/todos');
-            if (res.ok) {
-                const data = await res.json();
-                setTodos(data);
-            }
-        } catch (e) {
-            console.error('Failed to fetch todos', e);
-        }
-    }, []);
-
-    const fetchCountdowns = useCallback(async () => {
-        try {
-            const res = await fetch('/api/countdowns');
-            if (res.ok) {
-                const data = await res.json();
-                setCountdowns(data);
-            }
-        } catch (e) {
-            console.error('Failed to fetch countdowns', e);
-        }
-    }, []);
-
-    useEffect(() => {
-        fetchTodos();
-        fetchCountdowns();
-    }, [fetchTodos, fetchCountdowns]);
-
     const [displayCount, setDisplayCount] = useState(0);
 
     // ============================================================
-    // 长按删除相关
+    // localStorage 加载
+    // ============================================================
+    useEffect(() => {
+        const savedTodos = localStorage.getItem('aurora_todos');
+        if (savedTodos) {
+            try {
+                setTodos(JSON.parse(savedTodos));
+            } catch (e) {
+                console.warn('Failed to parse todos', e);
+            }
+        }
+
+        const savedCountdowns = localStorage.getItem('aurora_countdowns');
+        if (savedCountdowns) {
+            try {
+                setCountdowns(JSON.parse(savedCountdowns));
+            } catch (e) {
+                console.warn('Failed to parse countdowns', e);
+            }
+        }
+    }, []);
+
+    // ============================================================
+    // localStorage 保存
+    // ============================================================
+    useEffect(() => {
+        localStorage.setItem('aurora_todos', JSON.stringify(todos));
+    }, [todos]);
+
+    useEffect(() => {
+        localStorage.setItem('aurora_countdowns', JSON.stringify(countdowns));
+    }, [countdowns]);
+
+    // ============================================================
+    // 长按删除
     // ============================================================
     const longPressTimer = useRef<NodeJS.Timeout | null>(null);
 
@@ -208,9 +210,9 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
             const name = type === 'todo' ? item.text : item.label;
             if (confirm(`确定删除 "${name}" 吗？`)) {
                 if (type === 'todo') {
-                    deleteTodo(item.id);
+                    setTodos(prev => prev.filter(t => t.id !== item.id));
                 } else {
-                    deleteCountdown(item.id);
+                    setCountdowns(prev => prev.filter(c => c.id !== item.id));
                 }
             }
             longPressTimer.current = null;
@@ -229,91 +231,50 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
         const name = type === 'todo' ? item.text : item.label;
         if (confirm(`确定删除 "${name}" 吗？`)) {
             if (type === 'todo') {
-                deleteTodo(item.id);
+                setTodos(prev => prev.filter(t => t.id !== item.id));
             } else {
-                deleteCountdown(item.id);
+                setCountdowns(prev => prev.filter(c => c.id !== item.id));
             }
         }
     };
 
     // ============================================================
-    // CRUD 操作
+    // 待办操作
     // ============================================================
-    const addTodo = async () => {
+    const addTodo = () => {
         if (!newTodo.trim()) return;
-        try {
-            const res = await fetch('/api/todos', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ text: newTodo.trim() })
-            });
-            if (res.ok) {
-                const data = await res.json();
-                setTodos(prev => [...prev, data]);
-                setNewTodo('');
-                setIsAddingTodo(false);
-            }
-        } catch (e) {
-            console.error('Failed to add todo', e);
-        }
+        const newItem = {
+            id: Date.now().toString() + Math.random().toString(36).substring(2),
+            text: newTodo.trim(),
+            done: false
+        };
+        setTodos(prev => [...prev, newItem]);
+        setNewTodo('');
+        setIsAddingTodo(false);
     };
 
-    const toggleTodo = async (id: string, done: boolean) => {
-        setTodos(prev => prev.map(t => t.id === id ? { ...t, done } : t));
-        try {
-            await fetch(`/api/todos/${id}`, {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ done })
-            });
-        } catch (e) {
-            console.error('Failed to toggle todo', e);
-            fetchTodos();
-        }
-    };
-
-    const deleteTodo = async (id: string) => {
-        setTodos(prev => prev.filter(t => t.id !== id));
-        try {
-            await fetch(`/api/todos/${id}`, { method: 'DELETE' });
-        } catch (e) {
-            console.error('Failed to delete todo', e);
-            fetchTodos();
-        }
-    };
-
-    const addCountdown = async () => {
-        if (!newCountdownLabel.trim() || !newCountdownDate) return;
-        try {
-            const res = await fetch('/api/countdowns', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ label: newCountdownLabel.trim(), date: newCountdownDate })
-            });
-            if (res.ok) {
-                const data = await res.json();
-                setCountdowns(prev => [...prev, data]);
-                setNewCountdownLabel('');
-                setNewCountdownDate('');
-                setIsAddingCountdown(false);
-            }
-        } catch (e) {
-            console.error('Failed to add countdown', e);
-        }
-    };
-
-    const deleteCountdown = async (id: string) => {
-        setCountdowns(prev => prev.filter(c => c.id !== id));
-        try {
-            await fetch(`/api/countdowns/${id}`, { method: 'DELETE' });
-        } catch (e) {
-            console.error('Failed to delete countdown', e);
-            fetchCountdowns();
-        }
+    const toggleTodo = (id: string) => {
+        setTodos(prev => prev.map(t => t.id === id ? { ...t, done: !t.done } : t));
     };
 
     // ============================================================
-    // 天气相关 - 完整实现
+    // 倒计时操作
+    // ============================================================
+    const addCountdown = () => {
+        if (!newCountdownLabel.trim() || !newCountdownDate) return;
+        const newItem = {
+            id: Date.now().toString() + Math.random().toString(36).substring(2),
+            label: newCountdownLabel.trim(),
+            date: newCountdownDate
+        };
+        setCountdowns(prev => [...prev, newItem]);
+        setNewCountdownLabel('');
+        setNewCountdownDate('');
+        setIsAddingCountdown(false);
+    };
+
+    // ============================================================
+    // 天气
     // ============================================================
     useEffect(() => {
         const fetchWeatherData = async (latitude: number, longitude: number) => {
@@ -526,9 +487,6 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
         return () => clearInterval(interval);
     }, []);
 
-    // ============================================================
-    // 工具函数
-    // ============================================================
     const getNextHoliday = useCallback(() => {
         const now = new Date();
         const year = now.getFullYear();
@@ -896,7 +854,7 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                 </div>
             </TiltCard>
 
-            {/* 卡片3：工具（行情/待办/倒计时） */}
+            {/* 卡片3：工具 */}
             <TiltCard className="group">
                 <div className={cardBase}>
                     <GradientBorder isDarkMode={isDarkMode} customColor={widgetConfig?.customColors?.tools} />
@@ -981,16 +939,10 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                                                     className="w-full h-7 bg-black/50 text-white text-xs px-2 rounded-lg outline-none focus:bg-black/70 transition-colors border border-white/10 focus:border-emerald-500 placeholder:text-white/40"
                                                 />
                                                 <div className="flex gap-1.5">
-                                                    <button
-                                                        onClick={addTodo}
-                                                        className="flex-1 h-6 flex items-center justify-center bg-emerald-600 text-white text-[10px] rounded hover:bg-emerald-500 transition-colors border border-white/5"
-                                                    >
+                                                    <button onClick={addTodo} className="flex-1 h-6 flex items-center justify-center bg-emerald-600 text-white text-[10px] rounded hover:bg-emerald-500 transition-colors border border-white/5">
                                                         <Check size={14} />
                                                     </button>
-                                                    <button
-                                                        onClick={() => setIsAddingTodo(false)}
-                                                        className="flex-1 h-6 flex items-center justify-center bg-white/10 text-white text-[10px] rounded hover:bg-white/20 transition-colors border border-white/5"
-                                                    >
+                                                    <button onClick={() => setIsAddingTodo(false)} className="flex-1 h-6 flex items-center justify-center bg-white/10 text-white text-[10px] rounded hover:bg-white/20 transition-colors border border-white/5">
                                                         <X size={14} />
                                                     </button>
                                                 </div>
@@ -1008,7 +960,7 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                                                             onTouchMove={handleLongPressEnd}
                                                         >
                                                             <button
-                                                                onClick={() => toggleTodo(todo.id, !todo.done)}
+                                                                onClick={() => toggleTodo(todo.id)}
                                                                 className={`shrink-0 w-4 h-4 rounded flex items-center justify-center transition-all border ${todo.done ? 'bg-emerald-500 border-emerald-500 text-white' : 'border-black/20 dark:border-white/40 hover:border-emerald-500 text-transparent'}`}
                                                             >
                                                                 <Check size={10} strokeWidth={4} />
@@ -1023,10 +975,7 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                                                         </div>
                                                     )}
                                                 </div>
-                                                <button
-                                                    onClick={() => setIsAddingTodo(true)}
-                                                    className="absolute bottom-2 right-2 w-7 h-7 flex items-center justify-center rounded-full bg-emerald-500 text-white shadow-lg hover:scale-110 active:scale-95 transition-all z-10 border border-white/10"
-                                                >
+                                                <button onClick={() => setIsAddingTodo(true)} className="absolute bottom-2 right-2 w-7 h-7 flex items-center justify-center rounded-full bg-emerald-500 text-white shadow-lg hover:scale-110 active:scale-95 transition-all z-10 border border-white/10">
                                                     <Plus size={16} />
                                                 </button>
                                             </motion.div>
@@ -1061,16 +1010,10 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                                                         onChange={(e) => setNewCountdownDate(e.target.value)}
                                                         className="flex-1 h-6 bg-black/50 text-white text-[10px] px-1 rounded-lg outline-none focus:bg-black/70 transition-colors border border-white/10 focus:border-emerald-500 [&::-webkit-calendar-picker-indicator]:invert [&::-webkit-calendar-picker-indicator]:scale-75"
                                                     />
-                                                    <button
-                                                        onClick={addCountdown}
-                                                        className="w-8 h-6 flex items-center justify-center bg-emerald-600 text-white rounded hover:bg-emerald-500 transition-colors border border-white/5"
-                                                    >
+                                                    <button onClick={addCountdown} className="w-8 h-6 flex items-center justify-center bg-emerald-600 text-white rounded hover:bg-emerald-500 transition-colors border border-white/5">
                                                         <Check size={14} />
                                                     </button>
-                                                    <button
-                                                        onClick={() => setIsAddingCountdown(false)}
-                                                        className="w-8 h-6 flex items-center justify-center bg-white/10 text-white rounded hover:bg-white/20 transition-colors border border-white/5"
-                                                    >
+                                                    <button onClick={() => setIsAddingCountdown(false)} className="w-8 h-6 flex items-center justify-center bg-white/10 text-white rounded hover:bg-white/20 transition-colors border border-white/5">
                                                         <X size={14} />
                                                     </button>
                                                 </div>
@@ -1107,10 +1050,7 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                                                         </div>
                                                     )}
                                                 </div>
-                                                <button
-                                                    onClick={() => setIsAddingCountdown(true)}
-                                                    className="absolute bottom-2 right-2 w-7 h-7 flex items-center justify-center rounded-full bg-emerald-500 text-white shadow-lg hover:scale-110 active:scale-95 transition-all z-10 border border-white/10"
-                                                >
+                                                <button onClick={() => setIsAddingCountdown(true)} className="absolute bottom-2 right-2 w-7 h-7 flex items-center justify-center rounded-full bg-emerald-500 text-white shadow-lg hover:scale-110 active:scale-95 transition-all z-10 border border-white/10">
                                                     <Plus size={16} />
                                                 </button>
                                             </motion.div>
