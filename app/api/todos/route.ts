@@ -1,28 +1,36 @@
-﻿import { Env, jsonResponse, errorResponse } from '../_env';
+﻿import { NextResponse } from "next/server";
 
-export const onRequestGet: PagesFunction<Env> = async (context) => {
+export async function PATCH(request: Request, { params }: { params: { id: string } }) {
   try {
-    const stmt = context.env.DB.prepare('SELECT * FROM Todo ORDER BY createdAt DESC');
-    const result = await stmt.all();
-    return jsonResponse(result.results);
-  } catch (e: any) {
-    return errorResponse('Failed to fetch todos: ' + e.message);
-  }
-};
-
-export const onRequestPost: PagesFunction<Env> = async (context) => {
-  try {
-    const body: any = await context.request.json();
-    const id = crypto.randomUUID();
-    const now = new Date().toISOString();
-
-    await context.env.DB
-      .prepare('INSERT INTO Todo (id, text, done, createdAt) VALUES (?, ?, ?, ?)')
-      .bind(id, body.text, 0, now)
+    const id = params.id;
+    const body = await request.json();
+    const DB = (process.env as any).DB;
+    if (!DB) {
+      return NextResponse.json({ error: "Database not available" }, { status: 500 });
+    }
+    await DB
+      .prepare("UPDATE Todo SET done = ? WHERE id = ?")
+      .bind(body.done ? 1 : 0, id)
       .run();
-
-    return jsonResponse({ id, text: body.text, done: false, createdAt: now }, 201);
+    return NextResponse.json({ success: true });
   } catch (e: any) {
-    return errorResponse('Failed to create todo: ' + e.message);
+    return NextResponse.json({ error: e.message }, { status: 500 });
   }
-};
+}
+
+export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+  try {
+    const id = params.id;
+    const DB = (process.env as any).DB;
+    if (!DB) {
+      return NextResponse.json({ error: "Database not available" }, { status: 500 });
+    }
+    await DB
+      .prepare("DELETE FROM Todo WHERE id = ?")
+      .bind(id)
+      .run();
+    return NextResponse.json({ success: true });
+  } catch (e: any) {
+    return NextResponse.json({ error: e.message }, { status: 500 });
+  }
+}
