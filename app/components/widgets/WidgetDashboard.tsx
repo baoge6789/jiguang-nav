@@ -312,6 +312,165 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
         }
     };
 
+    // ============================================================
+    // 天气相关 - 完整实现
+    // ============================================================
+    useEffect(() => {
+        const fetchWeatherData = async (latitude: number, longitude: number) => {
+            try {
+                const weatherPromise = fetch(
+                    `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m,relative_humidity_2m&daily=weathercode,temperature_2m_max,temperature_2m_min,uv_index_max&timezone=auto`
+                ).then(res => res.json());
+
+                const airPromise = fetch(
+                    `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${latitude}&longitude=${longitude}&current=us_aqi`
+                ).then(res => res.json());
+
+                const [weatherData, airData] = await Promise.all([weatherPromise, airPromise]);
+
+                if (weatherData.error) throw new Error('Weather API error');
+
+                const dailyForecast = weatherData.daily?.time?.slice(1, 7).map((t: string, i: number) => ({
+                    time: t,
+                    code: weatherData.daily.weathercode[i + 1],
+                    max: weatherData.daily.temperature_2m_max[i + 1],
+                    min: weatherData.daily.temperature_2m_min[i + 1]
+                })) || [];
+
+                const uv = weatherData.daily?.uv_index_max?.[0] || 0;
+                const humidity = weatherData.current?.relative_humidity_2m || 50;
+                const aqi = airData?.current?.us_aqi || null;
+
+                setWeather((prev: any) => ({
+                    ...prev,
+                    temp: weatherData.current?.temperature_2m,
+                    feelsLike: weatherData.current?.apparent_temperature,
+                    code: weatherData.current?.weather_code,
+                    windSpeed: weatherData.current?.wind_speed_10m,
+                    humidity: humidity,
+                    hourly: [],
+                    daily: dailyForecast,
+                    uv: Math.round(uv),
+                    aqi: aqi,
+                    loading: false,
+                    error: false
+                }));
+            } catch (e) {
+                console.error('Failed to fetch weather data', e);
+                setWeather((prev: any) => ({ ...prev, loading: false, error: true }));
+            }
+        };
+
+        const fetchLocationName = async (latitude?: number, longitude?: number) => {
+            if (latitude && longitude) {
+                try {
+                    const res = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=zh`);
+                    if (res.ok) {
+                        const data = await res.json();
+                        const city = data.city || data.locality || data.principalSubdivision;
+                        if (city) {
+                            setLocationName(city.replace('市', ''));
+                            return;
+                        }
+                    }
+                } catch (e) {
+                    console.warn('Reverse geocoding failed, falling back to IP');
+                }
+            }
+
+            const tryApi = async (url: string, extractor: (data: any) => string | null) => {
+                try {
+                    const res = await fetch(url);
+                    if (!res.ok) throw new Error('Failed');
+                    const data = await res.json();
+                    return extractor(data);
+                } catch {
+                    return null;
+                }
+            };
+
+            let name = await tryApi('https://ipapi.co/json/', (data) => data.city);
+
+            if (!name || name === '本地') {
+                name = await tryApi('https://get.geojs.io/v1/ip/geo.json', (data) => data.city || data.region);
+            }
+
+            if (!name || name === '本地') {
+                name = await tryApi('https://ipwho.is/', (data) => data.city || data.region);
+            }
+
+            if (name) {
+                setLocationName(translateCity(name));
+            }
+        };
+
+        const fetchByIP = async () => {
+            const tryProvider = async (url: string, parser: (d: any) => any) => {
+                try {
+                    const res = await fetch(url);
+                    if (!res.ok) throw new Error('Status not ok');
+                    const data = await res.json();
+                    return parser(data);
+                } catch (e) {
+                    return null;
+                }
+            };
+
+            const ipapiData = await tryProvider('https://ipapi.co/json/', (d) => ({
+                lat: d.latitude,
+                lon: d.longitude,
+                name: d.city
+            }));
+
+            if (ipapiData && ipapiData.lat && ipapiData.lon) {
+                if (ipapiData.name) setLocationName(translateCity(ipapiData.name));
+                fetchWeatherData(ipapiData.lat, ipapiData.lon);
+                return;
+            }
+
+            const geojsData = await tryProvider('https://get.geojs.io/v1/ip/geo.json', (d) => ({
+                lat: d.latitude ? parseFloat(d.latitude) : null,
+                lon: d.longitude ? parseFloat(d.longitude) : null,
+                name: d.city || d.region
+            }));
+
+            if (geojsData && geojsData.lat && geojsData.lon) {
+                if (geojsData.name) setLocationName(translateCity(geojsData.name));
+                fetchWeatherData(geojsData.lat, geojsData.lon);
+                return;
+            }
+
+            const ipwhoisData = await tryProvider('https://ipwho.is/', (d) => ({
+                lat: d.latitude,
+                lon: d.longitude,
+                name: d.city || d.region
+            }));
+
+            if (ipwhoisData && ipwhoisData.lat && ipwhoisData.lon) {
+                if (ipwhoisData.name) setLocationName(translateCity(ipwhoisData.name));
+                fetchWeatherData(ipwhoisData.lat, ipwhoisData.lon);
+                return;
+            }
+
+            console.warn('All IP geolocation providers failed.');
+            setWeather((prev: any) => ({ ...prev, loading: false, error: true }));
+        };
+
+        const initWeather = () => {
+            const latitude = 36.1950;
+            const longitude = 117.1205;
+            fetchWeatherData(latitude, longitude);
+            setLocationName('泰安');
+        };
+
+        initWeather();
+        const interval = setInterval(initWeather, 600000);
+        return () => clearInterval(interval);
+    }, []);
+
+    // ============================================================
+    // 其他 hooks
+    // ============================================================
     useEffect(() => {
         setMounted(true);
         setTime(new Date());
@@ -367,16 +526,13 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
         return () => clearInterval(interval);
     }, []);
 
-    useEffect(() => {
-        const fetchWeatherData = async (latitude: number, longitude: number) => {
-            // ... weather logic (unchanged)
-        };
-        // ... weather init (unchanged)
-    }, []);
-
+    // ============================================================
+    // 工具函数
+    // ============================================================
     const getNextHoliday = useCallback(() => {
         const now = new Date();
         const year = now.getFullYear();
+
         for (const h of HOLIDAYS) {
             const holidayDate = new Date(year, h.month - 1, h.day);
             if (holidayDate > now) {
@@ -404,10 +560,12 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
     const getSolarTermInfo = useCallback(() => {
         const now = new Date();
         const today = now.toISOString().split('T')[0];
+
         const todayTerm = SOLAR_TERMS.find(t => t.date === today);
         if (todayTerm) {
             return { name: todayTerm.name, isToday: true, days: 0 };
         }
+
         for (const term of SOLAR_TERMS) {
             const termDate = new Date(term.date);
             if (termDate > now) {
@@ -415,6 +573,7 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                 return { name: term.name, isToday: false, days: diff };
             }
         }
+
         return { name: SOLAR_TERMS[0].name, isToday: false, days: 30 };
     }, []);
 
@@ -542,6 +701,7 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
 
     const DailyForecast = ({ data }: { data: { max: number, min: number, code: number, time: string }[] }) => {
         if (!data.length) return null;
+
         return (
             <div className="flex items-end justify-between gap-1 h-12 w-full pr-1 -ml-4 mt-1">
                 {data.map((day, i) => {
@@ -638,6 +798,7 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                                     </div>
                                 </motion.div>
                             )}
+
                             {timeMode === 'world' && (
                                 <motion.div key="world" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="grid grid-cols-2 gap-x-4 gap-y-1">
                                     {worldClocks.slice(0, 6).map((tz, idx) => {
@@ -665,6 +826,7 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                                     })}
                                 </motion.div>
                             )}
+
                             {timeMode === 'pomodoro' && (
                                 <motion.div key="pomodoro" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                                     <div className="text-3xl font-bold tabular-nums tracking-tight leading-none mb-2 text-red-500">
