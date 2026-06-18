@@ -4,8 +4,10 @@ import {
     Edit3, Plus, X, Link as LinkIcon, Sparkles, UploadCloud, LayoutGrid, Link2,
     RefreshCw, ChevronDown, Check, CheckCircle2, Type, Search, Eye, EyeOff
 } from 'lucide-react';
-import { Icon } from '@iconify/react';
+// import { Icon } from '@iconify/react';  // 已注释：品牌图标功能暂时隐藏
 
+// ===== 品牌图标数据 - 已注释，下次开发可恢复 =====
+/*
 const BRAND_ICONS: { id: string; name: string }[] = [
   { id: 'logos:google-icon', name: 'Google' },
   { id: 'logos:github-icon', name: 'GitHub' },
@@ -57,6 +59,8 @@ const BRAND_ICONS: { id: string; name: string }[] = [
   { id: 'logos:mongodb-icon', name: 'MongoDB' },
   { id: 'logos:linux-tux', name: 'Linux' },
 ];
+// ===== 品牌图标数据 - 已注释，下次开发可恢复 =====
+*/
 
 import { SiteCard } from '@/app/components/site/SiteCard';
 import { NOISE_BASE64, getRandomColor } from '@/lib/utils';
@@ -347,7 +351,7 @@ export function EditModal({ site, categories, sites, isDarkMode, onClose, onSave
                                         </div>
                                     )}
                                     {f.iconType === 'library' && (
-                                        <div className="w-full max-h-[200px] overflow-y-auto custom-scrollbar animate-in fade-in space-y-2">
+                                        <div className="w-full max-h-[200px] overflow-y-auto custom-scrollbar animate-in fade-in">
                                             <div className="grid grid-cols-5 gap-2">
                                                 {Object.keys(ICON_MAP).map(iconName => {
                                                     const I = ICON_MAP[iconName];
@@ -360,7 +364,9 @@ export function EditModal({ site, categories, sites, isDarkMode, onClose, onSave
                                                     )
                                                 })}
                                             </div>
-                                            <div className="text-[10px] opacity-40 font-medium px-1">品牌图标</div>
+                                            {/* ===== 品牌图标 - 已注释，下次开发可恢复 ===== */}
+                                            {/*
+                                            <div className="text-[10px] opacity-40 font-medium px-1 mt-2">品牌图标</div>
                                             <div className="grid grid-cols-8 gap-1.5">
                                                 {BRAND_ICONS.map(b => (
                                                     <button type="button" key={b.id} title={b.name}
@@ -370,6 +376,8 @@ export function EditModal({ site, categories, sites, isDarkMode, onClose, onSave
                                                     </button>
                                                 ))}
                                             </div>
+                                            */}
+                                            {/* ===== 品牌图标 - 已注释，下次开发可恢复 ===== */}
                                         </div>
                                     )}
                                 </div>

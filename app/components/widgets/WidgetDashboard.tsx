@@ -820,8 +820,8 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                                                     </div>
                                                     {!isZero && (
                                                         <div className={`text-[11px] px-1.5 py-0.5 rounded-full font-medium leading-none ${isUp ? 'bg-green-500/10 text-green-400' : 'bg-red-500/10 text-red-400'}`}>
-    {isUp ? '+' : ''}{percent.toFixed(2)}%
-</div>
+                                                            {isUp ? '+' : ''}{percent.toFixed(2)}%
+                                                        </div>
                                                     )}
                                                 </div>
                                             );
@@ -894,7 +894,7 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                                             <motion.div key="list" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex flex-col h-full">
                                                 <div className="flex-1 overflow-y-auto custom-scrollbar flex flex-wrap content-start gap-1 pr-1">
                                                     {todos.map(todo => (
-                                                        <div key={todo.id} className="flex items-center gap-1 px-1.5 py-1 bg-black/5 dark:bg-white/10 rounded-md hover:bg-black/10 dark:hover:bg-white/20 group/todo transition-colors max-w-full border border-black/10 dark:border-white/10">
+                                                        <div key={todo.id} className="flex items-center gap-1 px-2 py-1.5 bg-black/5 dark:bg-white/10 rounded-md hover:bg-black/10 dark:hover:bg-white/20 transition-colors max-w-full border border-black/10 dark:border-white/10">
                                                             <button
                                                                 onClick={async () => {
                                                                     const s = !todo.done;
@@ -909,13 +909,14 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                                                                         console.error("Failed to toggle todo", e);
                                                                     }
                                                                 }}
-                                                                className={`shrink-0 w-3 h-3 rounded flex items-center justify-center transition-all border ${todo.done ? 'bg-emerald-500 border-emerald-500 text-white' : 'border-black/20 dark:border-white/40 hover:border-emerald-500 text-transparent'}`}
+                                                                className={`shrink-0 w-4 h-4 rounded flex items-center justify-center transition-all border ${todo.done ? 'bg-emerald-500 border-emerald-500 text-white' : 'border-black/20 dark:border-white/40 hover:border-emerald-500 text-transparent'}`}
                                                             >
-                                                                <Check size={8} strokeWidth={4} />
+                                                                <Check size={10} strokeWidth={4} />
                                                             </button>
-                                                            <span className={`text-[11px] truncate ${todo.done ? 'line-through opacity-40' : ''}`}>{todo.text}</span>
+                                                            <span className={`text-[11px] truncate flex-1 ${todo.done ? 'line-through opacity-40' : ''}`}>{todo.text}</span>
                                                             <button
                                                                 onClick={async () => {
+                                                                    if (!confirm(`确定删除 "${todo.text}" 吗？`)) return;
                                                                     setTodos(todos.filter(t => t.id !== todo.id));
                                                                     try {
                                                                         await fetch(`/api/todos/${todo.id}`, { method: 'DELETE' });
@@ -923,9 +924,9 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                                                                         console.error("Failed to delete todo", e);
                                                                     }
                                                                 }}
-                                                                className="shrink-0 opacity-0 group-hover/todo:opacity-100 text-red-400 hover:text-red-500 ml-0.5"
+                                                                className="shrink-0 w-6 h-6 flex items-center justify-center rounded-full text-red-400 hover:text-red-500 hover:bg-red-500/10 transition-colors active:scale-90"
                                                             >
-                                                                <X size={10} />
+                                                                <span className="text-sm font-bold">−</span>
                                                             </button>
                                                         </div>
                                                     ))}
@@ -1013,17 +1014,18 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                                                     {countdowns.map(cd => {
                                                         const daysLeft = Math.max(0, Math.ceil((new Date(cd.date).getTime() - Date.now()) / (1000 * 60 * 60 * 24)));
                                                         return (
-                                                            <div key={cd.id} className="relative flex flex-col justify-between p-1.5 rounded-lg bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 hover:border-emerald-500/30 group/cd transition-all min-h-[52px]">
-                                                                <div className="text-[11px] font-medium opacity-80 truncate leading-none tracking-tight mb-0.5">{cd.label}</div>
-                                                                <div className="flex items-baseline justify-start gap-1.5 mt-auto">
-                                                                    <div className="text-[10px] opacity-40 font-medium tracking-tighter leading-none">{new Date(cd.date).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' }).replace('/', '-')}</div>
-                                                                    <div className="flex items-baseline leading-none">
+                                                            <div key={cd.id} className="flex items-center justify-between p-2 rounded-lg bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 hover:border-emerald-500/30 transition-all min-h-[44px]">
+                                                                <div className="flex items-center gap-2 min-w-0 flex-1">
+                                                                    <span className="text-[11px] font-medium opacity-80 truncate leading-none tracking-tight">{cd.label}</span>
+                                                                    <span className="text-[10px] opacity-40 font-medium tracking-tighter leading-none shrink-0">{new Date(cd.date).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' }).replace('/', '-')}</span>
+                                                                    <div className="flex items-baseline leading-none shrink-0">
                                                                         <span className="text-base font-bold text-emerald-400 tracking-tighter">{daysLeft}</span>
                                                                         <span className="text-[9px] ml-0.5 font-normal text-white/40 transform translate-y-[-1px]">天</span>
                                                                     </div>
                                                                 </div>
                                                                 <button
                                                                     onClick={async () => {
+                                                                        if (!confirm(`确定删除 "${cd.label}" 吗？`)) return;
                                                                         setCountdowns(countdowns.filter(c => c.id !== cd.id));
                                                                         try {
                                                                             await fetch(`/api/countdowns/${cd.id}`, { method: 'DELETE' });
@@ -1031,9 +1033,9 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                                                                             console.error("Failed to delete countdown", e);
                                                                         }
                                                                     }}
-                                                                    className="absolute -top-1 -right-1 p-1 opacity-0 group-hover/cd:opacity-100 text-red-400 hover:text-red-500 transition-opacity"
+                                                                    className="shrink-0 w-7 h-7 flex items-center justify-center rounded-full text-red-400 hover:text-red-500 hover:bg-red-500/10 transition-colors active:scale-90"
                                                                 >
-                                                                    <X size={10} />
+                                                                    <span className="text-lg font-bold">−</span>
                                                                 </button>
                                                             </div>
                                                         );
