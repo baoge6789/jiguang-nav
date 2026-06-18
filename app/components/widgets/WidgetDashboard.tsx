@@ -154,6 +154,9 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
     const [timeMode, setTimeMode] = useState<'clock' | 'world' | 'pomodoro'>('clock');
     const [toolsMode, setToolsMode] = useState<'stock' | 'todo' | 'countdown'>('stock');
 
+    // ============================================================
+    // 从 localStorage 加载待办和倒计时
+    // ============================================================
     const [todos, setTodos] = useState<{ id: string; text: string; done: boolean }[]>([]);
     const [newTodo, setNewTodo] = useState('');
     const [isAddingTodo, setIsAddingTodo] = useState(false);
@@ -165,23 +168,41 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
 
     const [marketData, setMarketData] = useState<{ id: string; name: string; price: number; change: number; percent: number; type: string; currency?: string }[]>([]);
 
+    // ============================================================
+    // 加载数据
+    // ============================================================
     useEffect(() => {
-        fetch('/api/todos')
-            .then(res => {
-                if (!res.ok) return [];
-                return res.json();
-            })
-            .then(data => { if (Array.isArray(data)) setTodos(data); })
-            .catch(err => console.warn('Silently failed to load todos', err));
+        // 从 localStorage 加载待办
+        const savedTodos = localStorage.getItem('aurora_todos');
+        if (savedTodos) {
+            try {
+                setTodos(JSON.parse(savedTodos));
+            } catch (e) {
+                console.warn('Failed to parse todos', e);
+            }
+        }
 
-        fetch('/api/countdowns')
-            .then(res => {
-                if (!res.ok) return [];
-                return res.json();
-            })
-            .then(data => { if (Array.isArray(data)) setCountdowns(data); })
-            .catch(err => console.warn('Silently failed to load countdowns', err));
+        // 从 localStorage 加载倒计时
+        const savedCountdowns = localStorage.getItem('aurora_countdowns');
+        if (savedCountdowns) {
+            try {
+                setCountdowns(JSON.parse(savedCountdowns));
+            } catch (e) {
+                console.warn('Failed to parse countdowns', e);
+            }
+        }
     }, []);
+
+    // ============================================================
+    // 保存到 localStorage
+    // ============================================================
+    useEffect(() => {
+        localStorage.setItem('aurora_todos', JSON.stringify(todos));
+    }, [todos]);
+
+    useEffect(() => {
+        localStorage.setItem('aurora_countdowns', JSON.stringify(countdowns));
+    }, [countdowns]);
 
     const [displayCount, setDisplayCount] = useState(0);
 
