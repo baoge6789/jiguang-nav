@@ -35,7 +35,7 @@ const BRAND_ICONS: { id: string; name: string }[] = [
   { id: 'logos:aws', name: 'AWS' },
   { id: 'logos:google-cloud', name: 'GCP' },
   { id: 'logos:azure-icon', name: 'Azure' },
-  { id: 'logos:chatgpt-icon', name: 'ChatGPT' },
+  { id: 'logos:openai', name: 'ChatGPT' },
   { id: 'logos:openai-icon', name: 'OpenAI' },
   { id: 'logos:anthropic-icon', name: 'Anthropic' },
   { id: 'logos:reddit-icon', name: 'Reddit' },
