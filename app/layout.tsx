@@ -3,7 +3,7 @@ import "./globals.css";
 import { CustomFontLoader } from "@/app/components/layout/CustomFontLoader";
 
 export const metadata: Metadata = {
-  title: "极光导航 - 您的个性化起始页",
+  title: "极光导航-宝哥",
   description: "极光导航 (Aurora Nav) - 一个简约、美观、可高度定制的浏览器起始页。",
   icons: {
     icon: '/icon.png',
