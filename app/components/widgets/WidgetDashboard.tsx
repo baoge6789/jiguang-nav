@@ -92,14 +92,35 @@ const DEFAULT_WORLD_CLOCKS = [
 ];
 
 const HOLIDAYS = [
-    { name: '元旦', month: 1, day: 1 },
     { name: '春节', month: 1, day: 29 },
+    { name: '元宵节', month: 2, day: 12 },
+    { name: '情人节', month: 2, day: 14 },
+    { name: '龙抬头', month: 3, day: 1 },
+    { name: '妇女节', month: 3, day: 8 },
+    { name: '植树节', month: 3, day: 12 },
+    { name: '愚人节', month: 4, day: 1 },
     { name: '清明', month: 4, day: 5 },
     { name: '劳动节', month: 5, day: 1 },
+    { name: '青年节', month: 5, day: 4 },
+    { name: '母亲节', month: 5, day: 10 },
+    { name: '儿童节', month: 6, day: 1 },
     { name: '端午', month: 6, day: 19 },
+    { name: '父亲节', month: 6, day: 21 },
+    { name: '建党节', month: 7, day: 1 },
+    { name: '建军节', month: 8, day: 1 },
+    { name: '七夕', month: 8, day: 19 },
+    { name: '中元节', month: 8, day: 28 },
+    { name: '教师节', month: 9, day: 10 },
+    { name: '国庆节', month: 10, day: 1 },
     { name: '中秋', month: 10, day: 6 },
-    { name: '国庆', month: 10, day: 1 },
-    { name: '圣诞', month: 12, day: 25 },
+    { name: '重阳节', month: 10, day: 21 },
+    { name: '寒衣节', month: 11, day: 11 },
+    { name: '下元节', month: 12, day: 4 },
+    { name: '平安夜', month: 12, day: 24 },
+    { name: '圣诞节', month: 12, day: 25 },
+    { name: '元旦', month: 1, day: 1 },
+    { name: '小年', month: 1, day: 30 },
+    { name: '除夕', month: 2, day: 16 }
 ];
 
 const SOLAR_TERMS = [
