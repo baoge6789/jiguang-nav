@@ -875,7 +875,7 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                 </div>
             </TiltCard>
 
-            {/* 卡片3：工具 */}
+            {/* 卡片3：工具 - 已修改为一行显示6个行情 */}
             <TiltCard className="group">
                 <div className={cardBase}>
                     <GradientBorder isDarkMode={isDarkMode} customColor={widgetConfig?.customColors?.tools} />
@@ -906,8 +906,8 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
 
                         <AnimatePresence mode="wait">
                             {toolsMode === 'stock' && (
-                                <motion.div key="stock" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex-1 flex flex-col justify-center h-full">
-                                    <div className="flex flex-row items-center gap-2 overflow-x-auto no-scrollbar px-1 pb-8 w-full h-full">
+                                <motion.div key="stock" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex-1 flex flex-col justify-center h-full overflow-hidden">
+                                    <div className="flex flex-row flex-nowrap items-center gap-1 overflow-x-auto overflow-y-hidden no-scrollbar px-0.5 w-full h-full">
                                         {marketData.length > 0 ? marketData.map(item => {
                                             const percent = item.percent || 0;
                                             const isUp = percent > 0;
@@ -915,20 +915,19 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                                             const currencySymbol = item.currency === 'CNY' ? '¥' : '$';
                                             const displayPrice = item.price;
                                             
-                                            // 判断品种，保留不同小数位
                                             let fractionDigits = 2;
                                             if (item.id === 1 || item.id === 'pi-USD' || item.name === 'PI-USD' || item.id === 'pi-cny' || item.name === 'PI-CNY') {
                                                 fractionDigits = 4;
                                             }
                                             
                                             return (
-                                                <div key={item.id} className="flex-shrink-0 flex flex-col items-center justify-center py-2.5 px-2 rounded-lg min-w-[80px]">
-                                                    <div className="text-[12px] font-medium opacity-60 leading-normal py-0.5 mb-0.5 whitespace-nowrap">{item.name}</div>
-                                                    <div className="font-bold tabular-nums text-sm leading-tight mb-1 text-center" title={displayPrice?.toLocaleString()}>
+                                                <div key={item.id} className="flex-shrink-0 flex flex-col items-center justify-center py-0.5 px-1 rounded min-w-[56px] max-w-[70px]">
+                                                    <div className="text-[8px] font-medium opacity-60 leading-none py-0.5 whitespace-nowrap">{item.name}</div>
+                                                    <div className="font-bold tabular-nums text-[10px] leading-tight mb-0.5 text-center truncate w-full" title={displayPrice?.toLocaleString()}>
                                                         {currencySymbol}{displayPrice?.toLocaleString(undefined, { minimumFractionDigits: fractionDigits, maximumFractionDigits: fractionDigits })}
                                                     </div>
                                                     {!isZero && (
-                                                        <div className={`text-[11px] px-1.5 py-0.5 rounded-full font-medium leading-none ${isUp ? 'bg-green-500/10 text-green-400' : 'bg-red-500/10 text-red-400'}`}>
+                                                        <div className={`text-[8px] px-0.5 py-0.5 rounded-full font-medium leading-none ${isUp ? 'bg-green-500/10 text-green-400' : 'bg-red-500/10 text-red-400'}`}>
                                                             {isUp ? '+' : ''}{percent.toFixed(2)}%
                                                         </div>
                                                     )}
@@ -936,10 +935,10 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                                             );
                                         }) : (
                                             Array.from({ length: 5 }).map((_, i) => (
-                                                <div key={i} className="flex-shrink-0 flex flex-col items-center justify-center p-2 rounded-lg animate-pulse min-w-[80px] h-[60px]">
-                                                    <div className="w-8 h-2 bg-white/10 rounded mb-1"></div>
-                                                    <div className="w-12 h-3 bg-white/10 rounded mb-1"></div>
-                                                    <div className="w-10 h-2 bg-white/10 rounded"></div>
+                                                <div key={i} className="flex-shrink-0 flex flex-col items-center justify-center p-1 rounded animate-pulse min-w-[56px] h-[44px]">
+                                                    <div className="w-6 h-1.5 bg-white/10 rounded mb-0.5"></div>
+                                                    <div className="w-8 h-2 bg-white/10 rounded mb-0.5"></div>
+                                                    <div className="w-6 h-1.5 bg-white/10 rounded"></div>
                                                 </div>
                                             ))
                                         )}
