@@ -831,10 +831,10 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                     </div>
                 </div>
             </TiltCard>
-            
-{/* 卡片2：天气 - 修复手机端溢出 */}
+
+{/* 卡片2：天气 - 修复手机端溢出和闪烁 */}
 <TiltCard className="group min-w-0">
-    <div className={`${cardBase} overflow-hidden`}>
+    <div className={`${cardBase} overflow-hidden h-[120px] sm:h-[120px] md:h-[130px]`}>
         <WeatherParticles code={weather.code} />
         <div className="flex flex-col justify-center h-full z-10 min-w-[80px] flex-shrink-0">
             <div className="flex items-center gap-1.5 mb-1">
@@ -995,7 +995,7 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                                                 container.scrollLeft += 150;
                                             }
                                         }}
-                                        className="absolute -right-5 top-1/2 -translate-y-1/2 z-10 w-5 h-5 rounded-full bg-black/50 hover:bg-black/70 text-white flex items-center justify-center border border-white/20 shadow-lg transition-all hover:scale-110 active:scale-90"
+                                        className="absolute -right-3 top-1/2 -translate-y-1/2 z-10 w-5 h-5 rounded-full bg-black/50 hover:bg-black/70 text-white flex items-center justify-center border border-white/20 shadow-lg transition-all hover:scale-110 active:scale-90"
                                     >
                                         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                                             <polyline points="9 18 15 12 9 6"></polyline>
