@@ -912,12 +912,12 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                                         onClick={() => {
                                             const container = document.getElementById('stock-scroll-container');
                                             if (container) {
-                                                container.scrollBy({ left: -120, behavior: 'smooth' });
+                                                container.scrollBy({ left: -160, behavior: 'smooth' });
                                             }
                                         }}
-                                        className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-5 h-5 rounded-full bg-black/30 hover:bg-black/50 text-white flex items-center justify-center border border-white/15 shadow-lg transition-all hover:scale-110 active:scale-90"
+                                        className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-6 h-6 rounded-full bg-black/40 hover:bg-black/60 text-white flex items-center justify-center border border-white/20 shadow-lg transition-all hover:scale-110 active:scale-90"
                                     >
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                                             <polyline points="15 18 9 12 15 6"></polyline>
                                         </svg>
                                     </button>
@@ -925,7 +925,7 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                                     {/* 滚动容器 */}
                                     <div 
                                         id="stock-scroll-container"
-                                        className="flex flex-row flex-nowrap items-center gap-0.5 overflow-x-auto overflow-y-visible no-scrollbar px-4 w-full h-full snap-x snap-mandatory scroll-smooth"
+                                        className="flex flex-row flex-nowrap items-center gap-1 overflow-x-auto overflow-y-visible no-scrollbar px-5 w-full h-full snap-x snap-mandatory scroll-smooth"
                                         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
                                     >
                                         {marketData.length > 0 ? marketData.map(item => {
@@ -941,13 +941,13 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                                             }
                                             
                                             return (
-                                                <div key={item.id} className="flex-shrink-0 flex flex-col items-center justify-center py-0.5 px-1 rounded min-w-[60px] max-w-[75px] snap-start">
-                                                    <div className="text-[8px] font-medium opacity-60 leading-none py-0.5 whitespace-nowrap">{item.name}</div>
-                                                    <div className="font-bold tabular-nums text-[10px] leading-tight mb-0.5 text-center truncate w-full" title={displayPrice?.toLocaleString()}>
+                                                <div key={item.id} className="flex-shrink-0 flex flex-col items-center justify-center py-1 px-2 rounded min-w-[80px] max-w-[100px] snap-start">
+                                                    <div className="text-[9px] font-medium opacity-60 leading-none py-0.5 whitespace-nowrap">{item.name}</div>
+                                                    <div className="font-bold tabular-nums text-[11px] leading-tight mb-0.5 text-center truncate w-full" title={displayPrice?.toLocaleString()}>
                                                         {currencySymbol}{displayPrice?.toLocaleString(undefined, { minimumFractionDigits: fractionDigits, maximumFractionDigits: fractionDigits })}
                                                     </div>
                                                     {!isZero && (
-                                                        <div className={`text-[8px] px-0.5 py-0.5 rounded-full font-medium leading-none ${isUp ? 'bg-green-500/10 text-green-400' : 'bg-red-500/10 text-red-400'}`}>
+                                                        <div className={`text-[8px] px-1 py-0.5 rounded-full font-medium leading-none ${isUp ? 'bg-green-500/10 text-green-400' : 'bg-red-500/10 text-red-400'}`}>
                                                             {isUp ? '+' : ''}{percent.toFixed(2)}%
                                                         </div>
                                                     )}
@@ -955,10 +955,10 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                                             );
                                         }) : (
                                             Array.from({ length: 5 }).map((_, i) => (
-                                                <div key={i} className="flex-shrink-0 flex flex-col items-center justify-center p-1 rounded animate-pulse min-w-[60px] h-[44px]">
-                                                    <div className="w-6 h-1.5 bg-white/10 rounded mb-0.5"></div>
-                                                    <div className="w-8 h-2 bg-white/10 rounded mb-0.5"></div>
-                                                    <div className="w-6 h-1.5 bg-white/10 rounded"></div>
+                                                <div key={i} className="flex-shrink-0 flex flex-col items-center justify-center p-2 rounded animate-pulse min-w-[80px] h-[50px]">
+                                                    <div className="w-8 h-1.5 bg-white/10 rounded mb-0.5"></div>
+                                                    <div className="w-10 h-2.5 bg-white/10 rounded mb-0.5"></div>
+                                                    <div className="w-8 h-1.5 bg-white/10 rounded"></div>
                                                 </div>
                                             ))
                                         )}
@@ -969,12 +969,12 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                                         onClick={() => {
                                             const container = document.getElementById('stock-scroll-container');
                                             if (container) {
-                                                container.scrollBy({ left: 120, behavior: 'smooth' });
+                                                container.scrollBy({ left: 160, behavior: 'smooth' });
                                             }
                                         }}
-                                        className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-5 h-5 rounded-full bg-black/30 hover:bg-black/50 text-white flex items-center justify-center border border-white/15 shadow-lg transition-all hover:scale-110 active:scale-90"
+                                        className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-6 h-6 rounded-full bg-black/40 hover:bg-black/60 text-white flex items-center justify-center border border-white/20 shadow-lg transition-all hover:scale-110 active:scale-90"
                                     >
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                                             <polyline points="9 18 15 12 9 6"></polyline>
                                         </svg>
                                     </button>
