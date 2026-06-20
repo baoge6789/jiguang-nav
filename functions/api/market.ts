@@ -121,31 +121,26 @@ export const onRequestGet: PagesFunction<Env> = async () => {
       });
     }
 
-    // ===== 🆕 5. 比特币 (BTC) - Yahoo Finance =====
+    // ===== 🆕 5. 比特币 (BTC) - Gate.io =====
     try {
-      const btcRes = await fetch('https://query1.finance.yahoo.com/v8/finance/chart/BTC-USD?interval=1d&range=1d', {
+      const btcRes = await fetch('https://api.gateio.ws/api/v4/spot/tickers?currency_pair=BTC_USDT', {
         headers: { 'Accept': 'application/json' },
       });
       
       if (btcRes.ok) {
-        const btcData = await btcRes.json();
-        const meta = btcData.chart?.result?.[0]?.meta;
-        if (meta) {
-          const priceUSD = meta.regularMarketPrice || 0;
+        const btcData = await btcRes.json() as Array<{ last: string; change_percentage: string }>;
+        if (btcData.length > 0) {
+          const priceUSD = parseFloat(btcData[0].last) || 0;
+          const pct = parseFloat(btcData[0].change_percentage) || 0;
           const priceCNY = priceUSD * cnyRate;
-          const previousClose = meta.previousClose || meta.chartPreviousClose || priceUSD;
-          const change = meta.regularMarketChange ?? (priceUSD - previousClose);
-          let percent = meta.regularMarketChangePercent;
-          if (percent === undefined || percent === null) {
-            percent = (change / previousClose) * 100;
-          }
+          const prevPrice = priceUSD / (1 + pct / 100);
           
           result.push({
             id: 'btc',
             name: '比特币',
             price: Math.round(priceCNY * 100) / 100,
-            change: change || 0,
-            percent: percent || 0,
+            change: priceUSD - prevPrice,
+            percent: pct,
             type: 'crypto',
             currency: 'CNY',
           });
@@ -187,31 +182,26 @@ export const onRequestGet: PagesFunction<Env> = async () => {
       });
     }
 
-    // ===== 🆕 6. 以太坊 (ETH) - Yahoo Finance =====
+    // ===== 🆕 6. 以太坊 (ETH) - Gate.io =====
     try {
-      const ethRes = await fetch('https://query1.finance.yahoo.com/v8/finance/chart/ETH-USD?interval=1d&range=1d', {
+      const ethRes = await fetch('https://api.gateio.ws/api/v4/spot/tickers?currency_pair=ETH_USDT', {
         headers: { 'Accept': 'application/json' },
       });
       
       if (ethRes.ok) {
-        const ethData = await ethRes.json();
-        const meta = ethData.chart?.result?.[0]?.meta;
-        if (meta) {
-          const priceUSD = meta.regularMarketPrice || 0;
+        const ethData = await ethRes.json() as Array<{ last: string; change_percentage: string }>;
+        if (ethData.length > 0) {
+          const priceUSD = parseFloat(ethData[0].last) || 0;
+          const pct = parseFloat(ethData[0].change_percentage) || 0;
           const priceCNY = priceUSD * cnyRate;
-          const previousClose = meta.previousClose || meta.chartPreviousClose || priceUSD;
-          const change = meta.regularMarketChange ?? (priceUSD - previousClose);
-          let percent = meta.regularMarketChangePercent;
-          if (percent === undefined || percent === null) {
-            percent = (change / previousClose) * 100;
-          }
+          const prevPrice = priceUSD / (1 + pct / 100);
           
           result.push({
             id: 'eth',
             name: '以太坊',
             price: Math.round(priceCNY * 100) / 100,
-            change: change || 0,
-            percent: percent || 0,
+            change: priceUSD - prevPrice,
+            percent: pct,
             type: 'crypto',
             currency: 'CNY',
           });
