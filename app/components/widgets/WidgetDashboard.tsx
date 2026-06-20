@@ -48,7 +48,7 @@ const LottieWeatherIcon = ({ code, size = 48 }: { code: number; size?: number })
     return (
         <Lottie
             animationData={animationData}
-            loop
+            loop={false}
             autoplay
             style={{ width: size, height: size }}
         />
