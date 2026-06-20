@@ -183,7 +183,7 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
     const [newCountdownDate, setNewCountdownDate] = useState('');
     const [isAddingCountdown, setIsAddingCountdown] = useState(false);
 
-    const [marketData, setMarketData] = useState<{ id: string; name: string; price: number; change: number; percent: number; type: string; currency?: string }[]>([]);
+    const [marketData, setMarketData] = useState<{ id: string; name: string; price: number; change: number; percent: number; type: string; currency?: string; noData?: boolean }[]>([]);
 
     const [displayCount, setDisplayCount] = useState(0);
 
@@ -875,7 +875,7 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                 </div>
             </TiltCard>
 
-            {/* 卡片3：工具 - 修复滚动 */}
+            {/* 卡片3：工具 - 支持无数据显示 */}
             <TiltCard className="group">
                 <div className={cardBase}>
                     <GradientBorder isDarkMode={isDarkMode} customColor={widgetConfig?.customColors?.tools} />
@@ -937,6 +937,7 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                                                 const percent = item.percent || 0;
                                                 const isUp = percent > 0;
                                                 const isZero = percent === 0;
+                                                const isNoData = item.noData === true;
                                                 const currencySymbol = item.currency === 'CNY' ? '¥' : '$';
                                                 const displayPrice = item.price;
                                                 
@@ -946,21 +947,39 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                                                 }
                                                 
                                                 return (
-                                                    <div key={item.id} className="flex-shrink-0 flex flex-col items-center justify-center py-1 px-2 rounded min-w-[80px] max-w-[100px] snap-start">
-                                                        <div className="text-[9px] font-medium opacity-60 leading-none py-0.5 whitespace-nowrap">{item.name}</div>
-                                                        <div className="font-bold tabular-nums text-[11px] leading-tight mb-0.5 text-center truncate w-full" title={displayPrice?.toLocaleString()}>
-                                                            {currencySymbol}{displayPrice?.toLocaleString(undefined, { minimumFractionDigits: fractionDigits, maximumFractionDigits: fractionDigits })}
-                                                        </div>
-                                                        {!isZero && (
-                                                            <div className={`text-[8px] px-1 py-0.5 rounded-full font-medium leading-none ${isUp ? 'bg-green-500/10 text-green-400' : 'bg-red-500/10 text-red-400'}`}>
-                                                                {isUp ? '+' : ''}{percent.toFixed(2)}%
-                                                            </div>
+                                                    <div key={item.id} className={`flex-shrink-0 flex flex-col items-center justify-center py-1.5 px-2.5 rounded-xl min-w-[78px] max-w-[95px] snap-start border transition-all hover:scale-105 ${
+                                                        isDarkMode 
+                                                            ? 'bg-slate-800/80 border-slate-700/50 shadow-lg shadow-black/30' 
+                                                            : 'bg-white/90 border-slate-200/80 shadow-lg shadow-slate-200/50'
+                                                    }`}>
+                                                        <div className={`text-[8px] font-medium leading-none py-0.5 whitespace-nowrap ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>{item.name}</div>
+                                                        {isNoData ? (
+                                                            <div className={`font-medium tabular-nums text-[9px] leading-tight mb-0.5 text-center truncate w-full ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>无数据</div>
+                                                        ) : (
+                                                            <>
+                                                                <div className={`font-bold tabular-nums text-[11px] leading-tight mb-0.5 text-center truncate w-full ${isDarkMode ? 'text-white' : 'text-slate-800'}`} title={displayPrice?.toLocaleString()}>
+                                                                    {currencySymbol}{displayPrice?.toLocaleString(undefined, { minimumFractionDigits: fractionDigits, maximumFractionDigits: fractionDigits })}
+                                                                </div>
+                                                                {!isZero && (
+                                                                    <div className={`text-[7px] px-1.5 py-0.5 rounded-full font-medium leading-none ${
+                                                                        isUp 
+                                                                            ? 'bg-emerald-500/20 text-emerald-400' 
+                                                                            : 'bg-red-500/20 text-red-400'
+                                                                    }`}>
+                                                                        {isUp ? '+' : ''}{percent.toFixed(2)}%
+                                                                    </div>
+                                                                )}
+                                                            </>
                                                         )}
                                                     </div>
                                                 );
                                             }) : (
                                                 Array.from({ length: 5 }).map((_, i) => (
-                                                    <div key={i} className="flex-shrink-0 flex flex-col items-center justify-center p-2 rounded animate-pulse min-w-[80px] h-[50px]">
+                                                    <div key={i} className={`flex-shrink-0 flex flex-col items-center justify-center p-2 rounded-xl animate-pulse min-w-[78px] h-[52px] ${
+                                                        isDarkMode 
+                                                            ? 'bg-slate-800/60 border border-slate-700/50' 
+                                                            : 'bg-white/80 border border-slate-200/80'
+                                                    }`}>
                                                         <div className="w-8 h-1.5 bg-white/10 rounded mb-0.5"></div>
                                                         <div className="w-10 h-2.5 bg-white/10 rounded mb-0.5"></div>
                                                         <div className="w-8 h-1.5 bg-white/10 rounded"></div>

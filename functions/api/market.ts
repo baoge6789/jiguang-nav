@@ -162,13 +162,47 @@ export const onRequestGet: PagesFunction<Env> = async () => {
               type: 'crypto',
               currency: 'CNY',
             });
+          } else {
+            // ⚠️ 所有 API 都失败，添加"无数据"标记
+            result.push({
+              id: 'btc',
+              name: '比特币',
+              price: null,
+              change: 0,
+              percent: 0,
+              type: 'crypto',
+              currency: 'CNY',
+              noData: true,
+            });
           }
         } catch (e) {
           console.error('BTC fallback error:', e);
+          // ⚠️ 异常时添加"无数据"标记
+          result.push({
+            id: 'btc',
+            name: '比特币',
+            price: null,
+            change: 0,
+            percent: 0,
+            type: 'crypto',
+            currency: 'CNY',
+            noData: true,
+          });
         }
       }
     } catch (e) {
       console.error('BTC fetch error:', e);
+      // ⚠️ 异常时添加"无数据"标记
+      result.push({
+        id: 'btc',
+        name: '比特币',
+        price: null,
+        change: 0,
+        percent: 0,
+        type: 'crypto',
+        currency: 'CNY',
+        noData: true,
+      });
     }
 
     // ===== 🆕 6. 以太坊 (ETH) =====
@@ -212,13 +246,47 @@ export const onRequestGet: PagesFunction<Env> = async () => {
               type: 'crypto',
               currency: 'CNY',
             });
+          } else {
+            // ⚠️ 所有 API 都失败，添加"无数据"标记
+            result.push({
+              id: 'eth',
+              name: '以太坊',
+              price: null,
+              change: 0,
+              percent: 0,
+              type: 'crypto',
+              currency: 'CNY',
+              noData: true,
+            });
           }
         } catch (e) {
           console.error('ETH fallback error:', e);
+          // ⚠️ 异常时添加"无数据"标记
+          result.push({
+            id: 'eth',
+            name: '以太坊',
+            price: null,
+            change: 0,
+            percent: 0,
+            type: 'crypto',
+            currency: 'CNY',
+            noData: true,
+          });
         }
       }
     } catch (e) {
       console.error('ETH fetch error:', e);
+      // ⚠️ 异常时添加"无数据"标记
+      result.push({
+        id: 'eth',
+        name: '以太坊',
+        price: null,
+        change: 0,
+        percent: 0,
+        type: 'crypto',
+        currency: 'CNY',
+        noData: true,
+      });
     }
 
     if (result.length > 0) {
