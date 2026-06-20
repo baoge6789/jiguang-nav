@@ -875,7 +875,7 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                 </div>
             </TiltCard>
 
-            {/* 卡片3：工具 - 支持无数据显示 */}
+            {/* 卡片3：工具 - 优化小卡片尺寸和字体 */}
             <TiltCard className="group">
                 <div className={cardBase}>
                     <GradientBorder isDarkMode={isDarkMode} customColor={widgetConfig?.customColors?.tools} />
@@ -915,7 +915,7 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                                                 container.scrollLeft -= 150;
                                             }
                                         }}
-                                        className="absolute -left-4 top-1/2 -translate-y-1/2 z-10 w-5 h-5 rounded-full bg-black/50 hover:bg-black/70 text-white flex items-center justify-center border border-white/20 shadow-lg transition-all hover:scale-110 active:scale-90"
+                                        className="absolute -left-5 top-1/2 -translate-y-1/2 z-10 w-5 h-5 rounded-full bg-black/50 hover:bg-black/70 text-white flex items-center justify-center border border-white/20 shadow-lg transition-all hover:scale-110 active:scale-90"
                                     >
                                         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                                             <polyline points="15 18 9 12 15 6"></polyline>
@@ -925,14 +925,14 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                                     {/* 滚动容器 */}
                                     <div 
                                         id="stock-scroll-container"
-                                        className="flex flex-row flex-nowrap items-center gap-1 overflow-x-auto overflow-y-visible no-scrollbar w-full h-full snap-x snap-mandatory scroll-smooth"
+                                        className="flex flex-row flex-nowrap items-center gap-2 overflow-x-auto overflow-y-visible no-scrollbar w-full h-full snap-x snap-mandatory scroll-smooth"
                                         style={{ 
                                             scrollbarWidth: 'none', 
                                             msOverflowStyle: 'none',
                                             WebkitOverflowScrolling: 'touch'
                                         }}
                                     >
-                                        <div className="flex flex-row flex-nowrap items-center gap-1 px-6">
+                                        <div className="flex flex-row flex-nowrap items-center gap-2 px-6">
                                             {marketData.length > 0 ? marketData.map(item => {
                                                 const percent = item.percent || 0;
                                                 const isUp = percent > 0;
@@ -947,21 +947,21 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                                                 }
                                                 
                                                 return (
-                                                    <div key={item.id} className={`flex-shrink-0 flex flex-col items-center justify-center py-1.5 px-2.5 rounded-xl min-w-[78px] max-w-[95px] snap-start border transition-all hover:scale-105 ${
+                                                    <div key={item.id} className={`flex-shrink-0 flex flex-col items-center justify-center py-2.5 px-4 rounded-xl min-w-[100px] max-w-[120px] snap-start border transition-all hover:scale-105 ${
                                                         isDarkMode 
                                                             ? 'bg-slate-800/80 border-slate-700/50 shadow-lg shadow-black/30' 
                                                             : 'bg-white/90 border-slate-200/80 shadow-lg shadow-slate-200/50'
                                                     }`}>
-                                                        <div className={`text-[8px] font-medium leading-none py-0.5 whitespace-nowrap ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>{item.name}</div>
+                                                        <div className={`text-[10px] font-medium leading-none py-0.5 whitespace-nowrap ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>{item.name}</div>
                                                         {isNoData ? (
-                                                            <div className={`font-medium tabular-nums text-[9px] leading-tight mb-0.5 text-center truncate w-full ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>无数据</div>
+                                                            <div className={`font-medium tabular-nums text-[11px] leading-tight mb-0.5 text-center truncate w-full ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>无数据</div>
                                                         ) : (
                                                             <>
-                                                                <div className={`font-bold tabular-nums text-[11px] leading-tight mb-0.5 text-center truncate w-full ${isDarkMode ? 'text-white' : 'text-slate-800'}`} title={displayPrice?.toLocaleString()}>
+                                                                <div className={`font-bold tabular-nums text-[14px] leading-tight mb-1 text-center truncate w-full ${isDarkMode ? 'text-white' : 'text-slate-800'}`} title={displayPrice?.toLocaleString()}>
                                                                     {currencySymbol}{displayPrice?.toLocaleString(undefined, { minimumFractionDigits: fractionDigits, maximumFractionDigits: fractionDigits })}
                                                                 </div>
                                                                 {!isZero && (
-                                                                    <div className={`text-[7px] px-1.5 py-0.5 rounded-full font-medium leading-none ${
+                                                                    <div className={`text-[10px] px-2 py-0.5 rounded-full font-medium leading-none ${
                                                                         isUp 
                                                                             ? 'bg-emerald-500/20 text-emerald-400' 
                                                                             : 'bg-red-500/20 text-red-400'
@@ -975,14 +975,14 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                                                 );
                                             }) : (
                                                 Array.from({ length: 5 }).map((_, i) => (
-                                                    <div key={i} className={`flex-shrink-0 flex flex-col items-center justify-center p-2 rounded-xl animate-pulse min-w-[78px] h-[52px] ${
+                                                    <div key={i} className={`flex-shrink-0 flex flex-col items-center justify-center p-2 rounded-xl animate-pulse min-w-[100px] h-[60px] ${
                                                         isDarkMode 
                                                             ? 'bg-slate-800/60 border border-slate-700/50' 
                                                             : 'bg-white/80 border border-slate-200/80'
                                                     }`}>
-                                                        <div className="w-8 h-1.5 bg-white/10 rounded mb-0.5"></div>
-                                                        <div className="w-10 h-2.5 bg-white/10 rounded mb-0.5"></div>
-                                                        <div className="w-8 h-1.5 bg-white/10 rounded"></div>
+                                                        <div className="w-10 h-2 bg-white/10 rounded mb-0.5"></div>
+                                                        <div className="w-12 h-3 bg-white/10 rounded mb-0.5"></div>
+                                                        <div className="w-10 h-2 bg-white/10 rounded"></div>
                                                     </div>
                                                 ))
                                             )}
@@ -997,7 +997,7 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                                                 container.scrollLeft += 150;
                                             }
                                         }}
-                                        className="absolute -right-3 top-1/2 -translate-y-1/2 z-10 w-5 h-5 rounded-full bg-black/50 hover:bg-black/70 text-white flex items-center justify-center border border-white/20 shadow-lg transition-all hover:scale-110 active:scale-90"
+                                        className="absolute -right-5 top-1/2 -translate-y-1/2 z-10 w-5 h-5 rounded-full bg-black/50 hover:bg-black/70 text-white flex items-center justify-center border border-white/20 shadow-lg transition-all hover:scale-110 active:scale-90"
                                     >
                                         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                                             <polyline points="9 18 15 12 9 6"></polyline>
