@@ -121,63 +121,35 @@ export const onRequestGet: PagesFunction<Env> = async () => {
       });
     }
 
-    // ===== 🆕 5. 比特币 (BTC) =====
+    // ===== 🆕 5. 比特币 (BTC) - Yahoo Finance =====
     try {
-      const btcRes = await fetch('https://api.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT', {
+      const btcRes = await fetch('https://query1.finance.yahoo.com/v8/finance/chart/BTC-USD?interval=1d&range=1d', {
         headers: { 'Accept': 'application/json' },
       });
       
       if (btcRes.ok) {
         const btcData = await btcRes.json();
-        const priceUSD = parseFloat(btcData.lastPrice) || 0;
-        const pct = parseFloat(btcData.priceChangePercent) || 0;
-        const priceCNY = priceUSD * cnyRate;
-        
-        result.push({
-          id: 'btc',
-          name: '比特币',
-          price: Math.round(priceCNY * 100) / 100,
-          change: parseFloat(btcData.priceChange) || 0,
-          percent: pct,
-          type: 'crypto',
-          currency: 'CNY',
-        });
-      } else {
-        // 备用 API：CoinGecko
-        try {
-          const fallbackRes = await fetch(
-            'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=cny&include_24hr_change=true',
-            { headers: { 'Accept': 'application/json' } }
-          );
-          if (fallbackRes.ok) {
-            const data = await fallbackRes.json();
-            const priceCNY = data.bitcoin?.cny || 0;
-            const pct = data.bitcoin?.cny_24h_change || 0;
-            result.push({
-              id: 'btc',
-              name: '比特币',
-              price: Math.round(priceCNY * 100) / 100,
-              change: 0,
-              percent: pct,
-              type: 'crypto',
-              currency: 'CNY',
-            });
-          } else {
-            // ⚠️ 所有 API 都失败，添加"无数据"标记
-            result.push({
-              id: 'btc',
-              name: '比特币',
-              price: null,
-              change: 0,
-              percent: 0,
-              type: 'crypto',
-              currency: 'CNY',
-              noData: true,
-            });
+        const meta = btcData.chart?.result?.[0]?.meta;
+        if (meta) {
+          const priceUSD = meta.regularMarketPrice || 0;
+          const priceCNY = priceUSD * cnyRate;
+          const previousClose = meta.previousClose || meta.chartPreviousClose || priceUSD;
+          const change = meta.regularMarketChange ?? (priceUSD - previousClose);
+          let percent = meta.regularMarketChangePercent;
+          if (percent === undefined || percent === null) {
+            percent = (change / previousClose) * 100;
           }
-        } catch (e) {
-          console.error('BTC fallback error:', e);
-          // ⚠️ 异常时添加"无数据"标记
+          
+          result.push({
+            id: 'btc',
+            name: '比特币',
+            price: Math.round(priceCNY * 100) / 100,
+            change: change || 0,
+            percent: percent || 0,
+            type: 'crypto',
+            currency: 'CNY',
+          });
+        } else {
           result.push({
             id: 'btc',
             name: '比特币',
@@ -189,10 +161,20 @@ export const onRequestGet: PagesFunction<Env> = async () => {
             noData: true,
           });
         }
+      } else {
+        result.push({
+          id: 'btc',
+          name: '比特币',
+          price: null,
+          change: 0,
+          percent: 0,
+          type: 'crypto',
+          currency: 'CNY',
+          noData: true,
+        });
       }
     } catch (e) {
       console.error('BTC fetch error:', e);
-      // ⚠️ 异常时添加"无数据"标记
       result.push({
         id: 'btc',
         name: '比特币',
@@ -205,63 +187,35 @@ export const onRequestGet: PagesFunction<Env> = async () => {
       });
     }
 
-    // ===== 🆕 6. 以太坊 (ETH) =====
+    // ===== 🆕 6. 以太坊 (ETH) - Yahoo Finance =====
     try {
-      const ethRes = await fetch('https://api.binance.com/api/v3/ticker/24hr?symbol=ETHUSDT', {
+      const ethRes = await fetch('https://query1.finance.yahoo.com/v8/finance/chart/ETH-USD?interval=1d&range=1d', {
         headers: { 'Accept': 'application/json' },
       });
       
       if (ethRes.ok) {
         const ethData = await ethRes.json();
-        const priceUSD = parseFloat(ethData.lastPrice) || 0;
-        const pct = parseFloat(ethData.priceChangePercent) || 0;
-        const priceCNY = priceUSD * cnyRate;
-        
-        result.push({
-          id: 'eth',
-          name: '以太坊',
-          price: Math.round(priceCNY * 100) / 100,
-          change: parseFloat(ethData.priceChange) || 0,
-          percent: pct,
-          type: 'crypto',
-          currency: 'CNY',
-        });
-      } else {
-        // 备用 API：CoinGecko
-        try {
-          const fallbackRes = await fetch(
-            'https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=cny&include_24hr_change=true',
-            { headers: { 'Accept': 'application/json' } }
-          );
-          if (fallbackRes.ok) {
-            const data = await fallbackRes.json();
-            const priceCNY = data.ethereum?.cny || 0;
-            const pct = data.ethereum?.cny_24h_change || 0;
-            result.push({
-              id: 'eth',
-              name: '以太坊',
-              price: Math.round(priceCNY * 100) / 100,
-              change: 0,
-              percent: pct,
-              type: 'crypto',
-              currency: 'CNY',
-            });
-          } else {
-            // ⚠️ 所有 API 都失败，添加"无数据"标记
-            result.push({
-              id: 'eth',
-              name: '以太坊',
-              price: null,
-              change: 0,
-              percent: 0,
-              type: 'crypto',
-              currency: 'CNY',
-              noData: true,
-            });
+        const meta = ethData.chart?.result?.[0]?.meta;
+        if (meta) {
+          const priceUSD = meta.regularMarketPrice || 0;
+          const priceCNY = priceUSD * cnyRate;
+          const previousClose = meta.previousClose || meta.chartPreviousClose || priceUSD;
+          const change = meta.regularMarketChange ?? (priceUSD - previousClose);
+          let percent = meta.regularMarketChangePercent;
+          if (percent === undefined || percent === null) {
+            percent = (change / previousClose) * 100;
           }
-        } catch (e) {
-          console.error('ETH fallback error:', e);
-          // ⚠️ 异常时添加"无数据"标记
+          
+          result.push({
+            id: 'eth',
+            name: '以太坊',
+            price: Math.round(priceCNY * 100) / 100,
+            change: change || 0,
+            percent: percent || 0,
+            type: 'crypto',
+            currency: 'CNY',
+          });
+        } else {
           result.push({
             id: 'eth',
             name: '以太坊',
@@ -273,10 +227,20 @@ export const onRequestGet: PagesFunction<Env> = async () => {
             noData: true,
           });
         }
+      } else {
+        result.push({
+          id: 'eth',
+          name: '以太坊',
+          price: null,
+          change: 0,
+          percent: 0,
+          type: 'crypto',
+          currency: 'CNY',
+          noData: true,
+        });
       }
     } catch (e) {
       console.error('ETH fetch error:', e);
-      // ⚠️ 异常时添加"无数据"标记
       result.push({
         id: 'eth',
         name: '以太坊',
