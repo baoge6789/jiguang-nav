@@ -19,9 +19,11 @@ export function AuroraBackground({ isDarkMode, layoutSettings }: AuroraBackgroun
     const defaultAurora = (
         <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
             <div
-                className={`absolute top-[-20%] left-[-10%] w-[70%] h-[70%] bg-indigo-600/15 rounded-full blur-[40px] will-change-transform ${isDarkMode ? 'opacity-90' : 'opacity-50'}`} />
+                className={`absolute top-[-20%] left-[-10%] w-[70%] h-[70%] rounded-full ${isDarkMode ? 'opacity-90' : 'opacity-50'}`}
+                style={{ background: 'radial-gradient(circle, rgba(99,102,241,0.18) 0%, transparent 70%)' }} />
             <div
-                className={`absolute bottom-[-10%] right-[-20%] w-[60%] h-[60%] bg-cyan-500/15 rounded-full blur-[40px] will-change-transform ${isDarkMode ? 'opacity-90' : 'opacity-50'}`} />
+                className={`absolute bottom-[-10%] right-[-20%] w-[60%] h-[60%] rounded-full ${isDarkMode ? 'opacity-90' : 'opacity-50'}`}
+                style={{ background: 'radial-gradient(circle, rgba(6,182,212,0.18) 0%, transparent 70%)' }} />
             <div className="absolute inset-0 opacity-[0.08] brightness-100 contrast-150 mix-blend-overlay"
                 style={{ backgroundImage: `url("${NOISE_BASE64}")` }}></div>
         </div>
