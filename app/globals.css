@@ -203,6 +203,17 @@
   }
 }
 
+/* ===== 桌面端模糊效果限制 ===== */
+/* 将所有 backdrop-blur 限制在 8px，降低 GPU 开销 */
+@media (min-width: 768px) {
+  .backdrop-blur-2xl,
+  .backdrop-blur-xl,
+  .backdrop-blur-lg {
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+  }
+}
+
 /* ===== 移动端性能优化 ===== */
 /* 针对 <768px 设备禁用消耗性能的特效 */
 

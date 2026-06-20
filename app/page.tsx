@@ -551,48 +551,7 @@ export default function AuroraNav() {
     }
   };
 
-  // Auto-Sync Bing Wallpaper Check
-  useEffect(() => {
-    const checkBingSync = async () => {
-      if (layoutSettings.bgType !== 'bing') return;
-
-      const now = new Date();
-      const todayStr = now.getFullYear() + String(now.getMonth() + 1).padStart(2, '0') + String(now.getDate()).padStart(2, '0');
-
-      const lastSync = localStorage.getItem('lastBingSync');
-      if (lastSync === todayStr) return;
-
-      try {
-        const res = await fetch('/api/wallpapers?type=bing');
-        if (res.ok) {
-          const wallpapers = await res.json();
-          if (wallpapers.length > 0) {
-            const latest = wallpapers[0];
-            if (latest.filename.includes(todayStr)) {
-              if (layoutSettings.bgUrl !== latest.url) {
-                setLayoutSettings((prev: any) => ({ ...prev, bgUrl: latest.url }));
-              }
-              localStorage.setItem('lastBingSync', todayStr);
-              return;
-            }
-          }
-        }
-
-        const hours = now.getHours();
-        const minutes = now.getMinutes();
-
-        if (hours > 0 || (hours === 0 && minutes >= 10)) {
-          console.log('Auto-syncing Bing wallpaper...');
-          await handleSyncBing();
-          localStorage.setItem('lastBingSync', todayStr);
-        }
-      } catch (e) {
-        console.error('Auto-sync check failed', e);
-      }
-    };
-
-    checkBingSync();
-  }, [layoutSettings.bgType]);
+  // Bing 壁纸自动同步已移除，使用手动同步即可
 
   const toastTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 

@@ -116,8 +116,8 @@ export function WallpaperManager({ isOpen, onClose, onSelect, isDarkMode, showTo
 
     return (
         <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
-            <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" onClick={onClose} />
-            <div className={`relative w-full max-w-5xl max-h-[85vh] h-full rounded-3xl shadow-2xl border backdrop-blur-xl flex flex-col overflow-hidden animate-in zoom-in-95 fade-in duration-300 ${isDarkMode ? 'bg-slate-900/95 border-white/10' : 'bg-white/95 border-white/60'}`}>
+            <div className="absolute inset-0 bg-black/40" onClick={onClose} />
+            <div className={`relative w-full max-w-5xl max-h-[85vh] h-full rounded-3xl shadow-2xl border flex flex-col overflow-hidden animate-in zoom-in-95 fade-in duration-300 ${isDarkMode ? 'bg-slate-900 border-white/10' : 'bg-white border-white/60'}`}>
 
                 {/* Header */}
                 <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-white/5">
@@ -224,7 +224,7 @@ export function WallpaperManager({ isOpen, onClose, onSelect, isDarkMode, showTo
                             {wallpapers.map((w) => (
                                 <div key={w.id} className={`group relative aspect-video rounded-xl overflow-hidden border-2 transition-all cursor-pointer ${selectedIds.includes(w.id) ? 'border-indigo-500 ring-2 ring-indigo-500/20' : 'border-transparent hover:border-indigo-500/50'}`}
                                     onClick={() => onSelect(w.url)}>
-                                    <img src={getUploadUrl(w.url)} className="w-full h-full object-cover" loading="lazy" />
+                                    <img src={getUploadUrl(w.url)} className="w-full h-full object-cover" loading="lazy" decoding="async" />
                                     <div className="absolute top-2 right-2 z-20 p-2"
                                         onClick={(e) => {
                                             e.stopPropagation();
