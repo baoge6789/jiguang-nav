@@ -875,7 +875,7 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                 </div>
             </TiltCard>
 
-            {/* 卡片3：工具 - 已修改为一行显示6个行情 */}
+            {/* 卡片3：工具 - 带左右移动按钮的行情 */}
             <TiltCard className="group">
                 <div className={cardBase}>
                     <GradientBorder isDarkMode={isDarkMode} customColor={widgetConfig?.customColors?.tools} />
@@ -906,8 +906,28 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
 
                         <AnimatePresence mode="wait">
                             {toolsMode === 'stock' && (
-                                <motion.div key="stock" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex-1 flex flex-col justify-center h-full overflow-hidden">
-                                    <div className="flex flex-row flex-nowrap items-center gap-1 overflow-x-auto overflow-y-hidden no-scrollbar px-0.5 w-full h-full">
+                                <motion.div key="stock" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex-1 flex flex-col justify-center h-full overflow-visible relative">
+                                    {/* 左移按钮 */}
+                                    <button
+                                        onClick={() => {
+                                            const container = document.getElementById('stock-scroll-container');
+                                            if (container) {
+                                                container.scrollBy({ left: -120, behavior: 'smooth' });
+                                            }
+                                        }}
+                                        className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-5 h-5 rounded-full bg-black/30 hover:bg-black/50 text-white flex items-center justify-center border border-white/15 shadow-lg transition-all hover:scale-110 active:scale-90"
+                                    >
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                                            <polyline points="15 18 9 12 15 6"></polyline>
+                                        </svg>
+                                    </button>
+                                    
+                                    {/* 滚动容器 */}
+                                    <div 
+                                        id="stock-scroll-container"
+                                        className="flex flex-row flex-nowrap items-center gap-0.5 overflow-x-auto overflow-y-visible no-scrollbar px-4 w-full h-full snap-x snap-mandatory scroll-smooth"
+                                        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+                                    >
                                         {marketData.length > 0 ? marketData.map(item => {
                                             const percent = item.percent || 0;
                                             const isUp = percent > 0;
@@ -921,7 +941,7 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                                             }
                                             
                                             return (
-                                                <div key={item.id} className="flex-shrink-0 flex flex-col items-center justify-center py-0.5 px-1 rounded min-w-[56px] max-w-[70px]">
+                                                <div key={item.id} className="flex-shrink-0 flex flex-col items-center justify-center py-0.5 px-1 rounded min-w-[60px] max-w-[75px] snap-start">
                                                     <div className="text-[8px] font-medium opacity-60 leading-none py-0.5 whitespace-nowrap">{item.name}</div>
                                                     <div className="font-bold tabular-nums text-[10px] leading-tight mb-0.5 text-center truncate w-full" title={displayPrice?.toLocaleString()}>
                                                         {currencySymbol}{displayPrice?.toLocaleString(undefined, { minimumFractionDigits: fractionDigits, maximumFractionDigits: fractionDigits })}
@@ -935,7 +955,7 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                                             );
                                         }) : (
                                             Array.from({ length: 5 }).map((_, i) => (
-                                                <div key={i} className="flex-shrink-0 flex flex-col items-center justify-center p-1 rounded animate-pulse min-w-[56px] h-[44px]">
+                                                <div key={i} className="flex-shrink-0 flex flex-col items-center justify-center p-1 rounded animate-pulse min-w-[60px] h-[44px]">
                                                     <div className="w-6 h-1.5 bg-white/10 rounded mb-0.5"></div>
                                                     <div className="w-8 h-2 bg-white/10 rounded mb-0.5"></div>
                                                     <div className="w-6 h-1.5 bg-white/10 rounded"></div>
@@ -943,6 +963,21 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                                             ))
                                         )}
                                     </div>
+                                    
+                                    {/* 右移按钮 */}
+                                    <button
+                                        onClick={() => {
+                                            const container = document.getElementById('stock-scroll-container');
+                                            if (container) {
+                                                container.scrollBy({ left: 120, behavior: 'smooth' });
+                                            }
+                                        }}
+                                        className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-5 h-5 rounded-full bg-black/30 hover:bg-black/50 text-white flex items-center justify-center border border-white/15 shadow-lg transition-all hover:scale-110 active:scale-90"
+                                    >
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                                            <polyline points="9 18 15 12 9 6"></polyline>
+                                        </svg>
+                                    </button>
                                 </motion.div>
                             )}
 
