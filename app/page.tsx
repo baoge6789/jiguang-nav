@@ -1154,14 +1154,30 @@ export default function AuroraNav() {
                   setIsLoginModalOpen={setIsLoginModalOpen}
                 />
 
-                {/* Content Container */}
-                <div
-                  className={`mx-auto w-full transition-all duration-300 flex-1 ${containerClass} ${layoutSettings.stickyHeader ? 'pt-28' : ''} ${layoutSettings.stickyFooter ? 'pb-28' : ''}`}>
-                  {!isLoading && layoutSettings.showWidgets && !isSearching && (
-                    <div className={`hidden md:block ${layoutSettings.compactMode ? 'mb-4 mt-2' : 'mb-8 mt-4'}`}>
-                      <WidgetDashboard isDarkMode={isDarkMode} sitesCount={sites.length} widgetStyle={layoutSettings.widgetStyle as "A" | "B" | "C"} widgetConfig={appConfig.widgetConfig} />
+                {/* ===== 固定顶部卡片区域（不随滚动消失） ===== */}
+                {!isLoading && layoutSettings.showWidgets && !isSearching && (
+                  <div 
+                    className="sticky top-[80px] z-30 bg-[#F8FAFC] dark:bg-[#0B1121] transition-colors duration-500 pt-2"
+                    style={{ 
+                      backgroundColor: isDarkMode ? '#0B1121' : '#F8FAFC' 
+                    }}
+                  >
+                    <div className={`mx-auto w-full ${containerClass}`}>
+                      <div className={`hidden md:block ${layoutSettings.compactMode ? 'mb-4 mt-2' : 'mb-8 mt-4'}`}>
+                        <WidgetDashboard 
+                          isDarkMode={isDarkMode} 
+                          sitesCount={sites.length} 
+                          widgetStyle={layoutSettings.widgetStyle as "A" | "B" | "C"} 
+                          widgetConfig={appConfig.widgetConfig} 
+                        />
+                      </div>
                     </div>
-                  )}
+                  </div>
+                )}
+
+                {/* ===== 可滚动内容区域 ===== */}
+                <div
+                  className={`mx-auto w-full transition-all duration-300 flex-1 ${containerClass} ${layoutSettings.stickyHeader ? 'pt-4' : ''} ${layoutSettings.stickyFooter ? 'pb-28' : ''}`}>
 
                   {/* HTML5 Content Section - Header Bottom */}
                   <div className={`w-full ${layoutSettings.compactMode ? 'mb-4' : 'mb-8'} flex ${appConfig.htmlConfig?.headerLayout === 'row' ? 'flex-row flex-wrap justify-center gap-4' : 'flex-col items-center gap-4'}`}>
@@ -1229,7 +1245,7 @@ export default function AuroraNav() {
                         setIsWallpaperManagerOpen={setIsWallpaperManagerOpen}
                         activeTab={activeSettingTab}
                         setActiveTab={setActiveSettingTab}
-                        searchEngine={searchEngine} // [NEW] Pass searchEngine
+                        searchEngine={searchEngine}
                         layoutSettings={layoutSettings}
                         setLayoutSettings={setLayoutSettings}
                         categories={categories}
@@ -1361,8 +1377,8 @@ export default function AuroraNav() {
                         onContextMenu={handleContextMenu}
                         getCategoryColor={getCategoryColor}
                         onFolderClick={(folder: any) => setCurrentFolderId(folder.id)}
-                        sites={sites} // Pass sites for folder count
-                        dragOverFolderId={dragOverFolderId} // Visual feedback for folder drop targets
+                        sites={sites}
+                        dragOverFolderId={dragOverFolderId}
                       />
                     </div>
                   </main>
@@ -1674,23 +1690,3 @@ function Toast({ notification, onClose, isDarkMode }: any) {
           className="text-sm font-medium">{notification.message}</span></div>
   </div>);
 }
-
-
-
-
-
-
-
-
-
-
-
-// Updated CategoryPill to support Custom Colors
-
-
-
-
-
-
-
-
