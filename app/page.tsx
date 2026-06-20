@@ -8,7 +8,7 @@ import {
   Image as ImageIcon, X, Moon, Sun, ChevronDown, Monitor, EyeOff, Eye,
   Palette, List, Music, MessageSquare, Gamepad, BookOpen, Zap, Cloud,
   Activity, MoreHorizontal, Download, UploadCloud, Copy, ArrowUp, ArrowDown,
-  Type, Link as LinkIcon, Layout, HardDrive, Lock, User, Users, Clock, RefreshCw, // Added Users icon
+  Type, Link as LinkIcon, Layout, HardDrive, Lock, User, Users, Clock, RefreshCw,
   AlertTriangle, CheckCircle2, XCircle, CloudRain, CloudSnow, CloudLightning,
   SunMedium, Wind, Image as WallpaperIcon, ImagePlus, Hash, MapPin, Sparkles, Check, Command,
   Move, Terminal, Droplet, PaintBucket, ZoomIn, GripVertical, ChevronRight
@@ -436,7 +436,7 @@ export default function AuroraNav() {
       } finally {
         categoriesSyncLock.current = false;
       }
-    }, 500); // Debounce reduced to 500ms
+    }, 500);
     return () => clearTimeout(timer);
   }, [categories, categoryColors, hiddenCategories, isLoggedIn]);
 
@@ -459,7 +459,7 @@ export default function AuroraNav() {
       } finally {
         sitesSyncLock.current = false;
       }
-    }, 800); // Debounce reduced to 800ms for faster feedback
+    }, 800);
     return () => clearTimeout(timer);
   }, [sites, isLoggedIn]);
 
@@ -616,12 +616,8 @@ export default function AuroraNav() {
     return () => window.removeEventListener('click', handleClick);
   }, [contextMenu]);
 
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!containerRef.current) return;
-    const { left, top } = containerRef.current.getBoundingClientRect();
-    containerRef.current.style.setProperty("--mouse-x", `${e.clientX - left}px`);
-    containerRef.current.style.setProperty("--mouse-y", `${e.clientY - top}px`);
-  };
+  // 禁用鼠标跟随 - 解决显卡占用高问题
+  const handleMouseMove = undefined;
 
   // --- HTML5 Content Handlers ---
   const handleHtmlContextMenu = (e: React.MouseEvent, section: any) => {
@@ -1070,21 +1066,15 @@ export default function AuroraNav() {
                     }
                 `}</style>
         <FontManager fontFamilyId={layoutSettings.fontFamily} />
-{/* <AuroraBackground isDarkMode={isDarkMode} layoutSettings={layoutSettings} /> */}
-        
-        <NoiseOverlay />
+
+        <AuroraBackground isDarkMode={isDarkMode} layoutSettings={layoutSettings} />
+        {/* <NoiseOverlay /> */}
         <Toast notification={toast} onClose={() => setToast(prev => ({ ...prev, show: false }))}
           isDarkMode={isDarkMode} />
 
-        {/* 私有模式锁定界面 - Prevent Flash: Show if configured OR if loading (security first) ?? No, if loading, we don't know configuration.
-            If we show lock on loading, it flashes lock for everyone.
-            Solution: If isLoading, show specific Loading State.
-            If !isLoading && privateMode, show Lock.
-            If !isLoading && !privateMode, show Content.
-         */}
         {isLoading ? (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-50 dark:bg-slate-900 transition-opacity">
-            <div className="flex flex-col items-center gap-4 animate-in fade-in duration-700">
+            <div className="flex flex-col items-center gap-4">
               <div className="w-12 h-12 rounded-full border-4 border-indigo-500/30 border-t-indigo-500 animate-spin" />
               <p className="text-sm font-medium opacity-50 animate-pulse">正在加载配置...</p>
             </div>
@@ -1185,12 +1175,12 @@ export default function AuroraNav() {
                           }}
                           className={`group/nav relative flex items-center gap-2 sm:gap-3 md:gap-4 p-1.5 sm:p-2 rounded-full overflow-x-auto custom-scrollbar max-w-full backdrop-blur-2xl shadow-2xl shadow-indigo-500/10 ${isDarkMode ? 'bg-slate-900/60 ring-1 ring-white/10' : 'bg-white/60 ring-1 ring-white/60'}`}>
 
-                          {/* Spotlight Effect */}
-                          <div className={`pointer-events-none absolute -inset-px rounded-full opacity-0 transition-opacity duration-300 group-hover/nav:opacity-100 ${isDarkMode ? 'mix-blend-overlay' : 'mix-blend-multiply'}`}
+                          {/* Spotlight Effect - 已禁用 */}
+                          {/* <div className={`pointer-events-none absolute -inset-px rounded-full opacity-0 transition-opacity duration-300 group-hover/nav:opacity-100 ${isDarkMode ? 'mix-blend-overlay' : 'mix-blend-multiply'}`}
                             style={{
                               background: `radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), ${isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(99,102,241,0.05)'}, transparent 40%)`
                             }}
-                          />
+                          /> */}
 
                           <CategoryPill
                             label="全部"
@@ -1229,7 +1219,7 @@ export default function AuroraNav() {
                         setIsWallpaperManagerOpen={setIsWallpaperManagerOpen}
                         activeTab={activeSettingTab}
                         setActiveTab={setActiveSettingTab}
-                        searchEngine={searchEngine} // [NEW] Pass searchEngine
+                        searchEngine={searchEngine}
                         layoutSettings={layoutSettings}
                         setLayoutSettings={setLayoutSettings}
                         categories={categories}
@@ -1361,8 +1351,8 @@ export default function AuroraNav() {
                         onContextMenu={handleContextMenu}
                         getCategoryColor={getCategoryColor}
                         onFolderClick={(folder: any) => setCurrentFolderId(folder.id)}
-                        sites={sites} // Pass sites for folder count
-                        dragOverFolderId={dragOverFolderId} // Visual feedback for folder drop targets
+                        sites={sites}
+                        dragOverFolderId={dragOverFolderId}
                       />
                     </div>
                   </main>
@@ -1644,10 +1634,10 @@ export default function AuroraNav() {
                     .group\\/spotlight:hover .spotlight-card::before { opacity: 1; }
                     .spotlight-card::before { background: radial-gradient(800px circle at var(--mouse-x) var(--mouse-y), rgba(99, 102, 241, 0.15), transparent 40%); content: ""; display: block; height: 100%; left: 0; opacity: 0; position: absolute; top: 0; width: 100%; z-index: 2; pointer-events: none; transition: opacity 0.5s; }
                     .text-shadow-sm { text-shadow: 0 1px 2px rgba(0,0,0,0.15), 0 0 1px rgba(0,0,0,0.1); }
-                    @keyframes slow-spin { from { transform: rotate(0deg) scale(1); } to { transform: rotate(360deg) scale(1); } }
-                    @keyframes gradient-move { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-                    .animate-slow-spin { animation: slow-spin 60s linear infinite; }
-                    .animate-gradient-move { animation: gradient-move 3s ease infinite; }
+                    /* @keyframes slow-spin { from { transform: rotate(0deg) scale(1); } to { transform: rotate(360deg) scale(1); } } */
+                    /* @keyframes gradient-move { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } } */
+                    /* .animate-slow-spin { animation: slow-spin 60s linear infinite; } */
+                    /* .animate-gradient-move { animation: gradient-move 3s ease infinite; } */
                     .custom-scrollbar::-webkit-scrollbar { height: 0px; width: 0px; }
                     .dynamic-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
                     @media (min-width: 640px) { .dynamic-grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); } }
@@ -1659,13 +1649,6 @@ export default function AuroraNav() {
 }
 
 // --- Components ---
-
-
-
-
-
-// 私有模式锁定界面
-
 function Toast({ notification, onClose, isDarkMode }: any) {
   if (!notification.show) return null;
   return (<div
@@ -1676,23 +1659,3 @@ function Toast({ notification, onClose, isDarkMode }: any) {
           className="text-sm font-medium">{notification.message}</span></div>
   </div>);
 }
-
-
-
-
-
-
-
-
-
-
-
-// Updated CategoryPill to support Custom Colors
-
-
-
-
-
-
-
-
