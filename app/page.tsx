@@ -1070,8 +1070,8 @@ export default function AuroraNav() {
                     }
                 `}</style>
         <FontManager fontFamilyId={layoutSettings.fontFamily} />
-
-        <AuroraBackground isDarkMode={isDarkMode} layoutSettings={layoutSettings} />
+{/* <AuroraBackground isDarkMode={isDarkMode} layoutSettings={layoutSettings} /> */}
+        
         <NoiseOverlay />
         <Toast notification={toast} onClose={() => setToast(prev => ({ ...prev, show: false }))}
           isDarkMode={isDarkMode} />
