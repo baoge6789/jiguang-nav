@@ -832,9 +832,9 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                 </div>
             </TiltCard>
 
-{/* 卡片2：天气 - 修复手机端溢出和闪烁 */}
+{/* 卡片2：天气 - 保持白色背景 */}
 <TiltCard className="group min-w-0">
-    <div className={`${cardBase} overflow-hidden h-[120px] sm:h-[120px] md:h-[130px]`}>
+    <div className={`${cardBase} !bg-white dark:!bg-white overflow-hidden h-[120px] sm:h-[120px] md:h-[130px]`}>
         <WeatherParticles code={weather.code} />
         <div className="flex flex-col justify-center h-full z-10 min-w-[80px] flex-shrink-0">
             <div className="flex items-center gap-1.5 mb-1">
