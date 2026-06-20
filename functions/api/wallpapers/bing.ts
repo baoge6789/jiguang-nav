@@ -47,13 +47,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     }
 
     const image = bingData.images[0];
-    // 尝试获取 UHD 版本
+    // 默认使用 1080p（UHD 分辨率会导致 GPU 解码压力过大）
     let imageUrl = `https://www.bing.com${image.url}`;
-    if (imageUrl.includes('1920x1080')) {
-      imageUrl = imageUrl.replace('1920x1080', 'UHD');
-    } else if (image.urlbase) {
-      imageUrl = `https://www.bing.com${image.urlbase}_UHD.jpg`;
-    }
 
     const dateStr = image.startdate || todayStr;
     const filename = `bing-${dateStr}.jpg`;
