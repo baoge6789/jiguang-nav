@@ -58,11 +58,25 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     const dateStr = image.startdate || todayStr;
     const filename = `bing-${dateStr}.jpg`;
 
+    // 二次查重：用 Bing 返回的真实日期再查一次，防止时区差异导致重复插入
+    const cached2 = await db
+      .prepare('SELECT * FROM Wallpaper WHERE filename = ? AND type = ?')
+      .bind(filename, 'bing')
+      .first();
+    if (cached2) {
+      return jsonResponse({ wallpaper: cached2, cached: true });
+    }
+
     // 保存到数据库（只存 URL，不下载文件）
     const id = crypto.randomUUID();
     await db
       .prepare('INSERT INTO Wallpaper (id, url, type, filename) VALUES (?, ?, ?, ?)')
       .bind(id, imageUrl, 'bing', filename)
+      .run();
+
+    // 自动清理：只保留最近 7 天的 Bing 壁纸，防止 D1 无限积累
+    await db
+      .prepare(`DELETE FROM Wallpaper WHERE type = 'bing' AND id NOT IN (SELECT id FROM Wallpaper WHERE type = 'bing' ORDER BY createdAt DESC LIMIT 7)`)
       .run();
 
     const wallpaper = await db.prepare('SELECT * FROM Wallpaper WHERE id = ?').bind(id).first();
