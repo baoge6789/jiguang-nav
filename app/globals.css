@@ -203,6 +203,14 @@
   }
 }
 
+/* ===== 卡片 hover 效果（纯 CSS，替代 framer-motion） ===== */
+.spotlight-card:hover .card-hover-target {
+  transform: translateY(-3px) scale(1.02);
+}
+.spotlight-card:active .card-hover-target {
+  transform: scale(0.98);
+}
+
 /* ===== 桌面端模糊效果限制 ===== */
 /* 将所有 backdrop-blur 限制在 8px，降低 GPU 开销 */
 @media (min-width: 768px) {

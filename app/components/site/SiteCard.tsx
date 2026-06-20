@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
 
 
 import NextImage from 'next/image';
@@ -133,24 +132,8 @@ export const SiteCard = React.memo(function SiteCard({
         perceivedBg = site.color || '#6366f1';
     }
 
-    const [realWidth, setRealWidth] = useState(settings.cardWidth || 260);
+    const realWidth = settings.cardWidth || 260;
     const cardRef = React.useRef<HTMLAnchorElement>(null);
-
-    useEffect(() => {
-        if (!cardRef.current) return;
-        const resizeObserver = new ResizeObserver((entries) => {
-            for (const entry of entries) {
-                if (entry.contentBoxSize) {
-                    setRealWidth(entry.contentBoxSize[0].inlineSize);
-                } else {
-                    setRealWidth(entry.contentRect.width);
-                }
-            }
-        });
-        resizeObserver.observe(cardRef.current);
-        setRealWidth(cardRef.current.offsetWidth);
-        return () => resizeObserver.disconnect();
-    }, []);
 
     const textColor = forceWhiteText ? '#ffffff' : getAccessibleTextColor(perceivedBg);
     const hasShadow = forceWhiteText || shouldUseTextShadow(textColor);
@@ -328,26 +311,15 @@ export const SiteCard = React.memo(function SiteCard({
     const showCount = site.type === 'folder' && (childCount || 0) > 0;
 
     return (
-        <motion.div
+        <div
             className={`spotlight-card relative h-full overflow-hidden ${isOverlay ? 'shadow-2xl scale-105 cursor-grabbing' : ''}`}
             style={{
                 borderRadius: settings.cardRadius ?? 16,
+                transition: 'transform 0.2s ease, box-shadow 0.2s ease',
                 ...(isDropTarget && site.type === 'folder' ? {
                     transform: 'scale(1.05)',
                     boxShadow: '0 0 20px rgba(34, 197, 94, 0.5), 0 0 40px rgba(34, 197, 94, 0.3)',
-                    transition: 'all 0.2s ease-in-out'
                 } : {})
-            }}
-            whileHover={!isOverlay && (settings.enableHover ?? true) ? {
-                scale: 1.02,
-                y: -4 * (settings.hoverIntensity ?? 1),
-                boxShadow: hoverBoxShadow
-            } : {}}
-            whileTap={!isOverlay && (settings.enableClick ?? true) ? { scale: 1 - (0.02 * (settings.clickIntensity ?? 1)) } : {}}
-            transition={{
-                type: "spring",
-                stiffness: 400 * (settings.hoverIntensity ?? 1),
-                damping: 17
             }}
         >
             <a
@@ -357,7 +329,7 @@ export const SiteCard = React.memo(function SiteCard({
                 rel="noopener noreferrer"
                 onClick={handleClick}
                 onContextMenu={(e) => onContextMenu && onContextMenu(e, site.id)}
-                className={`group relative block h-full border transition-all duration-300 overflow-hidden isolate z-10 ${isLoggedIn ? 'cursor-grab active:cursor-grabbing' : 'cursor-pointer'} ${site.isHidden && isLoggedIn ? 'opacity-50 grayscale' : ''}`}
+                className={`group relative block h-full border transition-all duration-200 overflow-hidden isolate z-10 card-hover-target ${isLoggedIn ? 'cursor-grab active:cursor-grabbing' : 'cursor-pointer'} ${site.isHidden && isLoggedIn ? 'opacity-50 grayscale' : ''}`}
                 style={{
                     height: `var(--mobile-card-height, ${settings.cardHeight}px)`,
                     borderRadius: settings.cardRadius ?? 16,
@@ -430,7 +402,7 @@ export const SiteCard = React.memo(function SiteCard({
                     )}
                 </div >
             </a >
-        </motion.div >
+        </div >
     );
 });
 
@@ -453,23 +425,15 @@ export const SortableSiteCard = React.memo(function SortableSiteCard({ site, isL
             {...listeners}
             className="h-full"
         >
-            <motion.div
-                layout={props.settings?.enableDrag ?? true}
-                initial={false}
-                animate={{ opacity: isDragging ? 0.5 : 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                transition={{
-                    duration: 0.2,
-                    layout: {
-                        type: "spring",
-                        damping: 20 * (props.settings?.dragIntensity ?? 1),
-                        stiffness: 300 * (props.settings?.dragIntensity ?? 1)
-                    }
-                }}
+            <div
                 className="h-full"
+                style={{
+                    opacity: isDragging ? 0.5 : 1,
+                    transition: 'opacity 0.2s ease'
+                }}
             >
                 <SiteCard site={site} isLoggedIn={isLoggedIn} {...props} />
-            </motion.div>
+            </div>
         </div>
     );
 });

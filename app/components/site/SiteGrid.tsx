@@ -1,5 +1,4 @@
 import React from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
 import { SortableContext } from '@dnd-kit/sortable';
 import { createSmartSortingStrategy } from '../dnd/SmartSortingStrategy';
 import { SortableSiteCard } from './SiteCard';
@@ -94,7 +93,7 @@ export function SiteGrid({
                                     : `repeat(${layoutSettings.gridCols || 6}, minmax(0, 1fr))`
                             }}>
                                 <SortableContext items={catSiteIds} strategy={createSmartSortingStrategy(visibleSites, catSiteIds)}>
-                                    <AnimatePresence mode="popLayout" initial={false}>
+                                    <>
                                         {catSites.map(site => {
                                             const childCount = sites ? sites.filter(s => s.parentId === site.id).length : 0;
                                             return (
@@ -115,7 +114,7 @@ export function SiteGrid({
                                                 从其他分类拖拽至此
                                             </div>
                                         )}
-                                    </AnimatePresence>
+                                    </>
                                 </SortableContext>
                             </div>
                         </section>
@@ -129,7 +128,7 @@ export function SiteGrid({
                             ? `repeat(auto-fill, minmax(${layoutSettings.cardWidth || 260}px, 1fr))`
                             : `repeat(${layoutSettings.gridCols || 6}, minmax(0, 1fr))`
                     }}>
-                        <AnimatePresence mode="popLayout" initial={false}>
+                        <>
                             {visibleSites.map(site => {
                                 const childCount = sites ? sites.filter(s => s.parentId === site.id).length : 0;
                                 return (
@@ -145,7 +144,7 @@ export function SiteGrid({
                                     />
                                 )
                             })}
-                        </AnimatePresence>
+                        </>
                     </div>
                 </SortableContext>
             )}

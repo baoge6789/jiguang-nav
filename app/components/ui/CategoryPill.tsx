@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 
 // Hook to detect mobile for performance optimization
@@ -16,8 +15,6 @@ function useIsMobile() {
 // Updated CategoryPill to support Custom Colors
 export function CategoryPill({ label, active, onClick, isDarkMode, color, navColorMode, settings }: any) {
     const isMobile = useIsMobile();
-    // 移动端禁用动画提升性能
-    const enableAnimation = !isMobile && (settings?.enableTabSlide ?? true);
 
     if (navColorMode) {
         // Colorful Mode: Premium Glassy Look with Category Colors
@@ -34,26 +31,13 @@ export function CategoryPill({ label, active, onClick, isDarkMode, color, navCol
                 `}
             >
                 {/* Background Layer */}
-                {active && enableAnimation ? (
-                    <motion.span
-                        layoutId="activePillColorful"
-                        className="absolute inset-0 rounded-full -z-10"
-                        style={{
-                            background: `linear-gradient(135deg, ${color}, ${color}dd)`,
-                            boxShadow: `0 8px 20px -6px ${color}99`
-                        }}
-                        transition={{
-                            type: "spring",
-                            stiffness: 350,
-                            damping: 30
-                        }}
-                    />
-                ) : (
-                    <span
-                        className="absolute inset-0 rounded-full -z-10 transition-colors"
-                        style={{ backgroundColor: active ? color : 'transparent' }}
-                    />
-                )}
+                <span
+                    className="absolute inset-0 rounded-full -z-10 transition-colors duration-200"
+                    style={{
+                        background: active ? `linear-gradient(135deg, ${color}, ${color}dd)` : 'transparent',
+                        boxShadow: active ? `0 8px 20px -6px ${color}99` : 'none'
+                    }}
+                />
 
                 <span className="relative z-10">{label}</span>
             </button>
@@ -75,21 +59,9 @@ export function CategoryPill({ label, active, onClick, isDarkMode, color, navCol
             `}>
 
             {/* Active Tab Background (Classic = Indigo Brand Color) */}
-            {active && enableAnimation ? (
-                <motion.span
-                    layoutId="activePillClassic"
-                    className="absolute inset-0 -z-10 bg-indigo-500 rounded-full"
-                    style={{
-                        boxShadow: '0 4px 12px -2px rgba(99,102,241,0.5)'
-                    }}
-                    transition={{
-                        type: "spring",
-                        stiffness: 350,
-                        damping: 30
-                    }}
-                />
-            ) : active && (
-                <span className="absolute inset-0 -z-10 bg-indigo-500 rounded-full" />
+            {active && (
+                <span className="absolute inset-0 -z-10 bg-indigo-500 rounded-full transition-all duration-200"
+                    style={{ boxShadow: '0 4px 12px -2px rgba(99,102,241,0.5)' }} />
             )}
 
             <span className="relative z-10">{label}</span>
