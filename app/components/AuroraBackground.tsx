@@ -83,7 +83,7 @@ export function AuroraBackground({ isDarkMode, layoutSettings }: AuroraBackgroun
                             className="absolute inset-0 bg-black transition-opacity duration-300"
                             style={{ opacity: (layoutSettings.bgOpacity ?? 40) / 100 }}
                         />
-                        <div className="absolute inset-0 opacity-[0.05] mix-blend-overlay pointer-events-none"
+                        <div className="absolute inset-0 opacity-[0.05] pointer-events-none"
                             style={{ backgroundImage: `url("${NOISE_BASE64}")` }}></div>
                     </div>
                 </>

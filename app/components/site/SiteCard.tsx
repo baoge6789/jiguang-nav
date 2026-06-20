@@ -364,8 +364,8 @@ export const SiteCard = React.memo(function SiteCard({
                     backgroundColor: bgColor,
                     borderColor: borderColor,
                     boxShadow: boxShadow,
-                    backdropFilter: `blur(${(settings.cardBlur ?? 12) * 0.5}px)`,
-                    WebkitBackdropFilter: `blur(${(settings.cardBlur ?? 12) * 0.5}px)`
+                    backdropFilter: `blur(${Math.min((settings.cardBlur ?? 12) * 0.5, 3)}px)`,
+                    WebkitBackdropFilter: `blur(${Math.min((settings.cardBlur ?? 12) * 0.5, 3)}px)`
                 }}
             >
                 {settings.colorfulCards && (

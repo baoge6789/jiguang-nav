@@ -14,7 +14,7 @@ const TiltCard = ({ children, className = '' }: { children: React.ReactNode; cla
 
 const GradientBorder = ({ isDarkMode, customColor }: { isDarkMode: boolean; customColor?: string }) => (
     <>
-        <div className="absolute -inset-[1px] rounded-3xl bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 opacity-0 group-hover:opacity-50 transition-opacity duration-500 blur-sm animate-gradient-x" />
+        <div className="absolute -inset-[1px] rounded-3xl bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 opacity-0 group-hover:opacity-50 transition-opacity duration-500 blur-sm" />
         <div className={`absolute inset-0 rounded-3xl ${isDarkMode ? 'bg-slate-900/90' : 'bg-gradient-to-br from-slate-100/90 to-slate-200/90'}`}
             style={customColor ? { background: customColor } : {}}
         />
@@ -801,7 +801,7 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                                         onClick={() => {
                                             const container = document.getElementById('stock-scroll-container');
                                             if (container) {
-                                                container.scrollLeft -= 150;
+                                                container.scrollBy({ left: -container.clientWidth, behavior: 'smooth' });
                                             }
                                         }}
                                         className="absolute -left-3 top-1/2 -translate-y-1/2 z-10 w-5 h-5 rounded-full bg-black/50 hover:bg-black/70 text-white flex items-center justify-center border border-white/20 shadow-lg transition-all hover:scale-110 active:scale-90"
@@ -883,7 +883,7 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                                         onClick={() => {
                                             const container = document.getElementById('stock-scroll-container');
                                             if (container) {
-                                                container.scrollLeft += 150;
+                                                container.scrollBy({ left: container.clientWidth, behavior: 'smooth' });
                                             }
                                         }}
                                         className="absolute -right-3 top-1/2 -translate-y-1/2 z-10 w-5 h-5 rounded-full bg-black/50 hover:bg-black/70 text-white flex items-center justify-center border border-white/20 shadow-lg transition-all hover:scale-110 active:scale-90"
