@@ -6,54 +6,6 @@ import {
 } from 'lucide-react';
 import { formatDate, translateCity } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
-import Lottie from 'lottie-react';
-
-// Lottie animation URLs from LottieFiles
-const LOTTIE_WEATHER = {
-    sunny: 'https://lottie.host/4c782f88-eb4e-4118-bb1f-71c9cf8d0128/xWPwCVcEzC.json',
-    cloudy: 'https://lottie.host/6f1aa81d-0c1c-4c87-b6e0-6c8f3f8e9c8a/cloudy.json',
-    rainy: 'https://lottie.host/a6d8e5c3-9c1f-4f5c-b0c8-8b7e6d9f1c5a/rainy.json',
-    snowy: 'https://lottie.host/b7c9d6e4-0d2e-5f6c-c1d9-9c8f7e0g2d6b/snowy.json',
-    thunder: 'https://lottie.host/c8d0e7f5-1e3f-6g7d-d2e0-0d9g8f1h3e7c/thunder.json',
-};
-
-const LottieWeatherIcon = ({ code, size = 48 }: { code: number; size?: number }) => {
-    const [animationData, setAnimationData] = useState<any>(null);
-
-    useEffect(() => {
-        let url = LOTTIE_WEATHER.sunny;
-        if (code >= 1 && code <= 3) url = LOTTIE_WEATHER.cloudy;
-        if ((code >= 51 && code <= 67) || (code >= 80 && code <= 82)) url = LOTTIE_WEATHER.rainy;
-        if (code >= 71 && code <= 77) url = LOTTIE_WEATHER.snowy;
-        if (code >= 95) url = LOTTIE_WEATHER.thunder;
-
-        fetch(url)
-            .then(res => {
-                if (!res.ok) return null;
-                return res.json();
-            })
-            .then(data => { if (data) setAnimationData(data); })
-            .catch(() => setAnimationData(null));
-    }, [code]);
-
-    if (!animationData) {
-        if (code === 0) return <SunMedium size={size} className="text-orange-500" />;
-        if (code >= 1 && code <= 3) return <Cloud size={size} className="text-gray-400" />;
-        if ((code >= 51 && code <= 67) || (code >= 80 && code <= 82)) return <CloudRain size={size} className="text-blue-500" />;
-        if (code >= 71 && code <= 77) return <CloudSnow size={size} className="text-blue-300" />;
-        if (code >= 95) return <CloudLightning size={size} className="text-purple-500" />;
-        return <SunMedium size={size} className="text-orange-500" />;
-    }
-
-    return (
-        <Lottie
-            animationData={animationData}
-            loop={false}
-            autoplay
-            style={{ width: size, height: size }}
-        />
-    );
-};
 
 const TiltCard = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
     <div className={className}>
@@ -576,10 +528,8 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
         return 'from-indigo-500/20 to-purple-600/20';
     };
 
-    const getWeatherIcon = (code: number, size = 24, className = "", useLottie = false) => {
-        if (useLottie && size >= 32) {
-            return <LottieWeatherIcon code={code} size={size} />;
-        }
+    // 天气图标 - 完全使用静态图标，禁用 Lottie
+    const getWeatherIcon = (code: number, size = 24, className = "") => {
         if (code === 0) return <SunMedium size={size} className={className || "text-orange-500"} />;
         if (code >= 1 && code <= 3) return <Cloud size={size} className={className || "text-gray-400"} />;
         if ((code >= 45 && code <= 48) || (code >= 51 && code <= 55)) return <CloudSnow size={size} className={className || "text-blue-300"} />;
@@ -615,66 +565,8 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
         return '极高';
     };
 
+    // 禁用粒子动画
     const WeatherParticles = ({ code }: { code: number }) => {
-        const isRain = code >= 51 && code <= 82;
-        const isSnow = code >= 71 && code <= 77;
-        const isSunny = code === 0;
-
-        if (isRain) {
-            return (
-                <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                    {Array.from({ length: 20 }).map((_, i) => (
-                        <motion.div
-                            key={i}
-                            className="absolute w-0.5 h-3 bg-blue-400/40 rounded-full"
-                            initial={{ x: Math.random() * 100 + '%', y: -10 }}
-                            animate={{ y: '110%' }}
-                            transition={{
-                                duration: 0.5 + Math.random() * 0.3,
-                                repeat: Infinity,
-                                delay: Math.random() * 2,
-                                ease: 'linear'
-                            }}
-                        />
-                    ))}
-                </div>
-            );
-        }
-
-        if (isSnow) {
-            return (
-                <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                    {Array.from({ length: 15 }).map((_, i) => (
-                        <motion.div
-                            key={i}
-                            className="absolute w-1.5 h-1.5 bg-white/60 rounded-full"
-                            initial={{ x: Math.random() * 100 + '%', y: -10 }}
-                            animate={{
-                                y: '110%',
-                                x: [null, `${Math.random() * 20 - 10}%`]
-                            }}
-                            transition={{
-                                duration: 2 + Math.random(),
-                                repeat: Infinity,
-                                delay: Math.random() * 3,
-                                ease: 'linear'
-                            }}
-                        />
-                    ))}
-                </div>
-            );
-        }
-
-        if (isSunny) {
-            return (
-                <motion.div
-                    className="absolute top-2 right-2 w-8 h-8 bg-gradient-radial from-yellow-300/30 to-transparent rounded-full pointer-events-none"
-                    animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0.8, 0.5] }}
-                    transition={{ duration: 3, repeat: Infinity }}
-                />
-            );
-        }
-
         return null;
     };
 
@@ -832,46 +724,46 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                 </div>
             </TiltCard>
 
-{/* 卡片2：天气 - 保持白色背景 */}
-<TiltCard className="group min-w-0">
-    <div className={`${cardBase} !bg-white dark:!bg-slate-800 overflow-hidden h-[120px] sm:h-[120px] md:h-[130px]`}>
-        <WeatherParticles code={weather.code} />
-        <div className="flex flex-col justify-center h-full z-10 min-w-[80px] flex-shrink-0">
-            <div className="flex items-center gap-1.5 mb-1">
-                <MapPin size={12} className="text-cyan-500 shrink-0" />
-                <span className={`text-xs font-medium truncate max-w-[80px] sm:max-w-[140px] ${isDarkMode ? 'opacity-70' : 'text-slate-700'}`}>{locationName}</span>
-            </div>
-            <div className="flex items-center gap-2">
-                <span className="text-2xl md:text-3xl font-bold leading-none text-slate-900 dark:text-white">{weather.temp}°</span>
-                {getWeatherIcon(weather.code, 32, "", false)}
-            </div>
-            <div className="flex items-center gap-2 mt-1 text-xs flex-wrap">
-                <span className={`${isDarkMode ? 'opacity-70' : 'text-slate-700'}`}>{getWeatherDesc(weather.code)}</span>
-                <span className={`${isDarkMode ? 'opacity-50' : 'text-slate-500'}`}>体感 {weather.feelsLike}°</span>
-            </div>
-            <div className="text-xs text-cyan-600 dark:text-cyan-400 font-medium mt-0.5 truncate">
-                {getClothingAdvice(weather.feelsLike || weather.temp || 20)}
-            </div>
-        </div>
-        <div className="z-10 pl-3 border-l border-white/10 dark:border-white/5 h-full flex flex-col justify-center gap-1.5 flex-1 min-w-0">
-            <div className="flex items-center gap-4 text-xs -ml-2 flex-wrap">
-                <div className="flex items-center gap-1 shrink-0">
-                    <Shield size={12} className="text-green-500 shrink-0" />
-                    <span className={`${isDarkMode ? 'opacity-50' : 'text-slate-500'}`}>AQI</span>
-                    <span className="font-bold text-slate-900 dark:text-white">{weather.aqi || '--'}</span>
-                    {weather.aqi && <span className={`${isDarkMode ? 'opacity-60' : 'text-slate-600'}`}>{getAQIDesc(weather.aqi)}</span>}
+            {/* 卡片2：天气 - 保持白色背景 */}
+            <TiltCard className="group min-w-0">
+                <div className={`${cardBase} !bg-white dark:!bg-slate-800 overflow-hidden h-[120px] sm:h-[120px] md:h-[130px]`}>
+                    <WeatherParticles code={weather.code} />
+                    <div className="flex flex-col justify-center h-full z-10 min-w-[80px] flex-shrink-0">
+                        <div className="flex items-center gap-1.5 mb-1">
+                            <MapPin size={12} className="text-cyan-500 shrink-0" />
+                            <span className={`text-xs font-medium truncate max-w-[80px] sm:max-w-[140px] ${isDarkMode ? 'opacity-70' : 'text-slate-700'}`}>{locationName}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <span className="text-2xl md:text-3xl font-bold leading-none text-slate-900 dark:text-white">{weather.temp}°</span>
+                            {getWeatherIcon(weather.code, 32)}
+                        </div>
+                        <div className="flex items-center gap-2 mt-1 text-xs flex-wrap">
+                            <span className={`${isDarkMode ? 'opacity-70' : 'text-slate-700'}`}>{getWeatherDesc(weather.code)}</span>
+                            <span className={`${isDarkMode ? 'opacity-50' : 'text-slate-500'}`}>体感 {weather.feelsLike}°</span>
+                        </div>
+                        <div className="text-xs text-cyan-600 dark:text-cyan-400 font-medium mt-0.5 truncate">
+                            {getClothingAdvice(weather.feelsLike || weather.temp || 20)}
+                        </div>
+                    </div>
+                    <div className="z-10 pl-3 border-l border-white/10 dark:border-white/5 h-full flex flex-col justify-center gap-1.5 flex-1 min-w-0">
+                        <div className="flex items-center gap-4 text-xs -ml-2 flex-wrap">
+                            <div className="flex items-center gap-1 shrink-0">
+                                <Shield size={12} className="text-green-500 shrink-0" />
+                                <span className={`${isDarkMode ? 'opacity-50' : 'text-slate-500'}`}>AQI</span>
+                                <span className="font-bold text-slate-900 dark:text-white">{weather.aqi || '--'}</span>
+                                {weather.aqi && <span className={`${isDarkMode ? 'opacity-60' : 'text-slate-600'}`}>{getAQIDesc(weather.aqi)}</span>}
+                            </div>
+                            <div className="flex items-center gap-1 shrink-0">
+                                <Sun size={12} className="text-amber-500 shrink-0" />
+                                <span className={`${isDarkMode ? 'opacity-50' : 'text-slate-500'}`}>UV</span>
+                                <span className="font-bold text-slate-900 dark:text-white">{weather.uv || '--'}</span>
+                                {weather.uv !== null && <span className={`${isDarkMode ? 'opacity-60' : 'text-slate-600'}`}>{getUVDesc(weather.uv)}</span>}
+                            </div>
+                        </div>
+                        {weather.daily?.length > 0 && <DailyForecast data={weather.daily} />}
+                    </div>
                 </div>
-                <div className="flex items-center gap-1 shrink-0">
-                    <Sun size={12} className="text-amber-500 shrink-0" />
-                    <span className={`${isDarkMode ? 'opacity-50' : 'text-slate-500'}`}>UV</span>
-                    <span className="font-bold text-slate-900 dark:text-white">{weather.uv || '--'}</span>
-                    {weather.uv !== null && <span className={`${isDarkMode ? 'opacity-60' : 'text-slate-600'}`}>{getUVDesc(weather.uv)}</span>}
-                </div>
-            </div>
-            {weather.daily?.length > 0 && <DailyForecast data={weather.daily} />}
-        </div>
-    </div>
-</TiltCard>
+            </TiltCard>
 
             {/* 卡片3：工具 - 优化小卡片尺寸和字体 */}
             <TiltCard className="group">
