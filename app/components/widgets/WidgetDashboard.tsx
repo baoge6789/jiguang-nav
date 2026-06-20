@@ -5,7 +5,6 @@ import {
     CheckSquare, TrendingUp, CalendarClock, Plus, X, Check
 } from 'lucide-react';
 import { formatDate, translateCity } from '@/lib/utils';
-import { motion, AnimatePresence } from 'framer-motion';
 
 const TiltCard = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
     <div className={className}>
@@ -649,9 +648,9 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                                 </button>
                             ))}
                         </div>
-                        <AnimatePresence mode="wait">
+                        <div>
                             {timeMode === 'clock' && (
-                                <motion.div key="clock" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                                <div>
                                     <div className="text-2xl md:text-3xl font-bold tabular-nums tracking-tight leading-none mb-1 text-slate-900 dark:text-white">
                                         {mounted && time ? time.toLocaleTimeString('zh-CN', { hour12: false, hour: '2-digit', minute: '2-digit' }) : '--:--'}
                                         <span className={`text-base ml-1 ${isDarkMode ? 'opacity-50' : 'text-slate-500'}`}>{mounted && time ? time.getSeconds().toString().padStart(2, '0') : '00'}</span>
@@ -667,11 +666,11 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                                             return <span className={`${isDarkMode ? 'opacity-40' : 'text-slate-500'}`}>距{termInfo.name}{termInfo.days}天</span>;
                                         })()}
                                     </div>
-                                </motion.div>
+                                </div>
                             )}
 
                             {timeMode === 'world' && (
-                                <motion.div key="world" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="grid grid-cols-2 gap-x-4 gap-y-1">
+                                <div className="grid grid-cols-2 gap-x-4 gap-y-1">
                                     {worldClocks.slice(0, 6).map((tz, idx) => {
                                         const timeFormatter = new Intl.DateTimeFormat('zh-CN', {
                                             hour: '2-digit',
@@ -695,11 +694,11 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                                             </div>
                                         );
                                     })}
-                                </motion.div>
+                                </div>
                             )}
 
                             {timeMode === 'pomodoro' && (
-                                <motion.div key="pomodoro" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                                <div>
                                     <div className="text-3xl font-bold tabular-nums tracking-tight leading-none mb-2 text-red-500">
                                         {pomodoroMins.toString().padStart(2, '0')}:{pomodoroSecs.toString().padStart(2, '0')}
                                     </div>
@@ -712,9 +711,9 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                                         </button>
                                         <span className="text-sm opacity-50">专注</span>
                                     </div>
-                                </motion.div>
+                                </div>
                             )}
-                        </AnimatePresence>
+                        </div>
                     </div>
                     <div className="z-10 pl-4 border-l border-white/10 dark:border-white/5 h-full flex flex-col justify-center items-center min-w-[70px]">
                         <div className="text-2xl md:text-3xl font-bold text-indigo-500">{nextHoliday.days}</div>
@@ -724,9 +723,9 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                 </div>
             </TiltCard>
 
-            {/* 卡片2：天气 - 保持白色背景 */}
+            {/* 卡片2：天气 - 统一毛玻璃效果，与左右卡片一致 */}
             <TiltCard className="group min-w-0">
-                <div className={`${cardBase} !bg-white dark:!bg-slate-800 overflow-hidden h-[120px] sm:h-[120px] md:h-[130px]`}>
+                <div className={`${cardBase} overflow-hidden h-[120px] sm:h-[120px] md:h-[130px]`}>
                     <WeatherParticles code={weather.code} />
                     <div className="flex flex-col justify-center h-full z-10 min-w-[80px] flex-shrink-0">
                         <div className="flex items-center gap-1.5 mb-1">
@@ -765,7 +764,7 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                 </div>
             </TiltCard>
 
-            {/* 卡片3：工具 - 优化小卡片尺寸和字体 */}
+            {/* 卡片3：工具 */}
             <TiltCard className="group">
                 <div className={cardBase}>
                     <GradientBorder isDarkMode={isDarkMode} customColor={widgetConfig?.customColors?.tools} />
@@ -794,9 +793,9 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                             </div>
                         </div>
 
-                        <AnimatePresence mode="wait">
+                        <div>
                             {toolsMode === 'stock' && (
-                                <motion.div key="stock" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex-1 flex flex-col justify-center h-full overflow-visible relative">
+                                <div className="flex-1 flex flex-col justify-center h-full overflow-visible relative">
                                     {/* 左移按钮 */}
                                     <button
                                         onClick={() => {
@@ -893,18 +892,14 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                                             <polyline points="9 18 15 12 9 6"></polyline>
                                         </svg>
                                     </button>
-                                </motion.div>
+                                </div>
                             )}
 
                             {toolsMode === 'todo' && (
-                                <motion.div key="todo" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex-1 flex flex-col h-full overflow-hidden relative">
-                                    <AnimatePresence mode="wait">
+                                <div className="flex-1 flex flex-col h-full overflow-hidden relative">
+                                    <div>
                                         {isAddingTodo ? (
-                                            <motion.div
-                                                key="add-form"
-                                                initial={{ opacity: 0, scale: 0.98 }}
-                                                animate={{ opacity: 1, scale: 1 }}
-                                                exit={{ opacity: 0, scale: 0.98 }}
+                                            <div
                                                 className="absolute inset-x-1 top-1 bottom-1 z-10 bg-zinc-900 flex flex-col justify-center gap-1.5 p-1.5 rounded-xl border border-white/40 ring-1 ring-white/10 shadow-2xl"
                                             >
                                                 <input
@@ -923,9 +918,9 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                                                         <X size={14} />
                                                     </button>
                                                 </div>
-                                            </motion.div>
+                                            </div>
                                         ) : (
-                                            <motion.div key="list" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex flex-col h-full">
+                                            <div className="flex flex-col h-full">
                                                 <div className="flex-1 overflow-y-auto custom-scrollbar flex flex-wrap content-start gap-1 pr-1">
                                                     {todos.map(todo => (
                                                         <div
@@ -955,21 +950,17 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                                                 <button onClick={() => setIsAddingTodo(true)} className="absolute bottom-2 right-2 w-7 h-7 flex items-center justify-center rounded-full bg-emerald-500 text-white shadow-lg hover:scale-110 active:scale-95 transition-all z-10 border border-white/10">
                                                     <Plus size={16} />
                                                 </button>
-                                            </motion.div>
+                                            </div>
                                         )}
-                                    </AnimatePresence>
-                                </motion.div>
+                                    </div>
+                                </div>
                             )}
 
                             {toolsMode === 'countdown' && (
-                                <motion.div key="countdown" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex-1 flex flex-col h-full overflow-hidden relative">
-                                    <AnimatePresence mode="wait">
+                                <div className="flex-1 flex flex-col h-full overflow-hidden relative">
+                                    <div>
                                         {isAddingCountdown ? (
-                                            <motion.div
-                                                key="add-form"
-                                                initial={{ opacity: 0, scale: 0.98 }}
-                                                animate={{ opacity: 1, scale: 1 }}
-                                                exit={{ opacity: 0, scale: 0.98 }}
+                                            <div
                                                 className="absolute inset-x-1 top-1 bottom-1 z-10 bg-zinc-900 flex flex-col justify-center gap-1.5 p-1.5 rounded-xl border border-white/40 ring-1 ring-white/10 shadow-2xl"
                                             >
                                                 <input
@@ -994,9 +985,9 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                                                         <X size={14} />
                                                     </button>
                                                 </div>
-                                            </motion.div>
+                                            </div>
                                         ) : (
-                                            <motion.div key="list" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex flex-col h-full">
+                                            <div className="flex flex-col h-full">
                                                 <div className="flex-1 overflow-y-auto custom-scrollbar grid grid-cols-4 gap-1 pr-9 content-start pb-9">
                                                     {countdowns.map(cd => {
                                                         const daysLeft = Math.max(0, Math.ceil((new Date(cd.date).getTime() - Date.now()) / (1000 * 60 * 60 * 24)));
@@ -1030,12 +1021,12 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                                                 <button onClick={() => setIsAddingCountdown(true)} className="absolute bottom-2 right-2 w-7 h-7 flex items-center justify-center rounded-full bg-emerald-500 text-white shadow-lg hover:scale-110 active:scale-95 transition-all z-10 border border-white/10">
                                                     <Plus size={16} />
                                                 </button>
-                                            </motion.div>
+                                            </div>
                                         )}
-                                    </AnimatePresence>
-                                </motion.div>
+                                    </div>
+                                </div>
                             )}
-                        </AnimatePresence>
+                        </div>
                     </div>
                 </div>
             </TiltCard>
