@@ -986,8 +986,14 @@ export default function AuroraNav() {
       }
     });
 
-    if (activeTab !== '全部' && !currentFolderId) {
+    // ✅ 分类过滤逻辑：管理员点击"全部"显示所有，访客看不到隐藏分类
+    if (activeTab !== '全部') {
       result = result.filter((site: any) => site.category === activeTab);
+    } else {
+      // 点击"全部"：管理员看到所有，访客看不到隐藏分类的站点
+      if (!isLoggedIn) {
+        result = result.filter((site: any) => !hiddenCategories.includes(site.category));
+      }
     }
   }
 
@@ -997,7 +1003,7 @@ export default function AuroraNav() {
   }
 
   return result;
-}, [sites, searchQuery, activeTab, appConfig.privateMode, isGuestVerified, currentFolderId, isLoggedIn]);
+}, [sites, searchQuery, activeTab, hiddenCategories, currentFolderId, isLoggedIn]);
   const activeDragSite = activeDragId ? sites.find(s => s.id === activeDragId) : null;
   const containerClass = layoutSettings.isWideMode ? 'max-w-[98%] px-6' : 'max-w-7xl px-4';
   const currentEngine = SEARCH_ENGINES.find(e => e.id === currentEngineId) || SEARCH_ENGINES[0];
