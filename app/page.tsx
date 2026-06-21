@@ -1123,7 +1123,7 @@ export default function AuroraNav() {
                     </SortableContext>
                   </div>
 
-                  {/* Category Tabs */}
+                  {/* Category Tabs - ✅ 管理员可见所有分类，访客看不到隐藏分类 */}
                   {!isLoading && (layoutSettings.showNavBar ?? true) && (
                     <nav
                       className={`sticky z-30 w-full ${layoutSettings.compactMode ? 'mb-4' : 'mb-8'} transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] ${isScrolled ? 'top-[4.5rem]' : 'top-[5.5rem]'}`}>
@@ -1153,7 +1153,11 @@ export default function AuroraNav() {
                           />
                           <div
                             className={`w-px h-5 shrink-0 ${isDarkMode ? 'bg-white/10' : 'bg-slate-400/20'}`}></div>
-                          {categories.filter(cat => !hiddenCategories.includes(cat)).map(cat => (
+                          {categories.filter(cat => {
+                            // ✅ 管理员登录后看到所有分类，访客看不到隐藏分类
+                            if (isLoggedIn) return true;
+                            return !hiddenCategories.includes(cat);
+                          }).map(cat => (
                             <CategoryPill
                               key={cat}
                               label={cat}
