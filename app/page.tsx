@@ -968,34 +968,36 @@ export default function AuroraNav() {
   };
 
   const filteredSites = useMemo(() => {
-    let result = sites;
+  let result = sites;
 
-    if (searchQuery) {
-      result = sites.filter((site: any) =>
-        site.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        site.url?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        site.desc?.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-    } else {
-      // If not searching, filter by folder level
-      result = result.filter((s: any) => {
-        if (currentFolderId) {
-          return s.parentId === currentFolderId;
-        } else {
-          return !s.parentId;
-        }
-      });
-
-      if (activeTab !== '全部' && !currentFolderId) {
-        result = result.filter((site: any) => site.category === activeTab);
+  if (searchQuery) {
+    result = sites.filter((site: any) =>
+      site.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      site.url?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      site.desc?.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  } else {
+    // If not searching, filter by folder level
+    result = result.filter((s: any) => {
+      if (currentFolderId) {
+        return s.parentId === currentFolderId;
+      } else {
+        return !s.parentId;
       }
+    });
+
+    if (activeTab !== '全部' && !currentFolderId) {
+      result = result.filter((site: any) => site.category === activeTab);
     }
+  }
 
-    if (!appConfig.privateMode) return result;
-    if (isGuestVerified) return result;
-    return result.filter((site: any) => !site.isHidden);
-  }, [sites, searchQuery, activeTab, appConfig.privateMode, isGuestVerified, currentFolderId]);
+  // ✅ 隐藏站点：只对未登录的访客生效
+  if (!isLoggedIn) {
+    result = result.filter((site: any) => !site.isHidden);
+  }
 
+  return result;
+}, [sites, searchQuery, activeTab, appConfig.privateMode, isGuestVerified, currentFolderId, isLoggedIn]);
   const activeDragSite = activeDragId ? sites.find(s => s.id === activeDragId) : null;
   const containerClass = layoutSettings.isWideMode ? 'max-w-[98%] px-6' : 'max-w-7xl px-4';
   const currentEngine = SEARCH_ENGINES.find(e => e.id === currentEngineId) || SEARCH_ENGINES[0];
