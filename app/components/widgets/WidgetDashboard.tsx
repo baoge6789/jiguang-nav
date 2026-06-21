@@ -397,7 +397,7 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
         };
 
         initWeather();
-        const interval = setInterval(initWeather, 600000);
+        const interval = setInterval(initWeather, 1200000);
         return () => clearInterval(interval);
     }, []);
 
