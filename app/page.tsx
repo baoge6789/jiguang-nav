@@ -971,45 +971,42 @@ export default function AuroraNav() {
   // ✅ 修复：管理员登录后点击"全部"显示所有站点
   // ============================================================
   const filteredSites = useMemo(() => {
-    let result = sites;
+  let result = sites;
 
-    if (searchQuery) {
-      result = sites.filter((site: any) =>
-        site.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        site.url?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        site.desc?.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-    } else {
-      // 文件夹过滤
-      result = result.filter((s: any) => {
-        if (currentFolderId) {
-          return s.parentId === currentFolderId;
-        } else {
-          return !s.parentId;
-        }
-      });
-
-      // 分类过滤
-      if (activeTab !== '全部') {
-        // 点击具体分类：只显示该分类下的站点
-        result = result.filter((site: any) => site.category === activeTab);
+  if (searchQuery) {
+    result = sites.filter((site: any) =>
+      site.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      site.url?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      site.desc?.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  } else {
+    result = result.filter((s: any) => {
+      if (currentFolderId) {
+        return s.parentId === currentFolderId;
       } else {
-        // ✅ 点击"全部"：管理员看到所有，访客过滤掉隐藏分类的站点
-        if (!isLoggedIn) {
-          result = result.filter((site: any) => !hiddenCategories.includes(site.category));
-        }
-        // 管理员：全部显示，不做任何过滤
+        return !s.parentId;
+      }
+    });
+
+    if (activeTab !== '全部') {
+      result = result.filter((site: any) => site.category === activeTab);
+    } else {
+      if (isLoggedIn) {
+        // ✅ 登录用户点击"全部"：显示所有站点
+        // 什么都不做，保持 result 不变
+      } else {
+        // ❌ 未登录访客点击"全部"：过滤掉隐藏分类的站点
+        result = result.filter((site: any) => !hiddenCategories.includes(site.category));
       }
     }
+  }
 
-    // ✅ 隐藏站点：只对未登录的访客生效
-    if (!isLoggedIn) {
-      result = result.filter((site: any) => !site.isHidden);
-    }
+  if (!isLoggedIn) {
+    result = result.filter((site: any) => !site.isHidden);
+  }
 
-    return result;
-  }, [sites, searchQuery, activeTab, hiddenCategories, currentFolderId, isLoggedIn]);
-
+  return result;
+}, [sites, searchQuery, activeTab, hiddenCategories, currentFolderId, isLoggedIn]);
   const activeDragSite = activeDragId ? sites.find(s => s.id === activeDragId) : null;
   const containerClass = layoutSettings.isWideMode ? 'max-w-[98%] px-6' : 'max-w-7xl px-4';
   const currentEngine = SEARCH_ENGINES.find(e => e.id === currentEngineId) || SEARCH_ENGINES[0];
