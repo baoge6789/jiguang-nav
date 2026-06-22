@@ -1479,10 +1479,18 @@ export default function AuroraNav() {
                   });
                   if (res.ok) {
                     const updated = await res.json();
-                    setSites(sites.map(s => s.id === editingSite.id ? updated : s));
+                    // ✅ 检查返回数据是否有效
+                    if (updated && updated.id) {
+                      setSites(sites.map(s => s.id === editingSite.id ? updated : s));
+                    } else {
+                      // 返回数据无效，重新获取全部数据
+                      await fetchSites();
+                    }
                     setIsModalOpen(false);
                     showToast('站点已更新', 'success');
-                  } else showToast('更新失败', 'error');
+                  } else {
+                    showToast('更新失败', 'error');
+                  }
                 } else {
                   const res = await fetch('/api/sites', {
                     method: 'POST',
@@ -1490,12 +1498,21 @@ export default function AuroraNav() {
                   });
                   if (res.ok) {
                     const created = await res.json();
-                    setSites([...sites, created]);
+                    // ✅ 检查返回数据是否有效
+                    if (created && created.id) {
+                      setSites([...sites, created]);
+                    } else {
+                      // 返回数据无效，重新获取全部数据
+                      await fetchSites();
+                    }
                     setIsModalOpen(false);
                     showToast('站点已添加', 'success');
-                  } else showToast('添加失败', 'error');
+                  } else {
+                    showToast('添加失败', 'error');
+                  }
                 }
               } catch (e) {
+                console.error('保存失败:', e);
                 showToast('保存失败', 'error');
               }
             }} />}
