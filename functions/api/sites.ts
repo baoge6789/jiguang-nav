@@ -60,6 +60,14 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
     const id = site.id || crypto.randomUUID();
 
+    // 🔍 日志：查看接收到的 type 值
+    console.log('🔥 创建站点 - site.type:', site.type);
+    console.log('🔥 创建站点 - site.parentId:', site.parentId);
+    console.log('🔥 完整数据:', JSON.stringify(site));
+
+    // 确保 type 值被正确传递
+    const siteType = site.type === 'folder' ? 'folder' : 'site';
+
     await db
       .prepare(
         `INSERT INTO Site (id, name, url, "desc", category, color, icon, iconType, customIconUrl, "order", parentId, type)
@@ -67,8 +75,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       )
       .bind(
         id,
-        site.name,
-        site.url,
+        site.name || '',
+        site.url || '',
         site.desc || null,
         site.category || '',
         site.color || null,
@@ -77,11 +85,11 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
         site.customIconUrl || null,
         site.order ?? 0,
         site.parentId || null,
-        site.type || 'site'
+        siteType
       )
       .run();
 
-    return jsonResponse({ id, ...site }, 201);
+    return jsonResponse({ id, ...site, type: siteType }, 201);
   } catch (e: any) {
     return errorResponse('Failed to create site: ' + e.message);
   }
