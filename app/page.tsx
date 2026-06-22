@@ -1467,6 +1467,9 @@ export default function AuroraNav() {
         <AnimatePresence>
           {isModalOpen && <EditModal key="edit-modal" site={editingSite} categories={categories} sites={sites} isDarkMode={isDarkMode} settings={layoutSettings}
             onClose={() => setIsModalOpen(false)} onSave={async (data: any) => {
+              console.log('📦 保存数据:', data);
+              console.log('📂 type:', data.type);
+              console.log('📁 parentId:', data.parentId);
 
               try {
                 if (editingSite?.id) {
