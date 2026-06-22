@@ -62,14 +62,14 @@ export function SiteGrid({
 
     const sortableItems = activeTab === '全部'
         ? categories
-            .filter(c => !hiddenCategories.includes(c))
+            .filter(c => isLoggedIn || !hiddenCategories.includes(c))
             .flatMap(cat => visibleSites.filter(s => s.category === cat).map(s => s.id))
         : visibleSites.map(s => s.id);
 
     return (
         <div className="w-full">
             {activeTab === '全部' && !isSearching ? (
-                categories.filter(cat => !hiddenCategories.includes(cat)).map(cat => {
+                categories.filter(cat => isLoggedIn || !hiddenCategories.includes(cat)).map(cat => {
                     const catSites = visibleSites.filter(s => s.category === cat);
                     const catSiteIds = catSites.map(s => s.id);
                     // Ensure we render empty categories if logged in, for drop targets

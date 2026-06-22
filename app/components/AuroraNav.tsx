@@ -687,7 +687,7 @@ export default function AuroraNav() {
     let visualSites = [...sites];
     if (activeTab === '全部') {
       visualSites = categories
-        .filter(c => !hiddenCategories.includes(c))
+        .filter(c => isLoggedIn || !hiddenCategories.includes(c))
         .flatMap(cat => sites.filter(s => s.category === cat));
     }
 
@@ -779,7 +779,7 @@ export default function AuroraNav() {
 
     // 5. Update State & Persist
     let finalSites = reorderedSites;
-    if (activeTab === '全部' && hiddenCategories.length > 0) {
+    if (activeTab === '全部' && !isLoggedIn && hiddenCategories.length > 0) {
       const hiddenSites = sites.filter(s => hiddenCategories.includes(s.category));
       finalSites = [...reorderedSites, ...hiddenSites];
     }
@@ -1073,15 +1073,15 @@ export default function AuroraNav() {
                   {!isLoading && (layoutSettings.showNavBar ?? true) && (
                     <nav
                       className={`sticky z-30 w-full ${layoutSettings.compactMode ? 'mb-4' : 'mb-8'} transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] ${isScrolled ? 'top-[4.5rem]' : 'top-[5.5rem]'}`}>
-                      <div className="px-2 md:px-4 overflow-visible">
+                      <div className="px-2 md:px-4 overflow-hidden max-w-full">
                         <div
                           onMouseMove={(e) => {
                             const bounds = e.currentTarget.getBoundingClientRect();
                             e.currentTarget.style.setProperty('--mouse-x', `${e.clientX - bounds.left}px`);
                             e.currentTarget.style.setProperty('--mouse-y', `${e.clientY - bounds.top}px`);
                           }}
-                          style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch', borderRadius: '9999px' }}
-                          className={`group/nav relative flex items-center gap-2 md:gap-4 p-2 custom-scrollbar backdrop-blur-2xl shadow-2xl shadow-indigo-500/10 md:mx-auto md:w-fit ${isDarkMode ? 'bg-slate-900/60 ring-1 ring-white/10' : 'bg-white/60 ring-1 ring-white/60'}`}>
+                          style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch', borderRadius: '9999px', maxWidth: '100%' }}
+                          className={`group/nav relative flex items-center gap-1.5 sm:gap-2 md:gap-4 p-1.5 sm:p-2 custom-scrollbar backdrop-blur-2xl shadow-2xl shadow-indigo-500/10 md:mx-auto md:w-fit ${isDarkMode ? 'bg-slate-900/60 ring-1 ring-white/10' : 'bg-white/60 ring-1 ring-white/60'}`}>
 
                           {/* Spotlight Effect */}
                           <div className={`pointer-events-none absolute -inset-px rounded-full opacity-0 transition-opacity duration-300 group-hover/nav:opacity-100 ${isDarkMode ? 'mix-blend-overlay' : 'mix-blend-multiply'}`}
@@ -1100,7 +1100,7 @@ export default function AuroraNav() {
                           />
                           <div
                             className={`w-px h-5 shrink-0 ${isDarkMode ? 'bg-white/10' : 'bg-slate-400/20'}`}></div>
-                          {categories.filter(cat => !hiddenCategories.includes(cat)).map(cat => (
+                          {categories.filter(cat => isLoggedIn || !hiddenCategories.includes(cat)).map(cat => (
                             <CategoryPill
                               key={cat}
                               label={cat}
