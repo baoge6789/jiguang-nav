@@ -12,7 +12,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   }
 };
 
-// PUT /api/sites - 更新站点（支持批量排序 + 单个编辑）
+// PUT /api/sites - 更新站点
 export const onRequestPut: PagesFunction<Env> = async (context) => {
   try {
     const body = await context.request.json();
@@ -60,11 +60,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
     const id = site.id || crypto.randomUUID();
 
-    // 🔥 直接判断 type 值
-    let siteType = 'site';
-    if (site.type === 'folder' || site.type === 'Folder') {
-      siteType = 'folder';
-    }
+    // ✅ 确保 type 正确保存
+    const finalType = site.type === 'folder' ? 'folder' : 'site';
 
     await db
       .prepare(
@@ -83,11 +80,13 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
         site.customIconUrl || null,
         site.order ?? 0,
         site.parentId || null,
-        siteType
+        finalType
       )
       .run();
 
-    return jsonResponse({ id, ...site, type: siteType }, 201);
+    // ✅ 返回时保留正确的 type
+    const result = { ...site, id, type: finalType };
+    return jsonResponse(result, 201);
   } catch (e: any) {
     return errorResponse('Failed to create site: ' + e.message);
   }
