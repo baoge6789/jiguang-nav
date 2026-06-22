@@ -1,5 +1,34 @@
 import { Env, jsonResponse, errorResponse } from './_env';
 
+// POST /api/categories - 添加单个分类
+export const onRequestPost: PagesFunction<Env> = async (context) => {
+  try {
+    const body: any = await context.request.json();
+    const db = context.env.DB;
+
+    if (!body.name || !body.name.trim()) {
+      return errorResponse('Missing category name', 400);
+    }
+
+    const name = body.name.trim();
+    const order = body.order ?? 0;
+
+    // 检查是否已存在
+    const existing = await db.prepare('SELECT id FROM Category WHERE name = ?').bind(name).first();
+    if (existing) {
+      return errorResponse('Category already exists', 409);
+    }
+
+    await db.prepare(
+      'INSERT INTO Category (name, "order", updatedAt) VALUES (?, ?, datetime(\'now\'))'
+    ).bind(name, order).run();
+
+    return jsonResponse({ success: true, name, order }, 201);
+  } catch (e: any) {
+    return errorResponse('Failed to create category: ' + e.message);
+  }
+};
+
 // PUT /api/categories - 批量更新分类（全量替换）
 export const onRequestPut: PagesFunction<Env> = async (context) => {
   try {

@@ -20,10 +20,10 @@ export const onRequestPut: PagesFunction<Env> = async (context) => {
 
     if (Array.isArray(body)) {
       const stmt = db.prepare(
-        'UPDATE Site SET "order" = ?, category = ?, isHidden = ?, parentId = ?, updatedAt = datetime(\'now\') WHERE id = ?'
+        'UPDATE Site SET "order" = ?, category = ?, isHidden = ?, parentId = ?, type = ?, updatedAt = datetime(\'now\') WHERE id = ?'
       );
       const batch = body.map((s: any) =>
-        stmt.bind(s.order ?? 0, s.category ?? '', s.isHidden ? 1 : 0, s.parentId ?? null, s.id)
+        stmt.bind(s.order ?? 0, s.category ?? '', s.isHidden ? 1 : 0, s.parentId ?? null, s.type || 'site', s.id)
       );
       if (batch.length > 0) await db.batch(batch);
       return jsonResponse({ success: true });
@@ -34,13 +34,14 @@ export const onRequestPut: PagesFunction<Env> = async (context) => {
 
     await db
       .prepare(
-        `UPDATE Site SET name = ?, url = ?, "desc" = ?, category = ?, color = ?, icon = ?, iconType = ?, customIconUrl = ?, "order" = ?, parentId = ?, isHidden = ?, updatedAt = datetime('now') WHERE id = ?`
+        `UPDATE Site SET name = ?, url = ?, "desc" = ?, category = ?, color = ?, icon = ?, iconType = ?, customIconUrl = ?, "order" = ?, parentId = ?, isHidden = ?, type = ?, updatedAt = datetime('now') WHERE id = ?`
       )
       .bind(
         site.name || '', site.url || '', site.desc || null,
         site.category || '', site.color || null, site.icon || null,
         site.iconType || 'auto', site.customIconUrl || null,
         site.order ?? 0, site.parentId || null, site.isHidden ? 1 : 0,
+        site.type || 'site',
         site.id
       )
       .run();
@@ -61,8 +62,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
     await db
       .prepare(
-        `INSERT INTO Site (id, name, url, "desc", category, color, icon, iconType, customIconUrl, "order", parentId)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+        `INSERT INTO Site (id, name, url, "desc", category, color, icon, iconType, customIconUrl, "order", parentId, type)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
       )
       .bind(
         id,
@@ -75,7 +76,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
         site.iconType || 'auto',
         site.customIconUrl || null,
         site.order ?? 0,
-        site.parentId || null
+        site.parentId || null,
+        site.type || 'site'
       )
       .run();
 

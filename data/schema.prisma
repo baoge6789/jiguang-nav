@@ -21,6 +21,9 @@ model Site {
   iconType      String?
   customIconUrl String?
   order         Int     @default(0)
+  parentId      String?
+  isHidden      Boolean @default(false)
+  type          String  @default("site")
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 }

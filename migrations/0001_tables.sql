@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS Site (
   "order" INTEGER NOT NULL DEFAULT 0,
   parentId TEXT,
   isHidden INTEGER NOT NULL DEFAULT 0,
+  type TEXT NOT NULL DEFAULT 'site',
   createdAt TEXT NOT NULL DEFAULT (datetime('now')),
   updatedAt TEXT NOT NULL DEFAULT (datetime('now'))
 );

@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import {
     Palette, ImageIcon, Layout, Globe, List, Settings, X, Type, ZoomIn, CheckCircle2,
-    PaintBucket, ImagePlus, RefreshCw, UploadCloud, Move, Lock, Code, Plus, Trash2,
+    PaintBucket, ImagePlus, RefreshCw, UploadCloud, Move, Lock, Code, Plus, Trash2, FolderPlus,
     HardDrive, Download, EyeOff, Eye, ArrowUp, ArrowDown, GripVertical, Image as WallpaperIcon,
     Sparkles, MousePointer2, Hand, LayoutList, Layers, ExternalLink, ChevronRight, ChevronDown, Share2,
     Edit3, Check
@@ -1682,7 +1682,7 @@ export function SettingsPanel({
                                                                         )}
                                                                     </div>
                                                                 </div>
-                                                                <div className="flex gap-1">
+                                                                <div className="flex gap-0.5">
                                                                     <button
                                                                         onClick={() => {
                                                                             setEditingSite({
@@ -1708,9 +1708,38 @@ export function SettingsPanel({
                                                                             setIsModalOpen(true);
                                                                         }}
                                                                         className="p-2 rounded hover:bg-indigo-500/10 text-slate-400 hover:text-indigo-500 active:scale-90"
-                                                                        title="添加站点到此分类"
+                                                                        title="添加站点"
                                                                     >
                                                                         <Plus size={16} />
+                                                                    </button>
+                                                                    <button
+                                                                        onClick={() => {
+                                                                            setEditingSite({
+                                                                                id: null,
+                                                                                name: '',
+                                                                                url: '',
+                                                                                desc: '',
+                                                                                category: cat,
+                                                                                color: getRandomColor(),
+                                                                                icon: 'Folder',
+                                                                                iconType: 'auto',
+                                                                                customIconUrl: '',
+                                                                                titleColor: '',
+                                                                                descColor: '',
+                                                                                titleFont: '',
+                                                                                descFont: '',
+                                                                                titleSize: '',
+                                                                                descSize: '',
+                                                                                isHidden: false,
+                                                                                type: 'folder',
+                                                                                parentId: ''
+                                                                            });
+                                                                            setIsModalOpen(true);
+                                                                        }}
+                                                                        className="p-2 rounded hover:bg-amber-500/10 text-slate-400 hover:text-amber-500 active:scale-90"
+                                                                        title="添加文件夹"
+                                                                    >
+                                                                        <FolderPlus size={16} />
                                                                     </button>
                                                                     <button onClick={() => toggleCategoryVisibility(cat)}
                                                                         className="p-2 rounded hover:bg-black/5 dark:hover:bg-white/10 text-slate-400 active:scale-90">{hiddenCategories.includes(cat) ?
