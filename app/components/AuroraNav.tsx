@@ -447,7 +447,7 @@ export default function AuroraNav() {
       if (sitesSyncLock.current) return;
       sitesSyncLock.current = true;
       try {
-        const sitePayload = sites.map((s, index) => ({ id: s.id, order: index, isHidden: s.isHidden, category: s.category, parentId: s.parentId }));
+        const sitePayload = sites.map((s, index) => ({ id: s.id, order: index, isHidden: s.isHidden, category: s.category, parentId: s.parentId, type: s.type || 'site' }));
         await fetch('/api/sites', {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },

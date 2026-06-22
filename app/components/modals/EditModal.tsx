@@ -94,8 +94,14 @@ export function EditModal({ site, categories, sites, isDarkMode, onClose, onSave
     const iconInputRef = useRef<HTMLInputElement>(null);
     const lastFetchedUrl = useRef<string>('');
 
+    const lastSiteId = useRef<string | null | undefined>(undefined);
     useEffect(() => {
-        if (site) setF({ ...site, iconType: site.iconType || 'auto', isHidden: site.isHidden || false, type: site.type || 'site', parentId: site.parentId || '' });
+        // Only re-initialize when the site ID actually changes (prevents resetting form on re-renders)
+        if (lastSiteId.current !== site?.id) {
+            lastSiteId.current = site?.id;
+            const defaults = { desc: '', color: getRandomColor(), icon: 'Globe', iconType: 'auto', customIconUrl: '', titleColor: '', descColor: '', titleFont: '', descFont: '', titleSize: '', descSize: '', isHidden: false, type: 'site' as string, parentId: '' };
+            setF({ ...defaults, ...site });
+        }
     }, [site]);
 
     const inputClass = `w-full rounded-xl px-3 py-2.5 text-sm border transition-all focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none ${isDarkMode ? 'bg-slate-800/50 border-white/10 placeholder:text-slate-500' : 'bg-slate-50 border-slate-200 placeholder:text-slate-400'}`;
