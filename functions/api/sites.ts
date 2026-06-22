@@ -12,7 +12,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   }
 };
 
-// PUT /api/sites - 更新站点
+// PUT /api/sites - 更新站点（支持批量排序 + 单个编辑）
 export const onRequestPut: PagesFunction<Env> = async (context) => {
   try {
     const body = await context.request.json();
@@ -52,23 +52,19 @@ export const onRequestPut: PagesFunction<Env> = async (context) => {
   }
 };
 
-// POST /api/sites - 创建新站点（带日志）
+// POST /api/sites - 创建新站点
 export const onRequestPost: PagesFunction<Env> = async (context) => {
   try {
     const site: any = await context.request.json();
     const db = context.env.DB;
 
-    // ✅ 日志：查看接收到的 type 值
-    console.log('🔥🔥🔥 创建站点日志开始 🔥🔥🔥');
-    console.log('site.type:', site.type);
-    console.log('site.parentId:', site.parentId);
-    console.log('site.name:', site.name);
-    console.log('完整数据:', JSON.stringify(site));
-
     const id = site.id || crypto.randomUUID();
 
-    // 确保 type 值被正确传递
-    const siteType = site.type === 'folder' ? 'folder' : 'site';
+    // 🔥 直接判断 type 值
+    let siteType = 'site';
+    if (site.type === 'folder' || site.type === 'Folder') {
+      siteType = 'folder';
+    }
 
     await db
       .prepare(
@@ -93,7 +89,6 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
     return jsonResponse({ id, ...site, type: siteType }, 201);
   } catch (e: any) {
-    console.error('❌ 创建失败:', e);
     return errorResponse('Failed to create site: ' + e.message);
   }
 };
