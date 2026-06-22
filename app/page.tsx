@@ -1472,44 +1472,42 @@ export default function AuroraNav() {
               console.log('📁 parentId:', data.parentId);
 
               try {
+                // ✅ 修复：确保 parentId 为 null 而不是空字符串
+                const payload = {
+                  ...data,
+                  parentId: data.parentId || null,
+                };
+
                 if (editingSite?.id) {
                   const res = await fetch('/api/sites', {
                     method: 'PUT',
-                    body: JSON.stringify({ ...data, id: editingSite.id })
+                    body: JSON.stringify({ ...payload, id: editingSite.id })
                   });
                   if (res.ok) {
                     const updated = await res.json();
-                    // ✅ 检查返回数据是否有效
                     if (updated && updated.id) {
                       setSites(sites.map(s => s.id === editingSite.id ? updated : s));
                     } else {
-                      // 返回数据无效，重新获取全部数据
                       await fetchSites();
                     }
                     setIsModalOpen(false);
                     showToast('站点已更新', 'success');
-                  } else {
-                    showToast('更新失败', 'error');
-                  }
+                  } else showToast('更新失败', 'error');
                 } else {
                   const res = await fetch('/api/sites', {
                     method: 'POST',
-                    body: JSON.stringify({ ...data })
+                    body: JSON.stringify(payload)
                   });
                   if (res.ok) {
                     const created = await res.json();
-                    // ✅ 检查返回数据是否有效
                     if (created && created.id) {
                       setSites([...sites, created]);
                     } else {
-                      // 返回数据无效，重新获取全部数据
                       await fetchSites();
                     }
                     setIsModalOpen(false);
                     showToast('站点已添加', 'success');
-                  } else {
-                    showToast('添加失败', 'error');
-                  }
+                  } else showToast('添加失败', 'error');
                 }
               } catch (e) {
                 console.error('保存失败:', e);
