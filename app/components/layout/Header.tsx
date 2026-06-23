@@ -3,7 +3,7 @@ import { Search, LayoutGrid, X, ChevronDown, Plus, Settings, User, LogOut, LogIn
 import { SEARCH_ENGINES } from '@/lib/utils';
 import { ThemeToggle } from './ThemeToggle';
 import { ActionButton } from '@/app/components/ui/ActionButton';
-import { Icon } from '@iconify/react';  // ← 新增导入
+import { Icon } from '@iconify/react';
 
 interface HeaderProps {
     isDarkMode: boolean;
@@ -163,15 +163,11 @@ export function Header({
                         </div>
                     </div>
 
-                    {/* Actions */}
+                    {/* Actions - 已移除前台添加按钮 */}
                     <div className="flex items-center gap-0.5 sm:gap-1 md:gap-2 shrink-0 pr-0.5 sm:pr-1 z-50">
                         <ThemeToggle isDarkMode={isDarkMode} toggleTheme={() => setIsDarkMode(!isDarkMode)} />
                         {isLoggedIn && (
                             <>
-                                <ActionButton icon={Plus} onClick={() => {
-                                    setEditingSite(null);
-                                    setIsModalOpen(true);
-                                }} tooltip="添加" isDarkMode={isDarkMode} highlight />
                                 <ActionButton icon={Settings} onClick={() => setIsSettingsOpen(!isSettingsOpen)}
                                     tooltip="设置" active={isSettingsOpen} isDarkMode={isDarkMode} />
                                 <ActionButton icon={User} onClick={() => setIsAccountSettingsModalOpen(true)}
