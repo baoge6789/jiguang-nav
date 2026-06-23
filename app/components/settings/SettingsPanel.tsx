@@ -503,7 +503,7 @@ export function SettingsPanel({
     const handleExport = async () => {
         const exportLayout = { ...layoutSettings };
 
-        // Serialize Custom Wallpaper if exists - 压缩后嵌入
+        // 1. 压缩壁纸
         if (layoutSettings.bgType === 'custom' && layoutSettings.bgColor && layoutSettings.bgColor.startsWith('/')) {
             try {
                 showToast('正在压缩壁纸...', 'loading');
@@ -517,10 +517,28 @@ export function SettingsPanel({
             }
         }
 
-        // Filter Custom Fonts
+        // 2. 压缩 Logo
+        let compressedLogo = appConfig.logoImage;
+        if (appConfig.logoImage && appConfig.logoImage.startsWith('data:image')) {
+            try {
+                showToast('正在压缩 Logo...', 'loading');
+                compressedLogo = await compressImage(appConfig.logoImage, 200, 0.8);
+            } catch (e) {
+                console.error('Failed to compress logo', e);
+                compressedLogo = appConfig.logoImage;
+            }
+        }
+
+        // 3. 使用压缩后的 Logo
+        const exportConfig = {
+            ...appConfig,
+            logoImage: compressedLogo
+        };
+
+        // 4. Filter Custom Fonts
         const customFonts = allFonts.filter((f: any) => f.isCustom);
 
-        // Fetch Todos and Countdowns
+        // 5. Fetch Todos and Countdowns
         let todos = [];
         let countdowns = [];
         try {
@@ -535,18 +553,19 @@ export function SettingsPanel({
             showToast('组件数据获取失败，将仅导出配置', 'error');
         }
 
+        // 6. 导出数据
         const data = JSON.stringify({
             sites,
             categories,
             categoryColors,
             layout: exportLayout,
-            config: appConfig,
-            hiddenCategories, // Export hidden state
-            theme: { isDarkMode }, // Export theme
-            searchEngine, // [NEW] Export Search Engine
-            customFonts, // Export custom fonts
-            todos, // Export todos
-            countdowns // Export countdowns
+            config: exportConfig,
+            hiddenCategories,
+            theme: { isDarkMode },
+            searchEngine,
+            customFonts,
+            todos,
+            countdowns
         });
 
         const blob = new Blob([data], { type: 'application/json' });
