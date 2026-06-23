@@ -514,8 +514,16 @@ export function SettingsPanel({
             showToast('组件数据获取失败，将仅导出配置', 'error');
         }
 
+        // ✅ 导出时排除与分类同名的文件夹
+        const exportSites = sites.filter((s: any) => {
+            if (s.type === 'folder' && categories.includes(s.name)) {
+                return false;
+            }
+            return true;
+        });
+
         const data = JSON.stringify({
-            sites,
+            sites: exportSites,
             categories,
             categoryColors,
             layout: exportLayout,
@@ -550,8 +558,16 @@ export function SettingsPanel({
                 const data = JSON.parse(ev.target.result);
                 showToast('正在导入配置...', 'loading');
                 
-                // 所有逻辑直接写在这里，不调用任何外部函数
-                let cleanedSites = data.sites || [];
+                // ✅ 导入时过滤掉与分类同名的文件夹
+                const categoryNames = data.categories || [];
+                let cleanedSites = (data.sites || []).filter((s: any) => {
+                    if (s.type === 'folder' && categoryNames.includes(s.name)) {
+                        return false;
+                    }
+                    return true;
+                });
+                
+                // 清理数据
                 cleanedSites = cleanedSites.map((s: any) => {
                     if (s.parentId || s.type === 'folder') {
                         return { ...s, type: 'folder' };

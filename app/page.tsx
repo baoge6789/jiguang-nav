@@ -239,8 +239,6 @@ export default function AuroraNav() {
   }, [isSearchFocused, contextMenu, currentFolderId]);
 
   // --- Init & Persistence ---
-  // --- Init & Persistence ---
-  // --- Init & Persistence ---
   useEffect(() => {
     const initData = async () => {
       // Optimistic Load from LocalStorage
@@ -744,7 +742,6 @@ export default function AuroraNav() {
     }
 
     // --- Category Drop Logic (New) ---
-    // --- Category Drop Logic (New) ---
     // If over is a Category (from CategoryHeader droppable)
     if (over.data.current?.type === 'category' || categories.includes(over.id as string)) {
       const categoryId = over.id as string;
@@ -1148,6 +1145,7 @@ export default function AuroraNav() {
                             return;
                           }
                           try {
+                            // ✅ 只添加分类，不自动创建文件夹
                             const res = await fetch('/api/categories', {
                               method: 'POST',
                               headers: { 'Content-Type': 'application/json' },
