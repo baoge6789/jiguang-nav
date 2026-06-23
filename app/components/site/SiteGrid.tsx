@@ -21,7 +21,7 @@ interface SiteGridProps {
     onContextMenu: (e: any, id: any) => void;
     onFolderClick?: (folder: any) => void;
     getCategoryColor: (cat: string) => string;
-    dragOverFolderId?: string | null; // For visual feedback on folder drop targets
+    dragOverFolderId?: string | null;
 }
 
 export function SiteGrid({
@@ -39,8 +39,8 @@ export function SiteGrid({
     onContextMenu,
     onFolderClick,
     getCategoryColor,
-    sites, // New Prop
-    dragOverFolderId, // For visual feedback
+    sites,
+    dragOverFolderId,
 }: SiteGridProps & { sites?: any[] }) {
 
     if (isLoading) {
@@ -72,7 +72,6 @@ export function SiteGrid({
                 categories.filter(cat => isLoggedIn || !hiddenCategories.includes(cat)).map(cat => {
                     const catSites = visibleSites.filter(s => s.category === cat);
                     const catSiteIds = catSites.map(s => s.id);
-                    // Ensure we render empty categories if logged in, for drop targets
                     if (catSites.length === 0 && !isLoggedIn) return null;
 
                     return (
@@ -109,11 +108,7 @@ export function SiteGrid({
                                                 />
                                             );
                                         })}
-                                        {catSites.length === 0 && (
-                                            <div className="col-span-full h-8 flex items-center justify-center border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-lg opacity-50 text-xs text-center w-full">
-                                                从其他分类拖拽至此
-                                            </div>
-                                        )}
+                                        {/* ✅ 虚线框已移除 */}
                                     </>
                                 </SortableContext>
                             </div>

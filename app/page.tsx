@@ -139,7 +139,7 @@ export default function AuroraNav() {
   const { allFonts } = useFonts();
 
   // Interaction States
-  const [activeTab, setActiveTab] = useState('全部');
+  const [activeTab, setActiveTab] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [searchSuggestions, setSearchSuggestions] = useState<string[]>([]);
   const [currentEngineId, setCurrentEngineId] = useState('local');
@@ -975,7 +975,7 @@ export default function AuroraNav() {
   };
 
   // ============================================================
-  // ✅ 修复：管理员登录后点击"全部"显示所有站点
+  // ✅ 修复：管理员登录后点击分类显示对应站点
   // ============================================================
   const filteredSites = useMemo(() => {
   let result = sites;
@@ -995,14 +995,14 @@ export default function AuroraNav() {
       }
     });
 
-    if (activeTab !== '全部') {
+    if (activeTab && activeTab !== '全部') {
       result = result.filter((site: any) => site.category === activeTab);
     } else {
       if (isLoggedIn) {
-        // ✅ 登录用户点击"全部"：显示所有站点
+        // ✅ 登录用户：显示所有分类下的站点
         // 什么都不做，保持 result 不变
       } else {
-        // ❌ 未登录访客点击"全部"：过滤掉隐藏分类的站点
+        // ❌ 未登录访客：过滤掉隐藏分类的站点
         result = result.filter((site: any) => !hiddenCategories.includes(site.category));
       }
     }
@@ -1139,7 +1139,7 @@ export default function AuroraNav() {
                     </SortableContext>
                   </div>
 
-                  {/* Category Tabs - ✅ 管理员可见所有分类，访客看不到隐藏分类 */}
+                  {/* Category Tabs - ✅ 只显示实际分类，不显示"全部" */}
                   {!isLoading && (layoutSettings.showNavBar ?? true) && (
                     <nav
                       className={`sticky z-30 w-full ${layoutSettings.compactMode ? 'mb-4' : 'mb-8'} transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] ${isScrolled ? 'top-[4.5rem]' : 'top-[5.5rem]'}`}>
@@ -1151,26 +1151,7 @@ export default function AuroraNav() {
                             e.currentTarget.style.setProperty('--mouse-y', `${e.clientY - bounds.top}px`);
                           }}
                           className={`group/nav relative flex items-center gap-2 sm:gap-3 md:gap-4 p-1.5 sm:p-2 rounded-full overflow-x-auto custom-scrollbar max-w-full backdrop-blur-2xl shadow-2xl shadow-indigo-500/10 ${isDarkMode ? 'bg-slate-900/60 ring-1 ring-white/10' : 'bg-white/60 ring-1 ring-white/60'}`}>
-
-                          {/* Spotlight Effect - 已禁用 */}
-                          {/* <div className={`pointer-events-none absolute -inset-px rounded-full opacity-0 transition-opacity duration-300 group-hover/nav:opacity-100 ${isDarkMode ? 'mix-blend-overlay' : 'mix-blend-multiply'}`}
-                            style={{
-                              background: `radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), ${isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(99,102,241,0.05)'}, transparent 40%)`
-                            }}
-                          /> */}
-
-                          <CategoryPill
-                            label="全部"
-                            active={activeTab === '全部'}
-                            onClick={() => setActiveTab('全部')}
-                            isDarkMode={isDarkMode}
-                            color={getCategoryColor('全部')}
-                            navColorMode={layoutSettings.navColorMode}
-                          />
-                          <div
-                            className={`w-px h-5 shrink-0 ${isDarkMode ? 'bg-white/10' : 'bg-slate-400/20'}`}></div>
                           {categories.filter(cat => {
-                            // ✅ 管理员登录后看到所有分类，访客看不到隐藏分类
                             if (isLoggedIn) return true;
                             return !hiddenCategories.includes(cat);
                           }).map(cat => (
@@ -1185,6 +1166,9 @@ export default function AuroraNav() {
                               settings={layoutSettings}
                             />
                           ))}
+                          {categories.length === 0 && (
+                            <span className="text-xs opacity-50 px-4 py-1">暂无分类</span>
+                          )}
                         </div>
                       </div>
                     </nav>
