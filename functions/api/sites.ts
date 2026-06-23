@@ -18,7 +18,6 @@ export const onRequestPut: PagesFunction<Env> = async (context) => {
     const body = await context.request.json();
     const db = context.env.DB;
 
-    // ✅ 批量更新（保留 type 字段）
     if (Array.isArray(body)) {
       const stmt = db.prepare(
         'UPDATE Site SET "order" = ?, category = ?, isHidden = ?, parentId = ?, type = ?, updatedAt = datetime(\'now\') WHERE id = ?'
@@ -29,7 +28,7 @@ export const onRequestPut: PagesFunction<Env> = async (context) => {
           s.category ?? '',
           s.isHidden ? 1 : 0,
           s.parentId ?? null,
-          s.type || 'site',  // ✅ 保留 type 字段
+          s.type || 'site',
           s.id
         )
       );
@@ -37,7 +36,6 @@ export const onRequestPut: PagesFunction<Env> = async (context) => {
       return jsonResponse({ success: true, updated: batch.length });
     }
 
-    // ✅ 单个更新（保留 type 字段）
     const site = body as any;
     if (!site.id) return errorResponse('Missing site id', 400);
 
@@ -62,7 +60,7 @@ export const onRequestPut: PagesFunction<Env> = async (context) => {
         site.order ?? 0,
         site.parentId || null,
         site.isHidden ? 1 : 0,
-        site.type || 'site',  // ✅ 保留 type 字段
+        site.type || 'site',
         site.id
       )
       .run();
@@ -80,8 +78,6 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     const db = context.env.DB;
 
     const id = site.id || crypto.randomUUID();
-
-    // ✅ 确保 type 正确保存
     const finalType = site.type === 'folder' ? 'folder' : 'site';
 
     await db
@@ -105,9 +101,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       )
       .run();
 
-    // ✅ 返回时保留正确的 type
-    const result = { ...site, id, type: finalType };
-    return jsonResponse(result, 201);
+    return jsonResponse({ ...site, id, type: finalType }, 201);
   } catch (e: any) {
     return errorResponse('Failed to create site: ' + e.message);
   }

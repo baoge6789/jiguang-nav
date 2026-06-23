@@ -13,31 +13,22 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     const name = body.name.trim();
     const order = body.order ?? 0;
 
-    // 检查分类是否已存在
     const existing = await db.prepare('SELECT id FROM Category WHERE name = ?').bind(name).first();
     if (existing) {
       return errorResponse('Category already exists', 409);
     }
 
-    // 1. 插入分类
     await db.prepare(
       'INSERT INTO Category (name, "order", updatedAt) VALUES (?, ?, datetime(\'now\'))'
     ).bind(name, order).run();
 
-    // 2. 🔥 同时创建对应的文件夹站点（关键修复）
+    // 创建对应的文件夹
     const folderId = `folder_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
     await db.prepare(
       `INSERT INTO Site (id, name, url, type, category, parentId, "order", isHidden, createdAt, updatedAt) 
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))`
     ).bind(
-      folderId,           // id
-      name,               // name (与分类同名)
-      '',                 // url (文件夹没有URL)
-      'folder',           // type ← 关键：标记为文件夹
-      name,               // category (属于这个分类)
-      null,               // parentId (根目录)
-      0,                  // order
-      0                   // isHidden (不隐藏)
+      folderId, name, '', 'folder', name, null, 0, 0
     ).run();
 
     return jsonResponse({ success: true, name, order }, 201);
@@ -46,21 +37,16 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   }
 };
 
-// PUT /api/categories - 批量更新分类（全量替换）
+// PUT /api/categories - 批量更新分类
 export const onRequestPut: PagesFunction<Env> = async (context) => {
   try {
     const categories: any[] = await context.request.json();
     const db = context.env.DB;
 
-    // 获取现有的分类列表（包含 name）
-    const existingCategories = await db.prepare('SELECT name FROM Category').all();
+    const existingCategories = await db.prepare('SELECT id, name FROM Category').all();
     const oldNames = existingCategories.results.map((row: any) => row.name);
-    const newNames = categories.map(c => c.name);
 
-    // 找出被删除的分类
-    const deletedNames = oldNames.filter((name: string) => !newNames.includes(name));
-
-    // 🔥 检测分类改名：找出 oldName -> newName 的映射
+    // 检测分类改名
     const nameMap: Record<string, string> = {};
     for (const oldName of oldNames) {
       const matched = categories.find(c => c.name === oldName);
@@ -69,10 +55,13 @@ export const onRequestPut: PagesFunction<Env> = async (context) => {
       }
     }
 
-    // 1. 删除所有现有分类
+    const newNames = categories.map(c => c.name);
+    const deletedNames = oldNames.filter((name: string) => !newNames.includes(name));
+
+    // 删除所有现有分类
     await db.prepare('DELETE FROM Category').run();
 
-    // 2. 重新插入分类
+    // 重新插入分类
     const stmt = db.prepare(
       'INSERT INTO Category (name, color, isHidden, "order", updatedAt) VALUES (?, ?, ?, ?, datetime(\'now\'))'
     );
@@ -85,8 +74,8 @@ export const onRequestPut: PagesFunction<Env> = async (context) => {
       await db.batch(batch);
     }
 
-    // 3. 🔥 同步文件夹站点
-    // 先删除不再存在的分类对应的文件夹
+    // 处理文件夹
+    // 删除不再存在的分类对应的文件夹
     for (const name of deletedNames) {
       await db.prepare('DELETE FROM Site WHERE type = ? AND category = ?').bind('folder', name).run();
     }
@@ -95,24 +84,21 @@ export const onRequestPut: PagesFunction<Env> = async (context) => {
     for (const cat of categories) {
       const folderName = cat.name.trim();
 
-      // 检查是否已有对应的文件夹
       const existingFolder = await db.prepare(
         'SELECT id, name FROM Site WHERE type = ? AND category = ?'
       ).bind('folder', folderName).first();
 
       if (existingFolder) {
-        // ✅ 只有当分类真正改名时，才更新文件夹名称
-        // 检查这个分类是否从旧名称改过来的
+        // ✅ 只有分类真正改名时才更新文件夹名
         const oldCategoryName = Object.keys(nameMap).find(key => nameMap[key] === folderName);
         if (oldCategoryName && existingFolder.name === oldCategoryName) {
-          // 分类改名了，文件夹名也需要同步
           await db.prepare(
             'UPDATE Site SET name = ?, updatedAt = datetime(\'now\') WHERE id = ?'
           ).bind(folderName, existingFolder.id).run();
         }
-        // ✅ 如果文件夹名已被用户手动修改（与分类名不同），则保持不动
+        // 否则保持原样，不覆盖用户手动修改的文件夹名
       } else {
-        // 创建新的文件夹（新分类）
+        // 创建新的文件夹
         const folderId = `folder_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
         await db.prepare(
           `INSERT INTO Site (id, name, url, type, category, parentId, "order", isHidden, createdAt, updatedAt) 
@@ -136,7 +122,7 @@ export const onRequestPut: PagesFunction<Env> = async (context) => {
   }
 };
 
-// DELETE /api/categories - 删除指定分类（同时删除对应的文件夹）
+// DELETE /api/categories - 删除指定分类
 export const onRequestDelete: PagesFunction<Env> = async (context) => {
   try {
     const url = new URL(context.request.url);
@@ -148,10 +134,7 @@ export const onRequestDelete: PagesFunction<Env> = async (context) => {
 
     const db = context.env.DB;
 
-    // 1. 删除分类
     await db.prepare('DELETE FROM Category WHERE name = ?').bind(name).run();
-
-    // 2. 🔥 同时删除对应的文件夹站点
     await db.prepare('DELETE FROM Site WHERE type = ? AND category = ?').bind('folder', name).run();
 
     return jsonResponse({ success: true });

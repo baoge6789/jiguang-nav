@@ -586,6 +586,69 @@ export function SettingsPanel({
         }
     };
 
+    // ✅ 修复后的 handleImportData
+    const handleImportData = async (data: any) => {
+        try {
+            showToast('正在导入配置...', 'loading');
+
+            // ✅ 关键修复：确保 type 字段正确保留
+            let cleanedSites = data.sites || [];
+            
+            // 修复每个站点的 type
+            cleanedSites = cleanedSites.map((s: any) => {
+                // 如果有 parentId 或者已经是 folder，强制设为 folder
+                if (s.parentId || s.type === 'folder') {
+                    return { ...s, type: 'folder' };
+                }
+                // 否则默认为 site
+                return { ...s, type: s.type || 'site' };
+            });
+
+            // 更新状态
+            if (cleanedSites.length > 0) setSites(cleanedSites);
+            if (data.categories) setCategories(data.categories);
+            if (data.layout) setLayoutSettings(data.layout);
+            if (data.config) setAppConfig(data.config);
+            if (data.categoryColors) setCategoryColors(data.categoryColors);
+            if (data.hiddenCategories) setHiddenCategories(data.hiddenCategories);
+            if (data.theme && typeof data.theme.isDarkMode === 'boolean') setIsDarkMode(data.theme.isDarkMode);
+            if (data.searchEngine) setSearchEngine(data.searchEngine);
+
+            // 恢复自定义字体
+            if (data.customFonts && Array.isArray(data.customFonts)) {
+                for (const font of data.customFonts) {
+                    try {
+                        await fetch('/api/admin/fonts', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(font)
+                        });
+                    } catch (e) {
+                        console.error('Failed to restore font:', font.name);
+                    }
+                }
+            }
+
+            // 保存到数据库
+            const res = await fetch('/api/import', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ...data, sites: cleanedSites })
+            });
+
+            if (res.ok) {
+                showToast('配置导入成功', 'success');
+                setIsSettingsOpen(false);
+                setTimeout(() => window.location.reload(), 1000);
+            } else {
+                showToast('保存到数据库失败', 'error');
+            }
+        } catch (e) {
+            console.error(e);
+            showToast('数据格式错误', 'error');
+        }
+    };
+
     const handleLogoUpload = (e: any) => {
         const file = e.target.files[0];
         if (file) {
