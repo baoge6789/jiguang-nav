@@ -586,7 +586,7 @@ export function SettingsPanel({
         }
     };
 
-    // ✅ 修复后的 handleImportData
+    // ✅ 唯一版本的 handleImportData
     const handleImportData = async (data: any) => {
         try {
             showToast('正在导入配置...', 'loading');
@@ -594,17 +594,13 @@ export function SettingsPanel({
             // ✅ 关键修复：确保 type 字段正确保留
             let cleanedSites = data.sites || [];
             
-            // 修复每个站点的 type
             cleanedSites = cleanedSites.map((s: any) => {
-                // 如果有 parentId 或者已经是 folder，强制设为 folder
                 if (s.parentId || s.type === 'folder') {
                     return { ...s, type: 'folder' };
                 }
-                // 否则默认为 site
                 return { ...s, type: s.type || 'site' };
             });
 
-            // 更新状态
             if (cleanedSites.length > 0) setSites(cleanedSites);
             if (data.categories) setCategories(data.categories);
             if (data.layout) setLayoutSettings(data.layout);
@@ -614,7 +610,6 @@ export function SettingsPanel({
             if (data.theme && typeof data.theme.isDarkMode === 'boolean') setIsDarkMode(data.theme.isDarkMode);
             if (data.searchEngine) setSearchEngine(data.searchEngine);
 
-            // 恢复自定义字体
             if (data.customFonts && Array.isArray(data.customFonts)) {
                 for (const font of data.customFonts) {
                     try {
@@ -629,7 +624,6 @@ export function SettingsPanel({
                 }
             }
 
-            // 保存到数据库
             const res = await fetch('/api/import', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
