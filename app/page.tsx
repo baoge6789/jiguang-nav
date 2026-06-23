@@ -440,14 +440,21 @@ export default function AuroraNav() {
     return () => clearTimeout(timer);
   }, [categories, categoryColors, hiddenCategories, isLoggedIn]);
 
-  // 3. Sync Sites
+  // 3. Sync Sites - ✅ 修复：保留 type 字段
   useEffect(() => {
     if (!isLoggedIn || !isInitializedRef.current) return;
     const timer = setTimeout(async () => {
       if (sitesSyncLock.current) return;
       sitesSyncLock.current = true;
       try {
-        const sitePayload = sites.map((s, index) => ({ id: s.id, order: index, isHidden: s.isHidden, category: s.category, parentId: s.parentId }));
+        const sitePayload = sites.map((s, index) => ({
+          id: s.id,
+          order: index,
+          isHidden: s.isHidden,
+          category: s.category,
+          parentId: s.parentId,
+          type: s.type || 'site'  // ✅ 保留 type 字段，防止文件夹变成网站
+        }));
         await fetch('/api/sites', {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
