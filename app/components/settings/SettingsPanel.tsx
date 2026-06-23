@@ -49,6 +49,76 @@ import { FontPickerModal } from '@/app/components/modals/FontPickerModal';
 import { ConfirmationModal } from '@/app/components/modals/ConfirmationModal';
 import { SyncProgressModal } from '@/app/components/modals/SyncProgressModal';
 
+// ============================================================
+// ✅ 关键修复：在组件外部定义导入处理函数（避免 Tree Shaking）
+// ============================================================
+const importDataHandler = async (data: any, context: any) => {
+    const { 
+        showToast, 
+        setSites, 
+        setCategories, 
+        setLayoutSettings, 
+        setAppConfig, 
+        setCategoryColors,
+        setHiddenCategories,
+        setIsDarkMode,
+        setSearchEngine,
+        setIsSettingsOpen
+    } = context;
+    
+    try {
+        showToast('正在导入配置...', 'loading');
+
+        let cleanedSites = data.sites || [];
+        cleanedSites = cleanedSites.map((s: any) => {
+            if (s.parentId || s.type === 'folder') {
+                return { ...s, type: 'folder' };
+            }
+            return { ...s, type: s.type || 'site' };
+        });
+
+        if (cleanedSites.length > 0) setSites(cleanedSites);
+        if (data.categories) setCategories(data.categories);
+        if (data.layout) setLayoutSettings(data.layout);
+        if (data.config) setAppConfig(data.config);
+        if (data.categoryColors) setCategoryColors(data.categoryColors);
+        if (data.hiddenCategories && setHiddenCategories) setHiddenCategories(data.hiddenCategories);
+        if (data.theme && typeof data.theme.isDarkMode === 'boolean' && setIsDarkMode) setIsDarkMode(data.theme.isDarkMode);
+        if (data.searchEngine && setSearchEngine) setSearchEngine(data.searchEngine);
+
+        if (data.customFonts && Array.isArray(data.customFonts)) {
+            for (const font of data.customFonts) {
+                try {
+                    await fetch('/api/admin/fonts', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(font)
+                    });
+                } catch (e) {
+                    console.error('Failed to restore font:', font.name);
+                }
+            }
+        }
+
+        const res = await fetch('/api/import', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ...data, sites: cleanedSites })
+        });
+
+        if (res.ok) {
+            showToast('配置导入成功', 'success');
+            if (setIsSettingsOpen) setIsSettingsOpen(false);
+            setTimeout(() => window.location.reload(), 1000);
+        } else {
+            showToast('保存到数据库失败', 'error');
+        }
+    } catch (e) {
+        console.error(e);
+        showToast('数据格式错误', 'error');
+    }
+};
+
 interface SettingsPanelProps {
     isDarkMode: boolean;
     onClose: () => void;
@@ -156,73 +226,6 @@ export function SettingsPanel({
         failed: 0,
         status: 'idle'
     });
-
-    // ============================================================
-    // ✅ 修复1: importDataHandler 定义在 handleFileSelect 之前
-    // ============================================================
-    const importDataHandler = async (data: any) => {
-        try {
-            showToast('正在导入配置...', 'loading');
-
-            // 关键修复：确保 type 字段正确保留
-            let cleanedSites = data.sites || [];
-            
-            cleanedSites = cleanedSites.map((s: any) => {
-                if (s.parentId || s.type === 'folder') {
-                    return { ...s, type: 'folder' };
-                }
-                return { ...s, type: s.type || 'site' };
-            });
-
-            if (cleanedSites.length > 0) setSites(cleanedSites);
-            if (data.categories) setCategories(data.categories);
-            if (data.layout) setLayoutSettings(data.layout);
-            if (data.config) setAppConfig(data.config);
-            if (data.categoryColors) setCategoryColors(data.categoryColors);
-            if (data.hiddenCategories && setHiddenCategories) {
-                setHiddenCategories(data.hiddenCategories);
-            }
-            if (data.theme && typeof data.theme.isDarkMode === 'boolean' && setIsDarkMode) {
-                setIsDarkMode(data.theme.isDarkMode);
-            }
-            if (data.searchEngine && setSearchEngine) {
-                setSearchEngine(data.searchEngine);
-            }
-
-            if (data.customFonts && Array.isArray(data.customFonts)) {
-                for (const font of data.customFonts) {
-                    try {
-                        await fetch('/api/admin/fonts', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(font)
-                        });
-                    } catch (e) {
-                        console.error('Failed to restore font:', font.name);
-                    }
-                }
-            }
-
-            const res = await fetch('/api/import', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ...data, sites: cleanedSites })
-            });
-
-            if (res.ok) {
-                showToast('配置导入成功', 'success');
-                if (setIsSettingsOpen) {
-                    setIsSettingsOpen(false);
-                }
-                setTimeout(() => window.location.reload(), 1000);
-            } else {
-                showToast('保存到数据库失败', 'error');
-            }
-        } catch (e) {
-            console.error(e);
-            showToast('数据格式错误', 'error');
-        }
-    };
 
     // 1. Open Modal and Calculate "To Sync"
     const openSyncModal = async () => {
@@ -604,9 +607,7 @@ export function SettingsPanel({
         showToast('配置已导出', 'success');
     };
 
-    // ============================================================
-    // ✅ 修复2: handleFileSelect 定义在 importDataHandler 之后
-    // ============================================================
+    // ✅ handleFileSelect 调用外部函数
     const handleFileSelect = (e: any) => {
         const file = e.target.files[0];
         if (file) {
@@ -614,7 +615,19 @@ export function SettingsPanel({
             reader.onload = (e: any) => {
                 try {
                     const data = JSON.parse(e.target.result);
-                    importDataHandler(data);
+                    // 调用外部定义的 importDataHandler
+                    importDataHandler(data, {
+                        showToast,
+                        setSites,
+                        setCategories,
+                        setLayoutSettings,
+                        setAppConfig,
+                        setCategoryColors,
+                        setHiddenCategories,
+                        setIsDarkMode,
+                        setSearchEngine,
+                        setIsSettingsOpen
+                    });
                 } catch (error) {
                     console.error('解析失败:', error);
                     showToast('数据格式错误，请检查 JSON 格式', 'error');
