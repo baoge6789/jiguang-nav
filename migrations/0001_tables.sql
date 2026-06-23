@@ -1,3 +1,7 @@
+-- ============================================================
+-- 所有建表语句
+-- ============================================================
+
 CREATE TABLE IF NOT EXISTS Site (
   id TEXT PRIMARY KEY,
   name TEXT NOT NULL,
@@ -75,3 +79,9 @@ CREATE TABLE IF NOT EXISTS Countdown (
   date TEXT NOT NULL,
   createdAt TEXT NOT NULL DEFAULT (datetime('now'))
 );
+
+-- ============================================================
+-- 默认管理员账户（密码：123456）
+-- ============================================================
+INSERT OR IGNORE INTO User (username, passwordHash) 
+VALUES ('admin', '$2b$10$pTSVGUeY0cN.4qSxb4nADulhrBR0TcTS/f0.rV7c4W56kr3Pc2gx.');
