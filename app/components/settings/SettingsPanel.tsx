@@ -581,13 +581,13 @@ export function SettingsPanel({
         const file = e.target.files[0];
         if (file) {
             const reader = new FileReader();
-            reader.onload = (e: any) => handleImportData(JSON.parse(e.target.result));
+            reader.onload = (e: any) => importDataHandler(JSON.parse(e.target.result));
             reader.readAsText(file);
         }
     };
 
     // ✅ 唯一版本的 handleImportData
-    const handleImportData = async (data: any) => {
+    const importDataHandler = async (data: any) => {
         try {
             showToast('正在导入配置...', 'loading');
 
