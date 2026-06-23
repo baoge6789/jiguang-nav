@@ -546,7 +546,7 @@ export function SettingsPanel({
     };
 
     // ============================================================
-    // ✅ handleFileSelect - 所有逻辑直接写在这里
+    // ✅ handleFileSelect - 所有逻辑直接写在这里，不调用外部函数
     // ============================================================
     const handleFileSelect = (e: any) => {
         const file = e.target.files?.[0];
@@ -1371,7 +1371,8 @@ export function SettingsPanel({
                                         </div>
                                     </div>
                                     <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2">
-                                        <h4 className="text-base font-bold opacity-80 flex items-center gap-2"><Layout                                            size={16} /> 页脚设置</h4>
+                                        <h4 className="text-base font-bold opacity-80 flex items-center gap-2"><Layout
+                                            size={16} /> 页脚设置</h4>
                                         <div className="space-y-1.5">
                                             <Label>底部文字</Label>
                                             <Input
