@@ -546,7 +546,7 @@ export function SettingsPanel({
     };
 
     // ============================================================
-    // ✅ handleFileSelect - 所有逻辑直接写在这里，不调用外部函数
+    // ✅ handleFileSelect - 所有逻辑直接写在这里
     // ============================================================
     const handleFileSelect = (e: any) => {
         const file = e.target.files?.[0];
@@ -558,7 +558,7 @@ export function SettingsPanel({
                 const data = JSON.parse(ev.target.result);
                 showToast('正在导入配置...', 'loading');
                 
-                // ✅ 导入时过滤掉与分类同名的文件夹
+                // ✅ 过滤掉与分类同名的文件夹
                 const categoryNames = data.categories || [];
                 let cleanedSites = (data.sites || []).filter((s: any) => {
                     if (s.type === 'folder' && categoryNames.includes(s.name)) {
@@ -567,12 +567,12 @@ export function SettingsPanel({
                     return true;
                 });
                 
-                // 清理数据
+                // ✅ 修复：只有 type === 'folder' 才是文件夹，parentId 不影响类型
                 cleanedSites = cleanedSites.map((s: any) => {
-                    if (s.parentId || s.type === 'folder') {
+                    if (s.type === 'folder') {
                         return { ...s, type: 'folder' };
                     }
-                    return { ...s, type: s.type || 'site' };
+                    return { ...s, type: 'site', parentId: s.parentId || null };
                 });
                 
                 if (cleanedSites.length > 0) setSites(cleanedSites);
@@ -1371,8 +1371,7 @@ export function SettingsPanel({
                                         </div>
                                     </div>
                                     <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2">
-                                        <h4 className="text-base font-bold opacity-80 flex items-center gap-2"><Layout
-                                            size={16} /> 页脚设置</h4>
+                                        <h4 className="text-base font-bold opacity-80 flex items-center gap-2"><Layout                                            size={16} /> 页脚设置</h4>
                                         <div className="space-y-1.5">
                                             <Label>底部文字</Label>
                                             <Input
