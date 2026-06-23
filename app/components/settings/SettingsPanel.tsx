@@ -569,11 +569,12 @@ export function SettingsPanel({
                 
                 // ✅ 修复：只有 type === 'folder' 才是文件夹，parentId 不影响类型
                 cleanedSites = cleanedSites.map((s: any) => {
-                    if (s.type === 'folder') {
-                        return { ...s, type: 'folder' };
-                    }
-                    return { ...s, type: 'site', parentId: s.parentId || null };
-                });
+    // ✅ 修复：使用 == 而不是 ===，或者使用 String() 转换
+    if (String(s.type) === 'folder') {
+        return { ...s, type: 'folder' };
+    }
+    return { ...s, type: 'site', parentId: s.parentId || null };
+});
                 
                 if (cleanedSites.length > 0) setSites(cleanedSites);
                 if (data.categories) setCategories(data.categories);
