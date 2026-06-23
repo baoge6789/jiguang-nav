@@ -1167,7 +1167,7 @@ export default function AuroraNav() {
                         setSites={setSites}
                         setCategories={setCategories}
                         moveCategory={moveCategory}
-                        handleImportData={importDataHandler}
+                        
                         appConfig={appConfig}
                         setAppConfig={setAppConfig}
                         showToast={showToast}
