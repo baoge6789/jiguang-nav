@@ -919,60 +919,7 @@ export default function AuroraNav() {
     setCategories((items: string[]) => arrayMove(items, oldIndex, newIndex));
   };
 
-  const handleImportData = async (data: any) => {
-    try {
-      showToast('正在导入配置...', 'loading');
-
-      // 1. Update Local State
-      if (data.sites) setSites(data.sites);
-      if (data.categories) setCategories(data.categories);
-      if (data.layout) setLayoutSettings(data.layout);
-      if (data.config) setAppConfig(data.config);
-      if (data.categoryColors) setCategoryColors(data.categoryColors);
-
-      // New Fields
-      if (data.hiddenCategories) setHiddenCategories(data.hiddenCategories);
-      if (data.theme && typeof data.theme.isDarkMode === 'boolean') setIsDarkMode(data.theme.isDarkMode);
-      if (data.searchEngine) setSearchEngine(data.searchEngine); // Restore Search Engine
-
-      // Restore Custom Fonts
-      if (data.customFonts && Array.isArray(data.customFonts)) {
-        for (const font of data.customFonts) {
-          try {
-            // Persist to DB directly via API
-            await fetch('/api/admin/fonts', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(font)
-            });
-          } catch (e) {
-            console.error('Failed to restore font:', font.name);
-          }
-        }
-        // Trigger global font refresh if possible, or reload page.
-        // FontManager will pick up changes on next mount or via context refresh.
-      }
-
-      // 2. Persist to Database
-      const res = await fetch('/api/import', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-      });
-
-      if (res.ok) {
-        showToast('配置导入成功', 'success');
-        setIsSettingsOpen(false);
-        // Force a reload to ensure all settings (fonts, theme) apply cleanly if needed
-        setTimeout(() => window.location.reload(), 1000);
-      } else {
-        showToast('保存到数据库失败', 'error');
-      }
-    } catch (e) {
-      console.error(e);
-      showToast('数据格式错误', 'error');
-    }
-  };
+  // ✅ 删除旧的 handleImportData，使用 SettingsPanel 中的
 
   // ============================================================
   // ✅ 修复：管理员登录后点击分类显示对应站点
