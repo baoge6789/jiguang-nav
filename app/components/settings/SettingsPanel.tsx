@@ -1602,7 +1602,38 @@ export function SettingsPanel({
                             )}
                             {activeTab === 'categories' && (
                                 <div className="space-y-4">
-                                    <NewCategoryInput onAdd={handleAddCategory} isDarkMode={isDarkMode} />
+                                    <div className="flex items-center gap-2">
+    <NewCategoryInput onAdd={handleAddCategory} isDarkMode={isDarkMode} className="flex-1" />
+    <Button
+        onClick={() => {
+            setEditingSite({
+                id: null,
+                name: '',
+                url: '',
+                desc: '',
+                category: categories[0] || '',
+                color: getRandomColor(),
+                icon: 'Globe',
+                iconType: 'auto',
+                customIconUrl: '',
+                titleColor: '',
+                descColor: '',
+                titleFont: '',
+                descFont: '',
+                titleSize: '',
+                descSize: '',
+                isHidden: false,
+                type: 'site',
+                parentId: ''
+            });
+            setIsModalOpen(true);
+        }}
+        className="shrink-0 h-9"
+        variant="outline"
+    >
+        <Plus size={16} className="mr-1" /> 添加站点/文件夹
+    </Button>
+</div>
 
                                     {/* Site Statistics */}
                                     <div className={`flex items-center justify-between px-4 py-3 rounded-xl border text-sm ${isDarkMode ? 'bg-white/5 border-white/5' : 'bg-slate-50 border-slate-100'}`}>
