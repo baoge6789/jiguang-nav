@@ -257,51 +257,59 @@ export function SettingsPanel({
     };
 
 
-    const handleRename = async () => {
-        if (!renamingCategory || !renameValue.trim() || renamingCategory === renameValue.trim()) {
-            setRenamingCategory(null);
-            return;
-        }
-        const oldName = renamingCategory;
-        const newName = renameValue.trim();
+   const handleRename = async () => {
+    if (!renamingCategory || !renameValue.trim() || renamingCategory === renameValue.trim()) {
+        setRenamingCategory(null);
+        return;
+    }
+    const oldName = renamingCategory;
+    const newName = renameValue.trim();
 
-        if (categories.includes(newName)) {
-            showToast('分类名称已存在', 'error');
-            return;
-        }
+    if (categories.includes(newName)) {
+        showToast('分类名称已存在', 'error');
+        return;
+    }
 
-        try {
-            const res = await fetch('/api/categories', {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ oldName, newName })
-            });
+    try {
+        // ✅ 构建完整的分类列表（包含所有分类）
+        const updatedCategories = categories.map(c => c === oldName ? newName : c);
+        const payload = updatedCategories.map((name, index) => ({
+            name,
+            order: index,
+            color: categoryColors[name] || getRandomColor(),
+            isHidden: hiddenCategories.includes(name)
+        }));
 
-            if (res.ok) {
-                // Update Categories List
-                setCategories(categories.map(c => c === oldName ? newName : c));
+        const res = await fetch('/api/categories', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)  // ✅ 提交完整列表，而不是 { oldName, newName }
+        });
 
-                // Update Sites
-                setSites(sites.map(s => s.category === oldName ? { ...s, category: newName } : s));
+        if (res.ok) {
+            // Update Categories List
+            setCategories(updatedCategories);
 
-                // Update Colors
-                if (categoryColors[oldName]) {
-                    const newColors = { ...categoryColors };
-                    newColors[newName] = newColors[oldName];
-                    delete newColors[oldName];
-                    setCategoryColors(newColors);
-                }
+            // Update Sites
+            setSites(sites.map(s => s.category === oldName ? { ...s, category: newName } : s));
 
-                setRenamingCategory(null);
-                showToast('分类重命名成功');
-            } else {
-                showToast('重命名失败', 'error');
+            // Update Colors
+            if (categoryColors[oldName]) {
+                const newColors = { ...categoryColors };
+                newColors[newName] = newColors[oldName];
+                delete newColors[oldName];
+                setCategoryColors(newColors);
             }
-        } catch (e) {
-            showToast('请求失败', 'error');
-        }
-    };
 
+            setRenamingCategory(null);
+            showToast('分类重命名成功');
+        } else {
+            showToast('重命名失败', 'error');
+        }
+    } catch (e) {
+        showToast('请求失败', 'error');
+    }
+};
     const sensors = useSensors(
         useSensor(MouseSensor, {
             activationConstraint: {
