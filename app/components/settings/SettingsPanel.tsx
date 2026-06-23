@@ -474,24 +474,46 @@ export function SettingsPanel({
         }
     };
 
+    // 压缩图片函数
+    const compressImage = (url: string, maxWidth: number = 1200, quality: number = 0.7): Promise<string> => {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.onload = () => {
+                try {
+                    const canvas = document.createElement('canvas');
+                    const ratio = Math.min(maxWidth / img.width, 1);
+                    canvas.width = Math.round(img.width * ratio);
+                    canvas.height = Math.round(img.height * ratio);
+                    const ctx = canvas.getContext('2d');
+                    if (!ctx) {
+                        reject(new Error('Failed to get canvas context'));
+                        return;
+                    }
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    resolve(canvas.toDataURL('image/jpeg', quality));
+                } catch (err) {
+                    reject(err);
+                }
+            };
+            img.onerror = () => reject(new Error('Failed to load image'));
+            img.src = url;
+        });
+    };
+
     const handleExport = async () => {
         const exportLayout = { ...layoutSettings };
 
-        // Serialize Custom Wallpaper if exists
+        // Serialize Custom Wallpaper if exists - 压缩后嵌入
         if (layoutSettings.bgType === 'custom' && layoutSettings.bgColor && layoutSettings.bgColor.startsWith('/')) {
             try {
-                showToast('正在打包壁纸...', 'loading');
-                const res = await fetch(layoutSettings.bgColor);
-                const blob = await res.blob();
-                const base64 = await new Promise((resolve) => {
-                    const reader = new FileReader();
-                    reader.onloadend = () => resolve(reader.result);
-                    reader.readAsDataURL(blob);
-                });
-                exportLayout.bgColor = base64; // Embed Base64
+                showToast('正在压缩壁纸...', 'loading');
+                const compressed = await compressImage(layoutSettings.bgColor, 1200, 0.7);
+                exportLayout.bgColor = compressed;
+                showToast('壁纸压缩完成', 'success');
             } catch (e) {
-                console.error('Failed to serialize wallpaper', e);
-                showToast('壁纸打包失败，将仅导出引用', 'error');
+                console.error('Failed to compress wallpaper', e);
+                showToast('压缩失败，将仅导出引用', 'error');
+                exportLayout.bgColor = layoutSettings.bgColor;
             }
         }
 
