@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import {
     Palette, ImageIcon, Layout, Globe, List, Settings, X, Type, ZoomIn, CheckCircle2,
     PaintBucket, ImagePlus, RefreshCw, UploadCloud, Move, Lock, Code, Plus, Trash2, FolderPlus,
@@ -23,7 +23,6 @@ import {
     verticalListSortingStrategy,
     arrayMove
 } from '@dnd-kit/sortable';
-
 
 import { Switch } from "@/components/ui/switch";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -78,7 +77,11 @@ interface SettingsPanelProps {
     setIsModalOpen: (isOpen: boolean) => void;
     setEditingSite: (site: any) => void;
     onDeleteSite: (site: any) => void;
-    searchEngine: string; // [NEW] Added for export
+    searchEngine: string;
+    setIsDarkMode?: (isDarkMode: boolean) => void;
+    setIsSettingsOpen?: (isOpen: boolean) => void;
+    setSearchEngine?: (engine: string) => void;
+    setHiddenCategories?: (categories: string[]) => void;
 }
 
 export function SettingsPanel({
@@ -104,12 +107,16 @@ export function SettingsPanel({
     setAppConfig,
     showToast,
     isWallpaperManagerOpen,
-    searchEngine, // [NEW] Destructure prop
+    searchEngine,
     setIsWallpaperManagerOpen,
     setBingWallpaper,
     setIsModalOpen,
     setEditingSite,
-    onDeleteSite
+    onDeleteSite,
+    setIsDarkMode,
+    setIsSettingsOpen,
+    setSearchEngine,
+    setHiddenCategories
 }: SettingsPanelProps) {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const logoInputRef = useRef<HTMLInputElement>(null);
@@ -150,9 +157,75 @@ export function SettingsPanel({
         status: 'idle'
     });
 
+    // ============================================================
+    // ✅ 修复1: importDataHandler 定义在 handleFileSelect 之前
+    // ============================================================
+    const importDataHandler = async (data: any) => {
+        try {
+            showToast('正在导入配置...', 'loading');
+
+            // 关键修复：确保 type 字段正确保留
+            let cleanedSites = data.sites || [];
+            
+            cleanedSites = cleanedSites.map((s: any) => {
+                if (s.parentId || s.type === 'folder') {
+                    return { ...s, type: 'folder' };
+                }
+                return { ...s, type: s.type || 'site' };
+            });
+
+            if (cleanedSites.length > 0) setSites(cleanedSites);
+            if (data.categories) setCategories(data.categories);
+            if (data.layout) setLayoutSettings(data.layout);
+            if (data.config) setAppConfig(data.config);
+            if (data.categoryColors) setCategoryColors(data.categoryColors);
+            if (data.hiddenCategories && setHiddenCategories) {
+                setHiddenCategories(data.hiddenCategories);
+            }
+            if (data.theme && typeof data.theme.isDarkMode === 'boolean' && setIsDarkMode) {
+                setIsDarkMode(data.theme.isDarkMode);
+            }
+            if (data.searchEngine && setSearchEngine) {
+                setSearchEngine(data.searchEngine);
+            }
+
+            if (data.customFonts && Array.isArray(data.customFonts)) {
+                for (const font of data.customFonts) {
+                    try {
+                        await fetch('/api/admin/fonts', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(font)
+                        });
+                    } catch (e) {
+                        console.error('Failed to restore font:', font.name);
+                    }
+                }
+            }
+
+            const res = await fetch('/api/import', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ...data, sites: cleanedSites })
+            });
+
+            if (res.ok) {
+                showToast('配置导入成功', 'success');
+                if (setIsSettingsOpen) {
+                    setIsSettingsOpen(false);
+                }
+                setTimeout(() => window.location.reload(), 1000);
+            } else {
+                showToast('保存到数据库失败', 'error');
+            }
+        } catch (e) {
+            console.error(e);
+            showToast('数据格式错误', 'error');
+        }
+    };
+
     // 1. Open Modal and Calculate "To Sync"
     const openSyncModal = async () => {
-        // Filter sites with valid URLs
         const validSites = sites.filter((s: any) => s.url && (s.url.startsWith('http://') || s.url.startsWith('https://')));
 
         if (validSites.length === 0) {
@@ -171,7 +244,6 @@ export function SettingsPanel({
             status: 'analyzing'
         });
 
-        // Call API to analyze
         try {
             const validIds = validSites.map((s: any) => s.id);
             const res = await fetch('/api/admin/cache-icons', {
@@ -207,18 +279,11 @@ export function SettingsPanel({
         const BATCH_SIZE = 5;
         let successCount = 0;
         let failCount = 0;
-        // Keep the pre-calculated skipped count as base? No, the API will return accurate skipped counts.
-        // Actually, we should reset skipped to 0 and let the API authoritative answer come in?
-        // Or cumulatively add?
-        // Let's reset to 0 to be safe and accurate from trusted source (API).
         let skippedCount = 0;
         let processedCount = 0;
 
         try {
             for (let i = 0; i < validSites.length; i += BATCH_SIZE) {
-                // Check if modal still open/user didn't cancel? 
-                // Currently we don't have a "stop" mechanism easily, but let's assume it runs to completion.
-
                 const batch = validSites.slice(i, i + BATCH_SIZE);
                 const batchIds = batch.map((s: any) => s.id);
 
@@ -244,7 +309,6 @@ export function SettingsPanel({
                     ...prev,
                     progress,
                     processed: processedCount,
-                    // skipped: skippedCount, // Keep analyzed skipped count stable
                     success: successCount,
                     failed: failCount
                 }));
@@ -252,64 +316,59 @@ export function SettingsPanel({
             setSyncStats(prev => ({ ...prev, status: 'finished', progress: 100 }));
         } catch (e) {
             showToast('同步过程中断', 'error');
-            setIsSyncModalOpen(false); // Close on critical error? Or show error state?
+            setIsSyncModalOpen(false);
         }
     };
 
-
-   const handleRename = async () => {
-    if (!renamingCategory || !renameValue.trim() || renamingCategory === renameValue.trim()) {
-        setRenamingCategory(null);
-        return;
-    }
-    const oldName = renamingCategory;
-    const newName = renameValue.trim();
-
-    if (categories.includes(newName)) {
-        showToast('分类名称已存在', 'error');
-        return;
-    }
-
-    try {
-        // ✅ 构建完整的分类列表（包含所有分类）
-        const updatedCategories = categories.map(c => c === oldName ? newName : c);
-        const payload = updatedCategories.map((name, index) => ({
-            name,
-            order: index,
-            color: categoryColors[name] || getRandomColor(),
-            isHidden: hiddenCategories.includes(name)
-        }));
-
-        const res = await fetch('/api/categories', {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)  // ✅ 提交完整列表，而不是 { oldName, newName }
-        });
-
-        if (res.ok) {
-            // Update Categories List
-            setCategories(updatedCategories);
-
-            // Update Sites
-            setSites(sites.map(s => s.category === oldName ? { ...s, category: newName } : s));
-
-            // Update Colors
-            if (categoryColors[oldName]) {
-                const newColors = { ...categoryColors };
-                newColors[newName] = newColors[oldName];
-                delete newColors[oldName];
-                setCategoryColors(newColors);
-            }
-
+    const handleRename = async () => {
+        if (!renamingCategory || !renameValue.trim() || renamingCategory === renameValue.trim()) {
             setRenamingCategory(null);
-            showToast('分类重命名成功');
-        } else {
-            showToast('重命名失败', 'error');
+            return;
         }
-    } catch (e) {
-        showToast('请求失败', 'error');
-    }
-};
+        const oldName = renamingCategory;
+        const newName = renameValue.trim();
+
+        if (categories.includes(newName)) {
+            showToast('分类名称已存在', 'error');
+            return;
+        }
+
+        try {
+            const updatedCategories = categories.map(c => c === oldName ? newName : c);
+            const payload = updatedCategories.map((name, index) => ({
+                name,
+                order: index,
+                color: categoryColors[name] || getRandomColor(),
+                isHidden: hiddenCategories.includes(name)
+            }));
+
+            const res = await fetch('/api/categories', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (res.ok) {
+                setCategories(updatedCategories);
+                setSites(sites.map(s => s.category === oldName ? { ...s, category: newName } : s));
+
+                if (categoryColors[oldName]) {
+                    const newColors = { ...categoryColors };
+                    newColors[newName] = newColors[oldName];
+                    delete newColors[oldName];
+                    setCategoryColors(newColors);
+                }
+
+                setRenamingCategory(null);
+                showToast('分类重命名成功');
+            } else {
+                showToast('重命名失败', 'error');
+            }
+        } catch (e) {
+            showToast('请求失败', 'error');
+        }
+    };
+
     const sensors = useSensors(
         useSensor(MouseSensor, {
             activationConstraint: {
@@ -334,11 +393,8 @@ export function SettingsPanel({
 
         const isCategory = (id: any) => categories.includes(id);
 
-        // Site sorting/nesting logic
         if (isCategory(over.id) && !isCategory(active.id)) {
-            // Dragging a site over a Category Header -> Move to Root of that Category
             const activeSite = sites.find(s => s.id === active.id);
-            // Allow moving ANY site to this category (unless it's already a root site there)
             if (activeSite && (activeSite.category !== over.id || activeSite.parentId)) {
                 const newItems = sites.map(s => s.id === activeSite.id ? { ...s, parentId: null, category: over.id } : s);
                 setSites(newItems);
@@ -351,13 +407,11 @@ export function SettingsPanel({
 
             if (!activeSite || !overSite) return;
 
-            // 1. Moving into a Folder
             if (overSite.type === 'folder' && activeSite.type !== 'folder') {
-                // If hovering over a folder, move inside
                 if (activeSite.parentId !== overSite.id) {
                     const newItems = sites.map(s => {
                         if (s.id === activeSite.id) {
-                            return { ...s, parentId: overSite.id, category: overSite.category, order: 9999 }; // Append to end temporarily
+                            return { ...s, parentId: overSite.id, category: overSite.category, order: 9999 };
                         }
                         return s;
                     });
@@ -365,32 +419,22 @@ export function SettingsPanel({
                 }
             }
 
-            // 2. Moving out of Folder (to Root of Category) logic is tricky in List view.
-
-            // If overSite is Root and activeSite is Nested -> Move to Root (Same level as overSite).
             if (!overSite.parentId && activeSite.parentId) {
-                // Move activeSite to Root (parentId: null)
                 const newItems = sites.map(s => s.id === activeSite.id ? { ...s, parentId: null, category: overSite.category } : s);
                 setSites(newItems);
             }
 
-            // If overSite is Nested and activeSite is Root -> Move to Folder (Same level as overSite).
             if (overSite.parentId && !activeSite.parentId) {
                 const newItems = sites.map(s => s.id === activeSite.id ? { ...s, parentId: overSite.parentId, category: overSite.category } : s);
                 setSites(newItems);
             }
 
-            // If both nested in different folders?
             if (activeSite.parentId && overSite.parentId && activeSite.parentId !== overSite.parentId) {
                 const newItems = sites.map(s => s.id === activeSite.id ? { ...s, parentId: overSite.parentId, category: overSite.category } : s);
                 setSites(newItems);
             }
 
-            // [FIX] Cross-Category Drag (Root to Root)
-            // If dragging from one category to another (and both are root items, or we decide to flatten)
             if (activeSite.category !== overSite.category) {
-                // If overSite is in a folder, we already handled it above (Moving into Folder or Same Folder Level).
-                // If overSite is Root, we just switch category.
                 if (!overSite.parentId) {
                     const newItems = sites.map(s => s.id === activeSite.id ? { ...s, category: overSite.category, parentId: null } : s);
                     setSites(newItems);
@@ -406,31 +450,25 @@ export function SettingsPanel({
         const isCategory = (id: any) => categories.includes(id);
 
         if (active.id !== over.id) {
-            // Category Reordering
             if (isCategory(active.id) && isCategory(over.id)) {
                 const oldIndex = categories.indexOf(active.id as string);
                 const newIndex = categories.indexOf(over.id as string);
                 moveCategory(oldIndex, newIndex);
-                // Note: Persistence for category order is handled by `moveCategory` if it updates a persistent state.
-                // If categories are derived from sites, then site reordering will implicitly affect category order.
                 return;
             }
 
-            // Site Reordering
             if (!isCategory(active.id) && !isCategory(over.id)) {
-
                 const oldIndex = sites.findIndex((item) => item.id === active.id);
                 const newIndex = sites.findIndex((item) => item.id === over.id);
 
                 if (oldIndex !== -1 && newIndex !== -1) {
                     const reordered = arrayMove(sites, oldIndex, newIndex).map((site: any, index: number) => ({
                         ...site,
-                        order: index // Update order based on new position
+                        order: index
                     }));
 
                     setSites(reordered);
 
-                    // Persist immediately
                     fetch('/api/sites', {
                         method: 'PUT',
                         headers: { 'Content-Type': 'application/json' },
@@ -442,7 +480,6 @@ export function SettingsPanel({
                 }
             }
 
-            // Site dropped on Category (Persist the change made in handleDragOver)
             if (!isCategory(active.id) && isCategory(over.id)) {
                 fetch('/api/sites', {
                     method: 'PUT',
@@ -455,10 +492,6 @@ export function SettingsPanel({
             }
         }
     };
-
-    // ...
-
-
 
     const handleSyncBing = async () => {
         try {
@@ -503,7 +536,6 @@ export function SettingsPanel({
     const handleExport = async () => {
         const exportLayout = { ...layoutSettings };
 
-        // 1. 压缩壁纸
         if (layoutSettings.bgType === 'custom' && layoutSettings.bgColor && layoutSettings.bgColor.startsWith('/')) {
             try {
                 showToast('正在压缩壁纸...', 'loading');
@@ -517,7 +549,6 @@ export function SettingsPanel({
             }
         }
 
-        // 2. 压缩 Logo
         let compressedLogo = appConfig.logoImage;
         if (appConfig.logoImage && appConfig.logoImage.startsWith('data:image')) {
             try {
@@ -529,16 +560,13 @@ export function SettingsPanel({
             }
         }
 
-        // 3. 使用压缩后的 Logo
         const exportConfig = {
             ...appConfig,
             logoImage: compressedLogo
         };
 
-        // 4. Filter Custom Fonts
         const customFonts = allFonts.filter((f: any) => f.isCustom);
 
-        // 5. Fetch Todos and Countdowns
         let todos = [];
         let countdowns = [];
         try {
@@ -553,7 +581,6 @@ export function SettingsPanel({
             showToast('组件数据获取失败，将仅导出配置', 'error');
         }
 
-        // 6. 导出数据
         const data = JSON.stringify({
             sites,
             categories,
@@ -577,69 +604,23 @@ export function SettingsPanel({
         showToast('配置已导出', 'success');
     };
 
+    // ============================================================
+    // ✅ 修复2: handleFileSelect 定义在 importDataHandler 之后
+    // ============================================================
     const handleFileSelect = (e: any) => {
         const file = e.target.files[0];
         if (file) {
             const reader = new FileReader();
-            reader.onload = (e: any) => importDataHandler(JSON.parse(e.target.result));
+            reader.onload = (e: any) => {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    importDataHandler(data);
+                } catch (error) {
+                    console.error('解析失败:', error);
+                    showToast('数据格式错误，请检查 JSON 格式', 'error');
+                }
+            };
             reader.readAsText(file);
-        }
-    };
-
-    // ✅ 唯一版本的 handleImportData
-    const importDataHandler = async (data: any) => {
-        try {
-            showToast('正在导入配置...', 'loading');
-
-            // ✅ 关键修复：确保 type 字段正确保留
-            let cleanedSites = data.sites || [];
-            
-            cleanedSites = cleanedSites.map((s: any) => {
-                if (s.parentId || s.type === 'folder') {
-                    return { ...s, type: 'folder' };
-                }
-                return { ...s, type: s.type || 'site' };
-            });
-
-            if (cleanedSites.length > 0) setSites(cleanedSites);
-            if (data.categories) setCategories(data.categories);
-            if (data.layout) setLayoutSettings(data.layout);
-            if (data.config) setAppConfig(data.config);
-            if (data.categoryColors) setCategoryColors(data.categoryColors);
-            if (data.hiddenCategories) setHiddenCategories(data.hiddenCategories);
-            if (data.theme && typeof data.theme.isDarkMode === 'boolean') setIsDarkMode(data.theme.isDarkMode);
-            if (data.searchEngine) setSearchEngine(data.searchEngine);
-
-            if (data.customFonts && Array.isArray(data.customFonts)) {
-                for (const font of data.customFonts) {
-                    try {
-                        await fetch('/api/admin/fonts', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(font)
-                        });
-                    } catch (e) {
-                        console.error('Failed to restore font:', font.name);
-                    }
-                }
-            }
-
-            const res = await fetch('/api/import', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ...data, sites: cleanedSites })
-            });
-
-            if (res.ok) {
-                showToast('配置导入成功', 'success');
-                setIsSettingsOpen(false);
-                setTimeout(() => window.location.reload(), 1000);
-            } else {
-                showToast('保存到数据库失败', 'error');
-            }
-        } catch (e) {
-            console.error(e);
-            showToast('数据格式错误', 'error');
         }
     };
 
@@ -691,7 +672,6 @@ export function SettingsPanel({
                     <div
                         className={`w-full md:w-64 flex-shrink-0 border-b md:border-b-0 md:border-r p-2 md:p-5 flex flex-row md:flex-col gap-1 md:gap-1.5 overflow-x-auto md:overflow-x-visible custom-scrollbar ${isDarkMode ? 'border-white/5 bg-gradient-to-b from-slate-800/50 to-slate-900/50' : 'border-slate-100 bg-gradient-to-b from-slate-50 to-white'}`}>
 
-                        {/* Header with gradient icon - 移动端隐藏 */}
                         <div className="hidden md:flex items-center gap-3 mb-5 px-2">
                             <div className="p-2 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white shadow-lg shadow-indigo-500/25">
                                 <Settings size={18} />
@@ -702,7 +682,6 @@ export function SettingsPanel({
                             </div>
                         </div>
 
-                        {/* Navigation Tabs - 移动端水平滚动 */}
                         <div className="flex flex-row md:flex-col md:space-y-1 gap-1 md:gap-0">
                             {tabs.map(t => (
                                 <Tooltip key={t.id}>
@@ -738,7 +717,6 @@ export function SettingsPanel({
 
                         <div className="hidden md:block flex-1" />
 
-                        {/* Close Button - 移动端仅图标 */}
                         <Separator className="hidden md:block my-2 opacity-50" />
                         <button onClick={onClose}
                             className={`shrink-0 md:w-full text-left px-2 md:px-4 py-2 md:py-2.5 rounded-lg md:rounded-xl text-sm font-medium flex items-center gap-1.5 md:gap-3 transition-all duration-200 hover:scale-[0.98] active:scale-95 ${isDarkMode ? 'text-slate-400 hover:bg-red-500/10 hover:text-red-400' : 'text-slate-500 hover:bg-red-50 hover:text-red-500'}`}>
@@ -749,7 +727,7 @@ export function SettingsPanel({
                         </button>
                     </div>
 
-                    {/* Content Area with ScrollArea - 确保移动端可滚动 */}
+                    {/* Content Area */}
                     <ScrollArea className="flex-1 h-full">
                         <div className="p-4 md:p-6 pb-20 md:pb-8">
 
@@ -783,8 +761,6 @@ export function SettingsPanel({
                                                     <span className="text-sm font-medium truncate">{font.name}</span>
                                                     {layoutSettings.fontFamily === font.id && <CheckCircle2 size={16} className="ml-2 shrink-0" />}
                                                 </div>
-
-                                                {/* Delete button only for custom fonts */}
                                                 {(font as any).isCustom && (
                                                     <button onClick={(e) => {
                                                         e.stopPropagation();
@@ -802,7 +778,6 @@ export function SettingsPanel({
                                     </div>
                                 </div>
 
-                                {/* Typography Customization Section */}
                                 <div className="mt-6 pt-6 border-t border-indigo-500/10 dark:border-white/5">
                                     <div className="flex items-center justify-between mb-4">
                                         <div className="flex items-center gap-2">
@@ -821,7 +796,6 @@ export function SettingsPanel({
                                     </div>
 
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                                        {/* Title Settings */}
                                         <div className="space-y-3">
                                             <Label className="text-xs font-medium opacity-70">标题样式</Label>
                                             <div className="flex flex-col gap-2">
@@ -842,7 +816,6 @@ export function SettingsPanel({
                                                                 style={{ backgroundColor: layoutSettings.globalTitleColor || 'transparent', backgroundImage: !layoutSettings.globalTitleColor ? 'linear-gradient(45deg, #ddd 25%, transparent 25%, transparent 75%, #ddd 75%, #ddd), linear-gradient(45deg, #ddd 25%, transparent 25%, transparent 75%, #ddd 75%, #ddd)' : 'none', backgroundSize: '8px 8px', backgroundPosition: '0 0, 4px 4px' }}
                                                             />
                                                             <span className="opacity-70 truncate">{layoutSettings.globalTitleColor || '自动颜色'}</span>
-                                                            {/* Hidden Color Input */}
                                                             <input
                                                                 type="color"
                                                                 className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
@@ -875,7 +848,6 @@ export function SettingsPanel({
                                             </div>
                                         </div>
 
-                                        {/* Description Settings */}
                                         <div className="space-y-3">
                                             <Label className="text-xs font-medium opacity-70">简介样式</Label>
                                             <div className="flex flex-col gap-2">
@@ -975,7 +947,6 @@ export function SettingsPanel({
                             </div>
                             )}
 
-
                             {/* 动效 Tab */}
                             {activeTab === 'animation' && (
                                 <div className="space-y-5 animate-in fade-in slide-in-from-bottom-2">
@@ -1046,7 +1017,7 @@ export function SettingsPanel({
                                 </div>
                             )}
 
-
+                            {/* 壁纸 Tab */}
                             {activeTab === 'wallpaper' && (
                                 <div className="space-y-5 animate-in fade-in slide-in-from-bottom-2">
                                     <div className="space-y-4">
@@ -1073,8 +1044,6 @@ export function SettingsPanel({
                                                     </ToggleGroupItem>
                                                 </ToggleGroup>
 
-
-                                                {/* Pure Color Settings */}
                                                 {layoutSettings.bgType === 'color' && (
                                                     <div
                                                         className="space-y-4 p-3 rounded-xl border bg-slate-50 dark:bg-white/5 border-slate-100 dark:border-white/10 animate-in fade-in">
@@ -1096,7 +1065,6 @@ export function SettingsPanel({
                                                             ))}
                                                         </div>
 
-                                                        {/* Custom Color Picker */}
                                                         <div className="pt-2 border-t border-dashed border-slate-200 dark:border-white/10 flex items-center justify-between">
                                                             <span className="text-xs opacity-60">自定义颜色</span>
                                                             <div className="flex items-center gap-3 bg-white dark:bg-black/20 rounded-lg p-1 pr-3 border border-slate-100 dark:border-white/5">
@@ -1118,7 +1086,6 @@ export function SettingsPanel({
                                                     </div>
                                                 )}
 
-                                                {/* Bing Resolution Settings */}
                                                 {layoutSettings.bgType === 'bing' && (
                                                     <div
                                                         className="p-3 rounded-xl border bg-indigo-500/5 border-indigo-500/20 text-center space-y-3">
@@ -1191,7 +1158,6 @@ export function SettingsPanel({
                                                     </>
                                                 )}
 
-                                                {/* Shared Fine Tuning Grid for both Bing and Custom */}
                                                 {layoutSettings.bgType !== 'color' && (
                                                     <div className="mt-6 pt-6 border-t border-dashed border-slate-200 dark:border-white/10 space-y-4">
                                                         <div className="flex items-center gap-2 mb-2">
@@ -1296,7 +1262,6 @@ export function SettingsPanel({
                                                 onChange={(v: number) => setLayoutSettings({ ...layoutSettings, cardRadius: v })} unit="px" />
                                         </div>
 
-                                        {/* Layout Mode Toggle */}
                                         <div className={`p-3 rounded-xl border transition-all hover:border-indigo-500/50 ${isDarkMode ? 'bg-white/5 border-white/5' : 'bg-slate-50 border-slate-100'}`}>
                                             <div className="flex items-center justify-between mb-2">
                                                 <Label className="cursor-pointer font-medium">布局模式</Label>
@@ -1318,7 +1283,6 @@ export function SettingsPanel({
                                             </p>
                                         </div>
 
-                                        {/* Conditional Sliders based on Mode */}
                                         {(!layoutSettings.gridMode || layoutSettings.gridMode === 'auto') ? (
                                             <div className={`p-3 rounded-xl border transition-all hover:border-indigo-500/50 ${isDarkMode ? 'bg-white/5 border-white/5' : 'bg-slate-50 border-slate-100'}`}>
                                                 <RangeControl label="卡片宽度 (目标)" value={layoutSettings.cardWidth || 260} min={160} max={400}
@@ -1422,7 +1386,6 @@ export function SettingsPanel({
                                             />
                                         </div>
 
-                                        {/* Footer Links Editor */}
                                         <div className="space-y-3 mt-4">
                                             <Label>底部链接管理</Label>
                                             {(appConfig.footerLinks || []).map((link: any, i: number) => (
@@ -1445,11 +1408,9 @@ export function SettingsPanel({
                                             </Button>
                                         </div>
 
-                                        {/* Social Icons Editor */}
                                         <div className="space-y-3 mt-6 pt-6 border-t border-dashed border-slate-200 dark:border-white/10">
                                             <Label className="flex items-center gap-2"><Share2 size={14} /> 社交图标</Label>
 
-                                            {/* Available Icons Grid */}
                                             <div className={`p-3 rounded-xl border ${isDarkMode ? 'bg-white/5 border-white/5' : 'bg-slate-50 border-slate-100'}`}>
                                                 <p className="text-xs opacity-50 mb-2">点击添加图标：</p>
                                                 <div className="flex flex-wrap gap-2">
@@ -1478,7 +1439,6 @@ export function SettingsPanel({
                                                 </div>
                                             </div>
 
-                                            {/* Added Social Links */}
                                             {(appConfig.socialLinks || []).length > 0 && (
                                                 <div className="space-y-2">
                                                     {(appConfig.socialLinks || []).map((link: any, i: number) => {
@@ -1518,14 +1478,12 @@ export function SettingsPanel({
                                         </div>
                                     </div>
 
-                                    {/* Widget Config Section */}
                                     <div className={`space-y-3 p-4 rounded-xl border transition-all ${isDarkMode ? 'bg-white/5 border-white/5' : 'bg-slate-50 border-slate-100'}`}>
                                         <h4 className="text-base font-bold opacity-80 flex items-center gap-2">
                                             <Globe size={16} className="text-indigo-500" />
                                             组件设置
                                         </h4>
 
-                                        {/* Pomodoro Duration */}
                                         <div className="space-y-2">
                                             <Label className="text-sm font-medium">番茄钟时长（分钟）</Label>
                                             <div className="flex items-center gap-3">
@@ -1547,7 +1505,6 @@ export function SettingsPanel({
                                             </div>
                                         </div>
 
-                                        {/* World Clocks */}
                                         <div className="space-y-2">
                                             <div className="flex items-center justify-between">
                                                 <Label className="text-sm font-medium">世界时钟（最多6个）</Label>
@@ -1636,7 +1593,6 @@ export function SettingsPanel({
                                             </div>
                                         </div>
 
-                                        {/* Widget Custom Colors */}
                                         <div className="pt-4 mt-4 border-t border-dashed border-slate-200 dark:border-white/10 space-y-3">
                                             <h5 className="text-sm font-bold opacity-80 flex items-center gap-2">
                                                 <Palette size={14} className="text-indigo-500" />
@@ -1698,42 +1654,43 @@ export function SettingsPanel({
                                     </div>
                                 </div>
                             )}
+
+                            {/* 分类 Tab */}
                             {activeTab === 'categories' && (
                                 <div className="space-y-4">
                                     <div className="flex items-center gap-2">
-    <NewCategoryInput onAdd={handleAddCategory} isDarkMode={isDarkMode} className="flex-1" />
-    <Button
-        onClick={() => {
-            setEditingSite({
-                id: null,
-                name: '',
-                url: '',
-                desc: '',
-                category: categories[0] || '',
-                color: getRandomColor(),
-                icon: 'Globe',
-                iconType: 'auto',
-                customIconUrl: '',
-                titleColor: '',
-                descColor: '',
-                titleFont: '',
-                descFont: '',
-                titleSize: '',
-                descSize: '',
-                isHidden: false,
-                type: 'site',
-                parentId: ''
-            });
-            setIsModalOpen(true);
-        }}
-        className="shrink-0 h-9"
-        variant="outline"
-    >
-        <Plus size={16} className="mr-1" /> 添加站点/文件夹
-    </Button>
-</div>
+                                        <NewCategoryInput onAdd={handleAddCategory} isDarkMode={isDarkMode} className="flex-1" />
+                                        <Button
+                                            onClick={() => {
+                                                setEditingSite({
+                                                    id: null,
+                                                    name: '',
+                                                    url: '',
+                                                    desc: '',
+                                                    category: categories[0] || '',
+                                                    color: getRandomColor(),
+                                                    icon: 'Globe',
+                                                    iconType: 'auto',
+                                                    customIconUrl: '',
+                                                    titleColor: '',
+                                                    descColor: '',
+                                                    titleFont: '',
+                                                    descFont: '',
+                                                    titleSize: '',
+                                                    descSize: '',
+                                                    isHidden: false,
+                                                    type: 'site',
+                                                    parentId: ''
+                                                });
+                                                setIsModalOpen(true);
+                                            }}
+                                            className="shrink-0 h-9"
+                                            variant="outline"
+                                        >
+                                            <Plus size={16} className="mr-1" /> 添加站点/文件夹
+                                        </Button>
+                                    </div>
 
-                                    {/* Site Statistics */}
                                     <div className={`flex items-center justify-between px-4 py-3 rounded-xl border text-sm ${isDarkMode ? 'bg-white/5 border-white/5' : 'bg-slate-50 border-slate-100'}`}>
                                         <div className="flex items-center gap-4">
                                             <div className="flex items-center gap-1.5">
@@ -1887,57 +1844,55 @@ export function SettingsPanel({
                                                                 </div>
                                                             </div>
 
-                                                            {/* Expanded Site List */}
                                                             {expandedCategories.includes(cat) && (
                                                                 <div className="mt-3 pl-8 pr-2 animate-in slide-in-from-top-2 fade-in duration-200">
-                                                                    {/* Only render Root sites here. Nested handled by SortableSiteItem */}
                                                                     <SortableContext
                                                                         items={sites.filter((s: any) => s.category === cat && !s.parentId).map((s: any) => s.id)}
                                                                         strategy={verticalListSortingStrategy}
                                                                     >
                                                                         <div className="space-y-1">
                                                                             {sites.filter((s: any) => s.category === cat && !s.parentId).map((site: any) => (
-                                                                               <SortableSiteItem
-    key={site.id}
-    site={site}
-    sites={sites}
-    isDarkMode={isDarkMode}
-    onEdit={(targetSite) => {
-        setEditingSite(targetSite);
-        setIsModalOpen(true);
-    }}
-    onDelete={(targetSite: any) => {
-        onDeleteSite(targetSite);
-    }}
-    onToggleHidden={(s: any) => {
-        const target = s.id ? s : site;
-        const updated = { ...target, isHidden: !target.isHidden };
-        setSites(sites.map(s => s.id === target.id ? updated : s));
-    }}
-    onAddToFolder={(parentId: string, category: string) => {
-        setEditingSite({
-            id: null,
-            name: '',
-            url: '',
-            desc: '',
-            category: category,
-            color: getRandomColor(),
-            icon: 'Globe',
-            iconType: 'auto',
-            customIconUrl: '',
-            titleColor: '',
-            descColor: '',
-            titleFont: '',
-            descFont: '',
-            titleSize: '',
-            descSize: '',
-            isHidden: false,
-            type: 'site',
-            parentId: parentId
-        });
-        setIsModalOpen(true);
-    }}
-/>
+                                                                                <SortableSiteItem
+                                                                                    key={site.id}
+                                                                                    site={site}
+                                                                                    sites={sites}
+                                                                                    isDarkMode={isDarkMode}
+                                                                                    onEdit={(targetSite) => {
+                                                                                        setEditingSite(targetSite);
+                                                                                        setIsModalOpen(true);
+                                                                                    }}
+                                                                                    onDelete={(targetSite: any) => {
+                                                                                        onDeleteSite(targetSite);
+                                                                                    }}
+                                                                                    onToggleHidden={(s: any) => {
+                                                                                        const target = s.id ? s : site;
+                                                                                        const updated = { ...target, isHidden: !target.isHidden };
+                                                                                        setSites(sites.map(s => s.id === target.id ? updated : s));
+                                                                                    }}
+                                                                                    onAddToFolder={(parentId: string, category: string) => {
+                                                                                        setEditingSite({
+                                                                                            id: null,
+                                                                                            name: '',
+                                                                                            url: '',
+                                                                                            desc: '',
+                                                                                            category: category,
+                                                                                            color: getRandomColor(),
+                                                                                            icon: 'Globe',
+                                                                                            iconType: 'auto',
+                                                                                            customIconUrl: '',
+                                                                                            titleColor: '',
+                                                                                            descColor: '',
+                                                                                            titleFont: '',
+                                                                                            descFont: '',
+                                                                                            titleSize: '',
+                                                                                            descSize: '',
+                                                                                            isHidden: false,
+                                                                                            type: 'site',
+                                                                                            parentId: parentId
+                                                                                        });
+                                                                                        setIsModalOpen(true);
+                                                                                    }}
+                                                                                />
                                                                             ))}
                                                                             {sites.filter((s: any) => s.category === cat && !s.parentId).length === 0 && (
                                                                                 <div className="text-xs text-center py-2 opacity-50 border border-dashed rounded-lg">暂无根站点</div>
@@ -1954,9 +1909,9 @@ export function SettingsPanel({
                                     </div>
                                 </div>
                             )}
+
                             {/* 高级 Tab */}
                             {activeTab === 'advanced' && (<div className="space-y-6">
-                                {/* 访问控制 */}
                                 <div className="space-y-4">
                                     <h4 className="text-base font-bold opacity-80 flex items-center gap-2"><Lock size={16} /> 访问控制</h4>
                                     <div className={`flex items-center justify-between p-3 rounded-xl border transition-all ${isDarkMode ? 'bg-white/5 border-white/5' : 'bg-slate-50 border-slate-100'}`}>
@@ -1967,7 +1922,6 @@ export function SettingsPanel({
                                         <Switch id="private-mode" checked={appConfig.privateMode || false} onCheckedChange={(c) => setAppConfig({ ...appConfig, privateMode: c })} />
                                     </div>
 
-                                    {/* Private Password Setting */}
                                     {appConfig.privateMode && (
                                         <div className={`p-4 rounded-xl border animate-in slide-in-from-top-2 ${isDarkMode ? 'bg-indigo-500/10 border-indigo-500/20' : 'bg-indigo-50 border-indigo-100'}`}>
                                             <div className="space-y-3">
@@ -1987,7 +1941,6 @@ export function SettingsPanel({
                                                         readOnly
                                                         onFocus={(e) => {
                                                             e.target.readOnly = false;
-                                                            // Optional: clear placeholder or visual cue
                                                         }}
                                                         onBlur={(e) => {
                                                             e.target.readOnly = true;
@@ -2022,7 +1975,6 @@ export function SettingsPanel({
 
                                 <Separator className={isDarkMode ? 'bg-white/10' : 'bg-slate-200'} />
 
-                                {/* HTML5 Content Section */}
                                 <div className="space-y-6">
                                     <h4 className="text-base font-bold opacity-80 flex items-center gap-2"><Code size={16} /> HTML5 内容区域</h4>
                                     {[
@@ -2106,7 +2058,6 @@ export function SettingsPanel({
                                     ))}
                                 </div>
                                 <div className={`h-px w-full ${isDarkMode ? 'bg-white/10' : 'bg-slate-200'}`}></div>
-                                {/* Data Backup Section */}
                                 <div className="space-y-4">
                                     <h4 className="text-base font-bold opacity-80 flex items-center gap-2"><HardDrive size={16} /> 数据备份</h4>
                                     <div className="grid grid-cols-2 gap-3">
@@ -2119,10 +2070,16 @@ export function SettingsPanel({
                                             className={`p-5 rounded-2xl border cursor-pointer text-center transition-all hover:scale-105 active:scale-95 ${isDarkMode ? 'bg-white/5 border-white/10 hover:bg-emerald-500/20' : 'bg-slate-50 border-slate-200 hover:bg-emerald-50'}`}>
                                             <UploadCloud size={32} className="mx-auto mb-3 text-emerald-500" /><h4
                                                 className="font-bold mb-1">导入配置</h4><p className="text-xs opacity-60">恢复 JSON
-                                                    备份文件</p><input type="file" ref={fileInputRef} className="hidden" accept=".json"
-                                                        onChange={handleFileSelect} /></div>
+                                                    备份文件</p>
+                                            <input
+                                                type="file"
+                                                ref={fileInputRef}
+                                                className="hidden"
+                                                accept=".json"
+                                                onChange={handleFileSelect}
+                                            />
+                                        </div>
 
-                                        {/* Sync Icons Button */}
                                         <div onClick={openSyncModal}
                                             className={`p-5 rounded-2xl border cursor-pointer text-center transition-all hover:scale-105 active:scale-95 ${isDarkMode ? 'bg-white/5 border-white/10 hover:bg-blue-500/20' : 'bg-slate-50 border-slate-200 hover:bg-blue-50'}`}>
                                             <RefreshCw size={32} className="mx-auto mb-3 text-blue-500" /><h4
@@ -2133,6 +2090,7 @@ export function SettingsPanel({
                             </div>)}
                         </div>
                     </ScrollArea>
+
                     {/* Modals */}
                     <FontPickerModal
                         isOpen={isFontPickerOpen}
@@ -2196,7 +2154,7 @@ export function SettingsPanel({
                         {...syncStats}
                     />
                 </div>
-            </div >
-        </TooltipProvider >
+            </div>
+        </TooltipProvider>
     );
 }
