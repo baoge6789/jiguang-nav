@@ -136,6 +136,25 @@ export function EditModal({ site, categories, sites, isDarkMode, onClose, onSave
         // cardHeight: 160 // REMOVED: Do not override height
     };
 
+    // 抓取元数据的通用函数
+    const fetchMetadata = async (url: string) => {
+        try {
+            const res = await fetch(`/api/metadata?url=${encodeURIComponent(url)}`);
+            if (res.ok) {
+                const data = await res.json();
+                setF(prev => ({
+                    ...prev,
+                    name: data.title || prev.name,
+                    desc: data.description || prev.desc,
+                    icon: data.icon || prev.icon,
+                    iconType: data.icon ? 'auto' : prev.iconType,
+                }));
+            }
+        } catch (e) {
+            console.error('Failed to fetch metadata:', e);
+        }
+    };
+
     return (
         <motion.div
             className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6"
@@ -228,52 +247,34 @@ export function EditModal({ site, categories, sites, isDarkMode, onClose, onSave
                                                 setF(prev => ({ ...prev, url: val }));
                                             }
 
-                                            // Fetch metadata on Enter key
-                                            try {
-                                                const urlChanged = val !== lastFetchedUrl.current;
-                                                lastFetchedUrl.current = val;
-                                                const res = await fetch(`/api/metadata?url=${encodeURIComponent(val)}`);
-                                                if (res.ok) {
-                                                    const data = await res.json();
-                                                    setF(prev => ({
-                                                        ...prev,
-                                                        name: data.title || prev.name,
-                                                        desc: (urlChanged || data.description) ? data.description : prev.desc,
-                                                        icon: data.icon || prev.icon,
-                                                        iconType: data.icon ? 'auto' : prev.iconType,
-                                                    }));
-                                                }
-                                            } catch (e) {
-                                                console.error('Failed to fetch title', e);
-                                            }
+                                            // ✅ 无论是否有 site，都抓取元数据（但编辑时不覆盖已有标题）
+                                            const isEditing = site?.id && site?.name;
+                                            const urlChanged = val !== lastFetchedUrl.current;
+                                            lastFetchedUrl.current = val;
+                                            
+                                            // 如果是编辑模式且没有修改 URL，不抓取
+                                            if (isEditing && !urlChanged) return;
+                                            
+                                            await fetchMetadata(val);
                                         }
                                     }}
                                     onBlur={async () => {
                                         let val = f.url.trim();
-                                        if (f.type === 'site' && !val) return; // Only return early for missing URL if type is 'site'.
+                                        if (f.type === 'site' && !val) return;
                                         if (!/^https?:\/\//i.test(val)) {
                                             val = 'https://' + val;
                                             setF(prev => ({ ...prev, url: val }));
                                         }
-                                        if (!site) {
-                                            try {
-                                                const urlChanged = val !== lastFetchedUrl.current;
-                                                lastFetchedUrl.current = val;
-                                                const res = await fetch(`/api/metadata?url=${encodeURIComponent(val)}`);
-                                                if (res.ok) {
-                                                    const data = await res.json();
-                                                    setF(prev => ({
-                                                        ...prev,
-                                                        name: data.title || prev.name,
-                                                        desc: (urlChanged || data.description) ? data.description : prev.desc,
-                                                        icon: data.icon || prev.icon,
-                                                        iconType: data.icon ? 'auto' : prev.iconType,
-                                                    }));
-                                                }
-                                            } catch (e) {
-                                                console.error('Failed to fetch title', e);
-                                            }
-                                        }
+                                        
+                                        // ✅ 无论是否有 site，都抓取元数据（但编辑时不覆盖已有标题）
+                                        const isEditing = site?.id && site?.name;
+                                        const urlChanged = val !== lastFetchedUrl.current;
+                                        lastFetchedUrl.current = val;
+                                        
+                                        // 如果是编辑模式且没有修改 URL，不抓取
+                                        if (isEditing && !urlChanged) return;
+                                        
+                                        await fetchMetadata(val);
                                     }}
                                     placeholder="输入网站链接 (例如 google.com)"
                                 />
