@@ -1203,9 +1203,9 @@ export default function AuroraNav() {
 
                     {/* Site Grid */}
                     <div className={layoutSettings.compactMode ? 'space-y-4' : 'space-y-10'}>
-                      {/* ✅ 面包屑：不显示被隐藏分类的文件夹 */}
-                      {activeTab && !hiddenCategories.includes(activeTab) && (
-                        <div className="mb-4 flex items-center gap-0.5 text-sm animate-in slide-in-from-left-2 fade-in duration-300 overflow-x-auto overflow-y-hidden custom-scrollbar pb-1 flex-nowrap max-w-full">
+                      {/* ✅ 面包屑：管理员显示所有，访客只显示可见分类 */}
+{activeTab && (isLoggedIn || !hiddenCategories.includes(activeTab)) && (
+    <div className="mb-4 flex items-center gap-0.5 text-sm animate-in slide-in-from-left-2 fade-in duration-300 overflow-x-auto overflow-y-hidden custom-scrollbar pb-1 flex-nowrap max-w-full">
                           {/* 首页按钮 */}
                           <DroppableHomeBreadcrumb
                             onClick={() => {
