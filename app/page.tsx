@@ -99,7 +99,7 @@ function DroppableHomeBreadcrumb({ onClick, isDarkMode, children, isActive }: an
       ref={setNodeRef}
       onClick={onClick}
       className={`
-        flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-200 border cursor-pointer select-none
+        flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-200 border cursor-pointer select-none shrink-0
         ${isActive
           ? (isDarkMode
               ? 'bg-indigo-500/30 border-indigo-500/50 text-indigo-300 shadow-sm'
@@ -1199,9 +1199,9 @@ export default function AuroraNav() {
 
                     {/* Site Grid */}
                     <div className={layoutSettings.compactMode ? 'space-y-4' : 'space-y-10'}>
-                      {/* ✅ 修改2：面包屑：首页 + 当前分类下的所有根级文件夹 */}
+                      {/* ✅ 面包屑：横向滚动，支持多文件夹 */}
                       {activeTab && (
-                        <div className="mb-4 flex items-center gap-2 text-sm animate-in slide-in-from-left-2 fade-in duration-300 flex-wrap">
+                        <div className="mb-4 flex items-center gap-1 text-sm animate-in slide-in-from-left-2 fade-in duration-300 overflow-x-auto overflow-y-hidden custom-scrollbar pb-1 flex-nowrap max-w-full">
                           {/* 首页按钮 */}
                           <DroppableHomeBreadcrumb
                             onClick={() => {
@@ -1228,7 +1228,7 @@ export default function AuroraNav() {
                                   onClick={() => {
                                     setCurrentFolderId(folder.id);
                                   }}
-                                  className={`px-3 py-1.5 rounded-full text-xs font-medium border select-none transition-all hover:scale-105 active:scale-95
+                                  className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium border select-none transition-all hover:scale-105 active:scale-95 whitespace-nowrap
                                     ${currentFolderId === folder.id
                                       ? (isDarkMode
                                           ? 'bg-indigo-500/30 border-indigo-500/50 text-indigo-300 shadow-sm'
@@ -1582,11 +1582,19 @@ export default function AuroraNav() {
                     .group\\/spotlight:hover .spotlight-card::before { opacity: 1; }
                     .spotlight-card::before { background: radial-gradient(800px circle at var(--mouse-x) var(--mouse-y), rgba(99, 102, 241, 0.15), transparent 40%); content: ""; display: block; height: 100%; left: 0; opacity: 0; position: absolute; top: 0; width: 100%; z-index: 2; pointer-events: none; transition: opacity 0.5s; }
                     .text-shadow-sm { text-shadow: 0 1px 2px rgba(0,0,0,0.15), 0 0 1px rgba(0,0,0,0.1); }
-                    /* @keyframes slow-spin { from { transform: rotate(0deg) scale(1); } to { transform: rotate(360deg) scale(1); } } */
-                    /* @keyframes gradient-move { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } } */
-                    /* .animate-slow-spin { animation: slow-spin 60s linear infinite; } */
-                    /* .animate-gradient-move { animation: gradient-move 3s ease infinite; } */
-                    .custom-scrollbar::-webkit-scrollbar { height: 0px; width: 0px; }
+                    .custom-scrollbar::-webkit-scrollbar {
+                        height: 4px;
+                    }
+                    .custom-scrollbar::-webkit-scrollbar-track {
+                        background: transparent;
+                    }
+                    .custom-scrollbar::-webkit-scrollbar-thumb {
+                        background: rgba(99, 102, 241, 0.3);
+                        border-radius: 4px;
+                    }
+                    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+                        background: rgba(99, 102, 241, 0.5);
+                    }
                     .dynamic-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
                     @media (min-width: 640px) { .dynamic-grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); } }
                     @media (min-width: 1024px) { .dynamic-grid { grid-template-columns: repeat(var(--grid-cols, 5), minmax(0, 1fr)); } }
