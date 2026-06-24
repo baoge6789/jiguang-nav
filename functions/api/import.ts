@@ -39,21 +39,27 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       if (batch.length > 0) await db.batch(batch);
     }
 
-    // 导入站点
+    // ✅ 导入站点（修复：添加 type 字段）
     if (data.sites && Array.isArray(data.sites)) {
       for (const site of data.sites) {
         await db
           .prepare(
-            `INSERT OR REPLACE INTO Site (id, name, url, "desc", category, color, icon, iconType, customIconUrl, "order", parentId)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+            `INSERT OR REPLACE INTO Site (id, name, url, "desc", category, color, icon, iconType, customIconUrl, "order", parentId, type)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
           )
           .bind(
             site.id || crypto.randomUUID(),
-            site.name, site.url, site.desc || null,
-            site.category || '', site.color || null,
-            site.icon || null, site.iconType || 'auto',
-            site.customIconUrl || null, site.order ?? 0,
-            site.parentId || null
+            site.name,
+            site.url || '',
+            site.desc || null,
+            site.category || '',
+            site.color || null,
+            site.icon || null,
+            site.iconType || 'auto',
+            site.customIconUrl || null,
+            site.order ?? 0,
+            site.parentId || null,
+            site.type || 'site'  // ✅ 关键修复：保存 type 字段
           )
           .run();
       }
