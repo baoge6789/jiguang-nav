@@ -352,6 +352,19 @@ export default function AuroraNav() {
     }
   }, [categories, hiddenCategories, isLoggedIn]);
 
+  // ✅ 登录/退出时自动切换分类
+  useEffect(() => {
+    const visibleCategories = isLoggedIn 
+      ? categories 
+      : categories.filter(c => !hiddenCategories.includes(c));
+    
+    if (visibleCategories.length > 0 && activeTab) {
+      if (!visibleCategories.includes(activeTab)) {
+        setActiveTab(visibleCategories[0]);
+      }
+    }
+  }, [isLoggedIn]);
+
   // Ensure colors are assigned when categories change
   useEffect(() => {
     const newColors = { ...categoryColors };
@@ -1204,8 +1217,8 @@ export default function AuroraNav() {
                     {/* Site Grid */}
                     <div className={layoutSettings.compactMode ? 'space-y-4' : 'space-y-10'}>
                       {/* ✅ 面包屑：管理员显示所有，访客只显示可见分类 */}
-{activeTab && (isLoggedIn || !hiddenCategories.includes(activeTab)) && (
-    <div className="mb-4 flex items-center gap-0.5 text-sm animate-in slide-in-from-left-2 fade-in duration-300 overflow-x-auto overflow-y-hidden custom-scrollbar pb-1 flex-nowrap max-w-full">
+                      {activeTab && (isLoggedIn || !hiddenCategories.includes(activeTab)) && (
+                        <div className="mb-4 flex items-center gap-0.5 text-sm animate-in slide-in-from-left-2 fade-in duration-300 overflow-x-auto overflow-y-hidden custom-scrollbar pb-1 flex-nowrap max-w-full">
                           {/* 首页按钮 */}
                           <DroppableHomeBreadcrumb
                             onClick={() => {
