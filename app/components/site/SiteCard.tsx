@@ -372,17 +372,6 @@ export const SiteCard = React.memo(function SiteCard({
                         </div>
 
                         <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
-                            {showCount && childCount !== undefined && childCount > 0 && (
-                                <div
-                                    className="flex items-center justify-center min-w-[22px] h-[22px] px-1.5 rounded-full text-[11px] font-bold text-white shadow-lg leading-none transform scale-100"
-                                    style={{
-                                        backgroundColor: site.color || '#6366f1',
-                                        boxShadow: `0 2px 10px -1px rgba(${brandRgb.r}, ${brandRgb.g}, ${brandRgb.b}, 0.5)`
-                                    }}
-                                >
-                                    {childCount}
-                                </div>
-                            )}
                             {isLoggedIn ? (<button onClick={(e) => {
                                 e.stopPropagation();
                                 onEdit && onEdit();
@@ -399,6 +388,17 @@ export const SiteCard = React.memo(function SiteCard({
                             style={{ color: descColorStyle, fontFamily: descFontFamily, fontSize: descFontSize ? `${descFontSize}px` : undefined }}>
                             {site.desc}
                         </p>
+                    )}
+                    
+                    {/* ✅ 数量移到右下角 */}
+                    {site.type === 'folder' && childCount !== undefined && childCount > 0 && (
+                        <div className="absolute bottom-2 right-3 flex items-center justify-center min-w-[20px] h-[20px] px-1.5 rounded-full text-[10px] font-bold text-white shadow-lg"
+                            style={{
+                                backgroundColor: site.color || '#6366f1',
+                                boxShadow: `0 2px 8px -1px rgba(${brandRgb.r}, ${brandRgb.g}, ${brandRgb.b}, 0.5)`
+                            }}>
+                            {childCount}
+                        </div>
                     )}
                 </div >
             </a >
