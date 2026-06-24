@@ -1250,30 +1250,37 @@ export default function AuroraNav() {
                       )}
 
                       <SiteGrid
-                        isLoading={isLoading}
-                        filteredSites={filteredSites}
-                        isSearching={!!searchQuery}
-                        activeTab={activeTab}
-                        categories={categories}
-                        hiddenCategories={hiddenCategories}
-                        layoutSettings={layoutSettings}
-                        isDarkMode={isDarkMode}
-                        isLoggedIn={isLoggedIn}
-                        onEdit={(site: any) => {
-                          setEditingSite(site);
-                          setIsModalOpen(true);
-                        }}
-                        onDelete={(site: any) => {
-                          setDeleteSite(site);
-                          setDeleteContents(false);
-                          setIsConfirmationOpen(true);
-                        }}
-                        onContextMenu={handleContextMenu}
-                        getCategoryColor={getCategoryColor}
-                        onFolderClick={(folder: any) => setCurrentFolderId(folder.id)}
-                        sites={sites}
-                        dragOverFolderId={dragOverFolderId}
-                      />
+    isLoading={isLoading}
+    filteredSites={filteredSites}
+    isSearching={!!searchQuery}
+    activeTab={activeTab}
+    categories={categories}
+    hiddenCategories={hiddenCategories}
+    layoutSettings={layoutSettings}
+    isDarkMode={isDarkMode}
+    isLoggedIn={isLoggedIn}
+    onEdit={(site: any) => {
+        setEditingSite(site);
+        setIsModalOpen(true);
+    }}
+    onDelete={(site: any) => {
+        setDeleteSite(site);
+        setDeleteContents(false);
+        setIsConfirmationOpen(true);
+    }}
+    onContextMenu={handleContextMenu}
+    getCategoryColor={getCategoryColor}
+    onFolderClick={(folder: any) => {
+        if (folder.category === activeTab) {
+            setCurrentFolderId(folder.id);
+        } else {
+            setActiveTab(folder.category);
+            setCurrentFolderId(folder.id);
+        }
+    }}
+    sites={sites}
+    dragOverFolderId={dragOverFolderId}
+/>
                     </div>
                   </main>
 
