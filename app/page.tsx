@@ -1247,15 +1247,14 @@ export default function AuroraNav() {
                                   }}
                                   className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium border select-none transition-all hover:scale-105 active:scale-95 whitespace-nowrap
                                     ${currentFolderId === folder.id
-                                      ? (isDarkMode
-                                          ? 'bg-indigo-500/30 border-indigo-500/50 text-indigo-300 shadow-sm'
-                                          : 'bg-indigo-100 border-indigo-300 text-indigo-700 shadow-sm'
-                                      )
-                                      : (isDarkMode
-                                          ? 'bg-white/5 border-white/10 text-slate-400 hover:text-slate-200 hover:border-white/20'
-                                          : 'bg-slate-50 border-slate-200 text-slate-500 hover:text-slate-700 hover:bg-white'
-                                      )
-                                    }`}
+    ? (isDarkMode
+        ? 'bg-indigo-500/60 border-indigo-400 text-white shadow-md font-bold'  // ← 暗色模式更亮
+        : 'bg-indigo-600 border-indigo-500 text-white shadow-md font-bold'      // ← 亮色模式更深
+    )
+    : (isDarkMode
+        ? 'bg-white/5 border-white/10 text-slate-400 hover:text-slate-200 hover:border-white/20'
+        : 'bg-slate-50 border-slate-200 text-slate-500 hover:text-slate-700 hover:bg-white'
+    )}`}
                                 >
                                   {folder.name}
                                   {(() => {
