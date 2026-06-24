@@ -88,7 +88,8 @@ import {
 const INITIAL_SITES: any[] = [];
 const INITIAL_CATEGORIES: string[] = [];
 
-function DroppableHomeBreadcrumb({ onClick, isDarkMode, children }: any) {
+// ✅ 修改1：DroppableHomeBreadcrumb 组件
+function DroppableHomeBreadcrumb({ onClick, isDarkMode, children, isActive }: any) {
   const { setNodeRef, isOver } = useDroppable({
     id: 'breadcrumb-home',
   });
@@ -99,11 +100,17 @@ function DroppableHomeBreadcrumb({ onClick, isDarkMode, children }: any) {
       onClick={onClick}
       className={`
         flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-200 border cursor-pointer select-none
-        ${isOver
-          ? 'bg-green-100 border-green-300 text-green-700 shadow-md scale-105 ring-2 ring-green-200'
-          : (isDarkMode
-            ? 'bg-indigo-500/20 border-indigo-500/20 text-indigo-300 hover:bg-indigo-500/30 hover:border-indigo-500/40'
-            : 'bg-white border-slate-200 text-slate-600 hover:text-indigo-600 hover:border-indigo-200 hover:bg-indigo-50 hover:shadow-sm')
+        ${isActive
+          ? (isDarkMode
+              ? 'bg-indigo-500/30 border-indigo-500/50 text-indigo-300 shadow-sm'
+              : 'bg-indigo-100 border-indigo-300 text-indigo-700 shadow-sm'
+            )
+          : (isOver
+              ? 'bg-green-100 border-green-300 text-green-700 shadow-md scale-105 ring-2 ring-green-200'
+              : (isDarkMode
+                ? 'bg-indigo-500/20 border-indigo-500/20 text-indigo-300 hover:bg-indigo-500/30 hover:border-indigo-500/40'
+                : 'bg-white border-slate-200 text-slate-600 hover:text-indigo-600 hover:border-indigo-200 hover:bg-indigo-50 hover:shadow-sm')
+            )
         }
       `}
     >
@@ -1192,57 +1199,53 @@ export default function AuroraNav() {
 
                     {/* Site Grid */}
                     <div className={layoutSettings.compactMode ? 'space-y-4' : 'space-y-10'}>
-                      {/* Breadcrumbs for Folder Navigation */}
-                      {currentFolderId && (
+                      {/* ✅ 修改2：面包屑：首页 + 当前分类下的所有根级文件夹 */}
+                      {activeTab && (
                         <div className="mb-4 flex items-center gap-2 text-sm animate-in slide-in-from-left-2 fade-in duration-300 flex-wrap">
-
+                          {/* 首页按钮 */}
                           <DroppableHomeBreadcrumb
-                            onClick={() => setCurrentFolderId(null)}
+                            onClick={() => {
+                              setCurrentFolderId(null);
+                            }}
                             isDarkMode={isDarkMode}
+                            isActive={currentFolderId === null}
                           >
                             <HardDrive size={14} className="mr-1.5" /> 首页
                           </DroppableHomeBreadcrumb>
 
+                          {/* 当前分类下的所有根级文件夹 */}
                           {(() => {
-                            // Build full breadcrumb path
-                            const buildPath = (folderId: string, visited = new Set<string>()): any[] => {
-                              if (visited.has(folderId)) return [];
-                              visited.add(folderId);
-                              const folder = sites.find(s => s.id === folderId);
-                              if (!folder) return [];
-                              if (folder.parentId) {
-                                return [...buildPath(folder.parentId, visited), folder];
-                              }
-                              return [folder];
-                            };
-
-                            const path = buildPath(currentFolderId);
-
-                            return path.map((folder, index) => (
+                            const folders = sites.filter(s => 
+                              s.type === 'folder' && 
+                              s.category === activeTab && 
+                              !s.parentId
+                            );
+                            
+                            return folders.map((folder) => (
                               <React.Fragment key={folder.id}>
                                 <ChevronRight size={14} className="text-slate-400 opacity-60 shrink-0" />
-                                {index === path.length - 1 ? (
-                                  // Current folder (not clickable, just display)
-                                  <div className={`px-3 py-1.5 rounded-full text-xs font-bold border select-none transition-colors
-                                      ${isDarkMode
-                                      ? 'bg-white/5 border-white/5 text-slate-200 shadow-sm'
-                                      : 'bg-white border-slate-200 text-slate-700 shadow-sm'
-                                    }`}>
-                                    {folder.name}
-                                  </div>
-                                ) : (
-                                  // Parent folder (clickable)
-                                  <button
-                                    onClick={() => setCurrentFolderId(folder.id)}
-                                    className={`px-3 py-1.5 rounded-full text-xs font-medium border select-none transition-all hover:scale-105 active:scale-95
-                                      ${isDarkMode
-                                        ? 'bg-white/5 border-white/10 text-slate-400 hover:text-slate-200 hover:border-white/20'
-                                        : 'bg-slate-50 border-slate-200 text-slate-500 hover:text-slate-700 hover:bg-white'
-                                      }`}
-                                  >
-                                    {folder.name}
-                                  </button>
-                                )}
+                                <button
+                                  onClick={() => {
+                                    setCurrentFolderId(folder.id);
+                                  }}
+                                  className={`px-3 py-1.5 rounded-full text-xs font-medium border select-none transition-all hover:scale-105 active:scale-95
+                                    ${currentFolderId === folder.id
+                                      ? (isDarkMode
+                                          ? 'bg-indigo-500/30 border-indigo-500/50 text-indigo-300 shadow-sm'
+                                          : 'bg-indigo-100 border-indigo-300 text-indigo-700 shadow-sm'
+                                      )
+                                      : (isDarkMode
+                                          ? 'bg-white/5 border-white/10 text-slate-400 hover:text-slate-200 hover:border-white/20'
+                                          : 'bg-slate-50 border-slate-200 text-slate-500 hover:text-slate-700 hover:bg-white'
+                                      )
+                                    }`}
+                                >
+                                  {folder.name}
+                                  {(() => {
+                                    const count = sites.filter(s => s.parentId === folder.id).length;
+                                    return count > 0 ? ` (${count})` : '';
+                                  })()}
+                                </button>
                               </React.Fragment>
                             ));
                           })()}
@@ -1250,37 +1253,37 @@ export default function AuroraNav() {
                       )}
 
                       <SiteGrid
-    isLoading={isLoading}
-    filteredSites={filteredSites}
-    isSearching={!!searchQuery}
-    activeTab={activeTab}
-    categories={categories}
-    hiddenCategories={hiddenCategories}
-    layoutSettings={layoutSettings}
-    isDarkMode={isDarkMode}
-    isLoggedIn={isLoggedIn}
-    onEdit={(site: any) => {
-        setEditingSite(site);
-        setIsModalOpen(true);
-    }}
-    onDelete={(site: any) => {
-        setDeleteSite(site);
-        setDeleteContents(false);
-        setIsConfirmationOpen(true);
-    }}
-    onContextMenu={handleContextMenu}
-    getCategoryColor={getCategoryColor}
-    onFolderClick={(folder: any) => {
-        if (folder.category === activeTab) {
-            setCurrentFolderId(folder.id);
-        } else {
-            setActiveTab(folder.category);
-            setCurrentFolderId(folder.id);
-        }
-    }}
-    sites={sites}
-    dragOverFolderId={dragOverFolderId}
-/>
+                        isLoading={isLoading}
+                        filteredSites={filteredSites}
+                        isSearching={!!searchQuery}
+                        activeTab={activeTab}
+                        categories={categories}
+                        hiddenCategories={hiddenCategories}
+                        layoutSettings={layoutSettings}
+                        isDarkMode={isDarkMode}
+                        isLoggedIn={isLoggedIn}
+                        onEdit={(site: any) => {
+                          setEditingSite(site);
+                          setIsModalOpen(true);
+                        }}
+                        onDelete={(site: any) => {
+                          setDeleteSite(site);
+                          setDeleteContents(false);
+                          setIsConfirmationOpen(true);
+                        }}
+                        onContextMenu={handleContextMenu}
+                        getCategoryColor={getCategoryColor}
+                        onFolderClick={(folder: any) => {
+                          if (folder.category === activeTab) {
+                            setCurrentFolderId(folder.id);
+                          } else {
+                            setActiveTab(folder.category);
+                            setCurrentFolderId(folder.id);
+                          }
+                        }}
+                        sites={sites}
+                        dragOverFolderId={dragOverFolderId}
+                      />
                     </div>
                   </main>
 
