@@ -88,7 +88,6 @@ import {
 const INITIAL_SITES: any[] = [];
 const INITIAL_CATEGORIES: string[] = [];
 
-// ✅ 修改1：DroppableHomeBreadcrumb 组件
 function DroppableHomeBreadcrumb({ onClick, isDarkMode, children, isActive }: any) {
   const { setNodeRef, isOver } = useDroppable({
     id: 'breadcrumb-home',
@@ -341,12 +340,17 @@ export default function AuroraNav() {
     }
   }, []);
 
-  // ✅ 设置默认分类
+  // ✅ 设置默认分类：只选择可见分类
   useEffect(() => {
     if (categories.length > 0 && !activeTab) {
-      setActiveTab(categories[0]);
+      const visibleCategories = isLoggedIn 
+        ? categories 
+        : categories.filter(c => !hiddenCategories.includes(c));
+      if (visibleCategories.length > 0) {
+        setActiveTab(visibleCategories[0]);
+      }
     }
-  }, [categories]);
+  }, [categories, hiddenCategories, isLoggedIn]);
 
   // Ensure colors are assigned when categories change
   useEffect(() => {
@@ -1199,8 +1203,8 @@ export default function AuroraNav() {
 
                     {/* Site Grid */}
                     <div className={layoutSettings.compactMode ? 'space-y-4' : 'space-y-10'}>
-                      {/* ✅ 面包屑：横向滚动，支持多文件夹 */}
-                      {activeTab && (
+                      {/* ✅ 面包屑：不显示被隐藏分类的文件夹 */}
+                      {activeTab && !hiddenCategories.includes(activeTab) && (
                         <div className="mb-4 flex items-center gap-0.5 text-sm animate-in slide-in-from-left-2 fade-in duration-300 overflow-x-auto overflow-y-hidden custom-scrollbar pb-1 flex-nowrap max-w-full">
                           {/* 首页按钮 */}
                           <DroppableHomeBreadcrumb
