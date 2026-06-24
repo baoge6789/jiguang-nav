@@ -334,6 +334,13 @@ export default function AuroraNav() {
     }
   }, []);
 
+  // ✅ 设置默认分类
+  useEffect(() => {
+    if (categories.length > 0 && !activeTab) {
+      setActiveTab(categories[0]);
+    }
+  }, [categories]);
+
   // Ensure colors are assigned when categories change
   useEffect(() => {
     const newColors = { ...categoryColors };
@@ -1103,7 +1110,10 @@ export default function AuroraNav() {
                               key={cat}
                               label={cat}
                               active={activeTab === cat}
-                              onClick={() => setActiveTab(cat)}
+                              onClick={() => {
+                                setActiveTab(cat);
+                                setCurrentFolderId(null);
+                              }}
                               isDarkMode={isDarkMode}
                               color={getCategoryColor(cat)}
                               navColorMode={layoutSettings.navColorMode}
