@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import NextImage from 'next/image';
 import { NOISE_BASE64 } from '@/lib/utils';
 import { getUploadUrl, isUploadPath } from '@/lib/upload-url';
 
@@ -15,7 +14,6 @@ export function AuroraBackground({ isDarkMode, layoutSettings }: AuroraBackgroun
         setIsLoaded(false);
     }, [layoutSettings?.bgUrl]);
 
-    // Default Aurora Layer (Always rendered as base)
     const defaultAurora = (
         <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
             <div
@@ -30,7 +28,6 @@ export function AuroraBackground({ isDarkMode, layoutSettings }: AuroraBackgroun
     );
 
     if (layoutSettings?.bgEnabled) {
-        // Mode 1: Pure Color
         if (layoutSettings.bgType === 'color') {
             return (
                 <div
@@ -40,50 +37,37 @@ export function AuroraBackground({ isDarkMode, layoutSettings }: AuroraBackgroun
             );
         }
 
-        // Mode 2: Custom/Bing Image
         if (layoutSettings?.bgUrl) {
             const isCustom = layoutSettings.bgType === 'custom';
-            const scale = isCustom ? (layoutSettings.bgScale || 100) / 100 : 1;
+            // ✅ 强制缩放比例为 1（不缩放）
+            const scale = 1;
             const bgX = isCustom ? (layoutSettings.bgX ?? 50) : 50;
             const bgY = isCustom ? (layoutSettings.bgY ?? 50) : 50;
+            const bgUrl = getUploadUrl(layoutSettings.bgUrl);
 
             return (
                 <>
                     {defaultAurora}
                     <div className={`fixed inset-0 z-0 pointer-events-none overflow-hidden transition-opacity duration-700 ease-in-out ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
-                        {/* Use native img for upload paths to avoid Next.js Image optimization issues in Docker */}
-                        {isUploadPath(layoutSettings.bgUrl) ? (
-                            <img
-                                src={getUploadUrl(layoutSettings.bgUrl)}
-                                alt="Background"
-                                className="absolute inset-0 w-full h-full"
-                                style={{
-                                    objectFit: 'cover',
-                                    objectPosition: `${bgX}% ${bgY}%`,
-                                    transform: `scale(${scale})`,
-                                }}
-                                onLoad={() => setIsLoaded(true)}
-                            />
-                        ) : (
-                            <NextImage
-                                src={layoutSettings.bgUrl || ''}
-                                alt="Background"
-                                fill
-                                priority
-                                quality={90}
-                                style={{
-                                    objectFit: 'cover',
-                                    objectPosition: `${bgX}% ${bgY}%`,
-                                    transform: `scale(${scale})`,
-                                }}
-                                onLoad={() => setIsLoaded(true)}
-                            />
-                        )}
+                        {/* ✅ 使用原生 img，避免 NextImage 压缩 */}
+                        <img
+                            src={bgUrl}
+                            alt="Background"
+                            className="absolute inset-0 w-full h-full"
+                            style={{
+                                objectFit: 'cover',
+                                objectPosition: `${bgX}% ${bgY}%`,
+                                // ✅ 移除 transform: scale
+                            }}
+                            onLoad={() => setIsLoaded(true)}
+                        />
+                        {/* ✅ 降低遮罩浓度上限，让壁纸更清晰 */}
                         <div
                             className="absolute inset-0 bg-black transition-opacity duration-300"
-                            style={{ opacity: (layoutSettings.bgOpacity ?? 40) / 100 }}
+                            style={{ opacity: Math.min((layoutSettings.bgOpacity ?? 10) / 100, 0.3) }}
                         />
-                        <div className="absolute inset-0 opacity-[0.05] pointer-events-none"
+                        {/* ✅ 降低噪点透明度 */}
+                        <div className="absolute inset-0 opacity-[0.02] pointer-events-none"
                             style={{ backgroundImage: `url("${NOISE_BASE64}")` }}></div>
                     </div>
                 </>
@@ -91,6 +75,5 @@ export function AuroraBackground({ isDarkMode, layoutSettings }: AuroraBackgroun
         }
     }
 
-    // Default Aurora Mode
     return defaultAurora;
 }
