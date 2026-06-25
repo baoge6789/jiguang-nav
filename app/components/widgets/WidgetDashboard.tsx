@@ -5,8 +5,6 @@ import {
     CheckSquare, TrendingUp, CalendarClock, Plus, X, Check
 } from 'lucide-react';
 import { formatDate, translateCity } from '@/lib/utils';
-// ✅ 新增导入 NewsWidget
-import { NewsWidget } from './NewsWidget';
 
 const TiltCard = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
     <div className={className}>
@@ -627,7 +625,7 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
     const pomodoroSecs = pomodoroTime % 60;
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* 卡片1：时钟 */}
             <TiltCard className="group">
                 <div className={cardBase}>
@@ -725,59 +723,48 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                 </div>
             </TiltCard>
 
-            {/* 卡片2：天气 */}
-            <TiltCard className="group min-w-0">
-                <div className={`${cardBase} overflow-hidden h-[120px] sm:h-[120px] md:h-[130px]`}>
-                    <GradientBorder isDarkMode={isDarkMode} />
-                    <WeatherParticles code={weather.code} />
-                    <div className="flex flex-col justify-center h-full z-10 min-w-[80px] flex-shrink-0">
-                        <div className="flex items-center gap-1.5 mb-1">
-                            <MapPin size={12} className="text-cyan-500 shrink-0" />
-                            <span className={`text-xs font-medium truncate max-w-[80px] sm:max-w-[140px] ${isDarkMode ? 'opacity-70' : 'text-slate-700'}`}>{locationName}</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <span className="text-2xl md:text-3xl font-bold leading-none text-slate-900 dark:text-white">{weather.temp}°</span>
-                            {getWeatherIcon(weather.code, 32)}
-                        </div>
-                        <div className="flex items-center gap-2 mt-1 text-xs flex-wrap">
-                            <span className={`${isDarkMode ? 'opacity-70' : 'text-slate-700'}`}>{getWeatherDesc(weather.code)}</span>
-                            <span className={`${isDarkMode ? 'opacity-50' : 'text-slate-500'}`}>体感 {weather.feelsLike}°</span>
-                        </div>
-                        <div className="text-xs text-cyan-600 dark:text-cyan-400 font-medium mt-0.5 truncate">
-                            {getClothingAdvice(weather.feelsLike || weather.temp || 20)}
-                        </div>
-                    </div>
-                    <div className="z-10 pl-3 border-l border-white/10 dark:border-white/5 h-full flex flex-col justify-center gap-1.5 flex-1 min-w-0">
-                        <div className="flex items-center gap-4 text-xs -ml-2 flex-wrap">
-                            <div className="flex items-center gap-1 shrink-0">
-                                <Shield size={12} className="text-green-500 shrink-0" />
-                                <span className={`${isDarkMode ? 'opacity-50' : 'text-slate-500'}`}>AQI</span>
-                                <span className="font-bold text-slate-900 dark:text-white">{weather.aqi || '--'}</span>
-                                {weather.aqi && <span className={`${isDarkMode ? 'opacity-60' : 'text-slate-600'}`}>{getAQIDesc(weather.aqi)}</span>}
-                            </div>
-                            <div className="flex items-center gap-1 shrink-0">
-                                <Sun size={12} className="text-amber-500 shrink-0" />
-                                <span className={`${isDarkMode ? 'opacity-50' : 'text-slate-500'}`}>UV</span>
-                                <span className="font-bold text-slate-900 dark:text-white">{weather.uv || '--'}</span>
-                                {weather.uv !== null && <span className={`${isDarkMode ? 'opacity-60' : 'text-slate-600'}`}>{getUVDesc(weather.uv)}</span>}
-                            </div>
-                        </div>
-                        {weather.daily?.length > 0 && <DailyForecast data={weather.daily} />}
-                    </div>
+          {/* 卡片2：天气 - 统一毛玻璃效果，与左右卡片一致 */}
+<TiltCard className="group min-w-0">
+    <div className={`${cardBase} overflow-hidden h-[120px] sm:h-[120px] md:h-[130px]`}>
+        <GradientBorder isDarkMode={isDarkMode} />
+        <WeatherParticles code={weather.code} />
+        <div className="flex flex-col justify-center h-full z-10 min-w-[80px] flex-shrink-0">
+            <div className="flex items-center gap-1.5 mb-1">
+                <MapPin size={12} className="text-cyan-500 shrink-0" />
+                <span className={`text-xs font-medium truncate max-w-[80px] sm:max-w-[140px] ${isDarkMode ? 'opacity-70' : 'text-slate-700'}`}>{locationName}</span>
+            </div>
+            <div className="flex items-center gap-2">
+                <span className="text-2xl md:text-3xl font-bold leading-none text-slate-900 dark:text-white">{weather.temp}°</span>
+                {getWeatherIcon(weather.code, 32)}
+            </div>
+            <div className="flex items-center gap-2 mt-1 text-xs flex-wrap">
+                <span className={`${isDarkMode ? 'opacity-70' : 'text-slate-700'}`}>{getWeatherDesc(weather.code)}</span>
+                <span className={`${isDarkMode ? 'opacity-50' : 'text-slate-500'}`}>体感 {weather.feelsLike}°</span>
+            </div>
+            <div className="text-xs text-cyan-600 dark:text-cyan-400 font-medium mt-0.5 truncate">
+                {getClothingAdvice(weather.feelsLike || weather.temp || 20)}
+            </div>
+        </div>
+        <div className="z-10 pl-3 border-l border-white/10 dark:border-white/5 h-full flex flex-col justify-center gap-1.5 flex-1 min-w-0">
+            <div className="flex items-center gap-4 text-xs -ml-2 flex-wrap">
+                <div className="flex items-center gap-1 shrink-0">
+                    <Shield size={12} className="text-green-500 shrink-0" />
+                    <span className={`${isDarkMode ? 'opacity-50' : 'text-slate-500'}`}>AQI</span>
+                    <span className="font-bold text-slate-900 dark:text-white">{weather.aqi || '--'}</span>
+                    {weather.aqi && <span className={`${isDarkMode ? 'opacity-60' : 'text-slate-600'}`}>{getAQIDesc(weather.aqi)}</span>}
                 </div>
-            </TiltCard>
-
-            {/* ✅ 卡片3：资讯（新增） */}
-            <TiltCard className="group">
-                <div className={cardBase}>
-                    <GradientBorder isDarkMode={isDarkMode} />
-                    <div className="flex-1 h-full z-10 w-full overflow-hidden">
-                        <NewsWidget isDarkMode={isDarkMode} />
-                    </div>
+                <div className="flex items-center gap-1 shrink-0">
+                    <Sun size={12} className="text-amber-500 shrink-0" />
+                    <span className={`${isDarkMode ? 'opacity-50' : 'text-slate-500'}`}>UV</span>
+                    <span className="font-bold text-slate-900 dark:text-white">{weather.uv || '--'}</span>
+                    {weather.uv !== null && <span className={`${isDarkMode ? 'opacity-60' : 'text-slate-600'}`}>{getUVDesc(weather.uv)}</span>}
                 </div>
-            </TiltCard>
-
-            {/* 卡片4：工具 */}
+            </div>
+            {weather.daily?.length > 0 && <DailyForecast data={weather.daily} />}
+        </div>
+    </div>
+</TiltCard>
+            {/* 卡片3：工具 */}
             <TiltCard className="group">
                 <div className={cardBase}>
                     <GradientBorder isDarkMode={isDarkMode} customColor={widgetConfig?.customColors?.tools} />
