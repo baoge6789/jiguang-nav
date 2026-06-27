@@ -1218,7 +1218,7 @@ export default function AuroraNav() {
                     <div className={layoutSettings.compactMode ? 'space-y-4' : 'space-y-10'}>
                       {/* ✅ 面包屑：管理员显示所有，访客只显示可见分类 */}
                       {activeTab && (isLoggedIn || !hiddenCategories.includes(activeTab)) && (
-                        <div className="mb-4 flex items-center gap-0.5 text-sm animate-in slide-in-from-left-2 fade-in duration-300 overflow-x-auto overflow-y-hidden custom-scrollbar pb-1 flex-nowrap max-w-full">
+                        <div className="mb-4 flex items-center gap-0.5 text-base animate-in slide-in-from-left-2 fade-in duration-300 overflow-x-auto overflow-y-hidden custom-scrollbar pb-1 flex-nowrap max-w-full">
                           {/* 首页按钮 */}
                           <DroppableHomeBreadcrumb
                             onClick={() => {
@@ -1245,7 +1245,7 @@ export default function AuroraNav() {
                                   onClick={() => {
                                     setCurrentFolderId(folder.id);
                                   }}
-                                  className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium border select-none transition-all hover:scale-105 active:scale-95 whitespace-nowrap
+                                  className={`shrink-0 px-3 py-1.5 rounded-full text-base font-medium border select-none transition-all hover:scale-105 active:scale-95 whitespace-nowrap
                                     ${currentFolderId === folder.id
     ? (isDarkMode
         ? 'bg-indigo-500/60 border-indigo-400 text-white shadow-md font-bold'  // ← 暗色模式更亮
