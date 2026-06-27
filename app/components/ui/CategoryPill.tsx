@@ -25,7 +25,7 @@ export function CategoryPill({ label, active, onClick, isDarkMode, color, navCol
                 onClick={onClick}
                 style={textStyle}
                 className={`
-                    relative px-3 md:px-6 py-1.5 md:py-2.5 rounded-full text-xs md:text-sm font-bold tracking-wide shrink-0 isolate
+                    relative px-3 md:px-6 py-1.5 md:py-2.5 rounded-full text-sm md:text-base font-bold tracking-wide shrink-0 isolate
                     transition-all duration-300 active:scale-95 outline-none ring-0 focus-visible:ring-2 focus-visible:ring-indigo-500/50
                     ${!active ? 'hover:scale-105 opacity-80 hover:opacity-100' : ''}
                 `}
@@ -49,7 +49,7 @@ export function CategoryPill({ label, active, onClick, isDarkMode, color, navCol
         <button
             onClick={onClick}
             className={`
-                relative px-3 md:px-6 py-1.5 md:py-2.5 rounded-full text-xs md:text-sm font-bold tracking-wide shrink-0
+                relative px-3 md:px-6 py-1.5 md:py-2.5 rounded-full text-sm md:text-base font-bold tracking-wide shrink-0
                 transition-all duration-300 active:scale-95
                 outline-none ring-0 focus-visible:ring-2 focus-visible:ring-indigo-500/50
                 ${active
