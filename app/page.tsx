@@ -1240,7 +1240,6 @@ export default function AuroraNav() {
       
       return folders.map((folder) => (
         <React.Fragment key={folder.id}>
-          <ChevronRight size={12} className="text-slate-400 opacity-50 shrink-0 mx-0.5" />
           <button
             onClick={() => {
               setCurrentFolderId(folder.id);
