@@ -1227,7 +1227,7 @@ export default function AuroraNav() {
       isDarkMode={isDarkMode}
       isActive={currentFolderId === null}
     >
-      <HardDrive size={14} className="mr-1" /> 首页
+      <HardDrive size={14} className="mx-0.5" /> 首页
     </DroppableHomeBreadcrumb>
 
     {/* 当前分类下的所有根级文件夹 */}
@@ -1244,7 +1244,7 @@ export default function AuroraNav() {
             onClick={() => {
               setCurrentFolderId(folder.id);
             }}
-            className={`shrink-0 px-2.5 py-1 rounded-full text-base font-medium border select-none transition-all hover:scale-105 active:scale-95 whitespace-nowrap mx-1
+            className={`shrink-0 px-2.5 py-1 rounded-full text-base font-medium border select-none transition-all hover:scale-105 active:scale-95 whitespace-nowrap mx-0.5
               ${currentFolderId === folder.id
                 ? (isDarkMode
                     ? 'bg-indigo-500/60 border-indigo-400 text-white shadow-md font-bold'
