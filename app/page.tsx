@@ -1217,57 +1217,57 @@ export default function AuroraNav() {
                     {/* Site Grid */}
                     <div className={layoutSettings.compactMode ? 'space-y-4' : 'space-y-10'}>
                       {/* ✅ 面包屑：管理员显示所有，访客只显示可见分类 */}
-                      {activeTab && (isLoggedIn || !hiddenCategories.includes(activeTab)) && (
-                        <div className="mb-4 flex items-center gap-0.5 text-base animate-in slide-in-from-left-2 fade-in duration-300 overflow-x-auto overflow-y-hidden custom-scrollbar pb-1 flex-nowrap max-w-full">
-                          {/* 首页按钮 */}
-                          <DroppableHomeBreadcrumb
-                            onClick={() => {
-                              setCurrentFolderId(null);
-                            }}
-                            isDarkMode={isDarkMode}
-                            isActive={currentFolderId === null}
-                          >
-                            <HardDrive size={14} className="mr-1.5" /> 首页
-                          </DroppableHomeBreadcrumb>
+{activeTab && (isLoggedIn || !hiddenCategories.includes(activeTab)) && (
+  <div className="mb-4 flex items-center gap-0 text-base animate-in slide-in-from-left-2 fade-in duration-300 overflow-x-auto overflow-y-hidden custom-scrollbar pb-1 flex-nowrap max-w-full">
+    {/* 首页按钮 */}
+    <DroppableHomeBreadcrumb
+      onClick={() => {
+        setCurrentFolderId(null);
+      }}
+      isDarkMode={isDarkMode}
+      isActive={currentFolderId === null}
+    >
+      <HardDrive size={14} className="mr-1" /> 首页
+    </DroppableHomeBreadcrumb>
 
-                          {/* 当前分类下的所有根级文件夹 */}
-                          {(() => {
-                            const folders = sites.filter(s => 
-                              s.type === 'folder' && 
-                              s.category === activeTab && 
-                              !s.parentId
-                            );
-                            
-                            return folders.map((folder) => (
-                              <React.Fragment key={folder.id}>
-                                <ChevronRight size={14} className="text-slate-400 opacity-60 shrink-0" />
-                                <button
-                                  onClick={() => {
-                                    setCurrentFolderId(folder.id);
-                                  }}
-                                  className={`shrink-0 px-3 py-1.5 rounded-full text-base font-medium border select-none transition-all hover:scale-105 active:scale-95 whitespace-nowrap
-                                    ${currentFolderId === folder.id
-    ? (isDarkMode
-        ? 'bg-indigo-500/60 border-indigo-400 text-white shadow-md font-bold'  // ← 暗色模式更亮
-        : 'bg-indigo-600 border-indigo-500 text-white shadow-md font-bold'      // ← 亮色模式更深
-    )
-    : (isDarkMode
-        ? 'bg-white/5 border-white/10 text-slate-400 hover:text-slate-200 hover:border-white/20'
-        : 'bg-slate-50 border-slate-200 text-slate-500 hover:text-slate-700 hover:bg-white'
-    )}`}
-                                >
-                                  {folder.name}
-                                  {(() => {
-                                    const count = sites.filter(s => s.parentId === folder.id).length;
-                                    return count > 0 ? ` (${count})` : '';
-                                  })()}
-                                </button>
-                              </React.Fragment>
-                            ));
-                          })()}
-                        </div>
-                      )}
-
+    {/* 当前分类下的所有根级文件夹 */}
+    {(() => {
+      const folders = sites.filter(s => 
+        s.type === 'folder' && 
+        s.category === activeTab && 
+        !s.parentId
+      );
+      
+      return folders.map((folder) => (
+        <React.Fragment key={folder.id}>
+          <ChevronRight size={12} className="text-slate-400 opacity-50 shrink-0 mx-0.5" />
+          <button
+            onClick={() => {
+              setCurrentFolderId(folder.id);
+            }}
+            className={`shrink-0 px-2 py-1 rounded-full text-base font-medium border select-none transition-all hover:scale-105 active:scale-95 whitespace-nowrap
+              ${currentFolderId === folder.id
+                ? (isDarkMode
+                    ? 'bg-indigo-500/60 border-indigo-400 text-white shadow-md font-bold'
+                    : 'bg-indigo-600 border-indigo-500 text-white shadow-md font-bold'
+                  )
+                : (isDarkMode
+                    ? 'bg-white/5 border-white/10 text-slate-400 hover:text-slate-200 hover:border-white/20'
+                    : 'bg-slate-50 border-slate-200 text-slate-500 hover:text-slate-700 hover:bg-white'
+                  )
+              }`}
+          >
+            {folder.name}
+            {(() => {
+              const count = sites.filter(s => s.parentId === folder.id).length;
+              return count > 0 ? ` (${count})` : '';
+            })()}
+          </button>
+        </React.Fragment>
+      ));
+    })()}
+  </div>
+)}
                       <SiteGrid
                         isLoading={isLoading}
                         filteredSites={filteredSites}
