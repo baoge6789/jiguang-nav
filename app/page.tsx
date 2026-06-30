@@ -1216,7 +1216,7 @@ export default function AuroraNav() {
 
                     {/* Site Grid */}
                     <div className={layoutSettings.compactMode ? 'space-y-4' : 'space-y-10'}>
-                     {/* ✅ 面包屑：显示完整路径，当前文件夹高亮 */}
+          {/* ✅ 面包屑：显示完整路径，当前文件夹高亮 */}
 {activeTab && (isLoggedIn || !hiddenCategories.includes(activeTab)) && (
   <div className="mb-4 flex items-center gap-0 text-base animate-in slide-in-from-left-2 fade-in duration-300 overflow-x-auto overflow-y-hidden custom-scrollbar pb-1 flex-nowrap max-w-full">
     {/* 首页按钮 */}
@@ -1230,16 +1230,17 @@ export default function AuroraNav() {
       <HardDrive size={14} className="mx-0.5" /> 首页
     </DroppableHomeBreadcrumb>
 
-    {/* 返回上一级按钮 - 放在首页后面，有文件夹时才显示 */}
+    {/* 返回上一级按钮 - 只在有父级文件夹时显示 */}
     {currentFolderId && (() => {
       const currentFolder = sites.find(s => s.id === currentFolderId);
       if (!currentFolder) return null;
       const parentId = currentFolder.parentId;
+      if (!parentId) return null;
       
       return (
         <button
           onClick={() => {
-            setCurrentFolderId(parentId || null);
+            setCurrentFolderId(parentId);
           }}
           className={`shrink-0 px-2.5 py-1 rounded-full text-base font-medium border select-none transition-all hover:scale-105 active:scale-95 whitespace-nowrap mx-0.5 flex items-center gap-1
             ${isDarkMode
@@ -1254,7 +1255,6 @@ export default function AuroraNav() {
 
     {/* 显示完整文件夹路径 */}
     {(() => {
-      // 获取从根到当前的完整路径
       const getFolderPath = () => {
         if (!currentFolderId) return [];
         const path: any[] = [];
@@ -1268,7 +1268,7 @@ export default function AuroraNav() {
 
       const folderPath = getFolderPath();
       
-      return folderPath.map((folder, index) => {
+      return folderPath.map((folder) => {
         const isActive = currentFolderId === folder.id;
         
         return (
