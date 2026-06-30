@@ -1216,7 +1216,7 @@ export default function AuroraNav() {
 
                     {/* Site Grid */}
                     <div className={layoutSettings.compactMode ? 'space-y-4' : 'space-y-10'}>
-                      {/* ✅ 面包屑：管理员显示所有，访客只显示可见分类 */}
+                     {/* ✅ 面包屑：显示完整路径，当前文件夹高亮 */}
 {activeTab && (isLoggedIn || !hiddenCategories.includes(activeTab)) && (
   <div className="mb-4 flex items-center gap-0 text-base animate-in slide-in-from-left-2 fade-in duration-300 overflow-x-auto overflow-y-hidden custom-scrollbar pb-1 flex-nowrap max-w-full">
     {/* 首页按钮 */}
@@ -1230,22 +1230,55 @@ export default function AuroraNav() {
       <HardDrive size={14} className="mx-0.5" /> 首页
     </DroppableHomeBreadcrumb>
 
-    {/* 当前分类下的所有根级文件夹 */}
-    {(() => {
-      const folders = sites.filter(s => 
-        s.type === 'folder' && 
-        s.category === activeTab && 
-        !s.parentId
-      );
+    {/* 返回上一级按钮 - 放在首页后面，有文件夹时才显示 */}
+    {currentFolderId && (() => {
+      const currentFolder = sites.find(s => s.id === currentFolderId);
+      if (!currentFolder) return null;
+      const parentId = currentFolder.parentId;
       
-      return folders.map((folder) => (
-        <React.Fragment key={folder.id}>
+      return (
+        <button
+          onClick={() => {
+            setCurrentFolderId(parentId || null);
+          }}
+          className={`shrink-0 px-2.5 py-1 rounded-full text-base font-medium border select-none transition-all hover:scale-105 active:scale-95 whitespace-nowrap mx-0.5 flex items-center gap-1
+            ${isDarkMode
+              ? 'bg-emerald-500/20 border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/30'
+              : 'bg-emerald-50 border-emerald-200 text-emerald-600 hover:bg-emerald-100'
+            }`}
+        >
+          <ArrowUp size={14} /> 返回
+        </button>
+      );
+    })()}
+
+    {/* 显示完整文件夹路径 */}
+    {(() => {
+      // 获取从根到当前的完整路径
+      const getFolderPath = () => {
+        if (!currentFolderId) return [];
+        const path: any[] = [];
+        let current = sites.find(s => s.id === currentFolderId);
+        while (current) {
+          path.unshift(current);
+          current = sites.find(s => s.id === current?.parentId);
+        }
+        return path;
+      };
+
+      const folderPath = getFolderPath();
+      
+      return folderPath.map((folder, index) => {
+        const isActive = currentFolderId === folder.id;
+        
+        return (
           <button
+            key={folder.id}
             onClick={() => {
               setCurrentFolderId(folder.id);
             }}
             className={`shrink-0 px-2.5 py-1 rounded-full text-base font-medium border select-none transition-all hover:scale-105 active:scale-95 whitespace-nowrap mx-0.5
-              ${currentFolderId === folder.id
+              ${isActive
                 ? (isDarkMode
                     ? 'bg-indigo-500/60 border-indigo-400 text-white shadow-md font-bold'
                     : 'bg-indigo-600 border-indigo-500 text-white shadow-md font-bold'
@@ -1262,8 +1295,8 @@ export default function AuroraNav() {
               return count > 0 ? ` (${count})` : '';
             })()}
           </button>
-        </React.Fragment>
-      ));
+        );
+      });
     })()}
   </div>
 )}
