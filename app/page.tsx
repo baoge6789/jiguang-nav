@@ -108,7 +108,7 @@ function DroppableHomeBreadcrumb({ onClick, isDarkMode, children, isActive }: an
               ? 'bg-green-100 border-green-300 text-green-700 shadow-md scale-105 ring-2 ring-green-200'
               : (isDarkMode
                   ? 'bg-white/10 border-white/15 text-white hover:bg-white/20 hover:border-white/30'
-                  : 'bg-slate-50 border-slate-200 text-slate-600 hover:text-indigo-600 hover:border-indigo-200 hover:bg-indigo-50 hover:shadow-sm'  // ✅ 改为 text-slate-600，与文件夹按钮一致
+                  : 'bg-slate-50 border-slate-200 text-slate-600 hover:text-indigo-600 hover:border-indigo-200 hover:bg-indigo-50 hover:shadow-sm'
                 )
             )
         }
