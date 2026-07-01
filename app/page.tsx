@@ -1126,6 +1126,7 @@ export default function AuroraNav() {
                             e.currentTarget.style.setProperty('--mouse-y', `${e.clientY - bounds.top}px`);
                           }}
                           className={`group/nav relative flex items-center gap-2 sm:gap-3 md:gap-4 p-1.5 sm:p-2 rounded-full overflow-x-auto custom-scrollbar max-w-full shadow-2xl shadow-indigo-500/10 ${isDarkMode ? 'bg-slate-800/90 ring-1 ring-white/15' : 'bg-white/90 ring-1 ring-slate-200/50'}`}
+                          >
                           {categories.filter(cat => {
                             if (isLoggedIn) return true;
                             return !hiddenCategories.includes(cat);
