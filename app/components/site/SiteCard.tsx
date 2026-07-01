@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react';
-
-
 import NextImage from 'next/image';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
@@ -102,19 +100,22 @@ export const SiteCard = React.memo(function SiteCard({
             const g = Math.round(bgBase[1] * (1 - mixRatio) + brandRgb.g * mixRatio);
             const b = Math.round(bgBase[2] * (1 - mixRatio) + brandRgb.b * mixRatio);
 
-            bgColor = `rgba(${r}, ${g}, ${b}, ${safeOpacity})`;
+            // ✅ 提高背景不透明度，移除毛玻璃
+            bgColor = `rgba(${r}, ${g}, ${b}, ${Math.max(safeOpacity, 0.8)})`;
             borderColor = `rgba(${brandRgb.r}, ${brandRgb.g}, ${brandRgb.b}, ${isDarkMode ? 0.6 : 0.5})`;
             boxShadow = isFlat ? 'none' : `0 ${8 * shadowMultiplier}px ${32 * shadowMultiplier}px -${8 * shadowMultiplier}px rgba(${brandRgb.r}, ${brandRgb.g}, ${brandRgb.b}, ${0.4 * Math.min(shadowMultiplier, 1.2)})`;
             hoverBoxShadow = isFlat ? 'none' : `0 ${12 * hoverMultiplier}px ${40 * hoverMultiplier}px -${10 * hoverMultiplier}px rgba(${brandRgb.r}, ${brandRgb.g}, ${brandRgb.b}, ${0.5 * Math.min(hoverMultiplier, 1.2)})`;
         } else {
-            bgColor = `rgba(${brandRgb.r}, ${brandRgb.g}, ${brandRgb.b}, ${safeOpacity})`;
+            // ✅ 提高背景不透明度
+            bgColor = `rgba(${brandRgb.r}, ${brandRgb.g}, ${brandRgb.b}, ${Math.max(safeOpacity, 0.85)})`;
             borderColor = `rgba(${brandRgb.r}, ${brandRgb.g}, ${brandRgb.b}, ${Math.min(safeOpacity + 0.3, 1)})`;
             boxShadow = isFlat ? 'none' : `0 ${8 * shadowMultiplier}px ${32 * shadowMultiplier}px -${8 * shadowMultiplier}px rgba(${brandRgb.r}, ${brandRgb.g}, ${brandRgb.b}, ${0.25 * Math.min(shadowMultiplier, 1.2)})`;
             hoverBoxShadow = isFlat ? 'none' : `0 ${12 * hoverMultiplier}px ${40 * hoverMultiplier}px -${10 * hoverMultiplier}px rgba(${brandRgb.r}, ${brandRgb.g}, ${brandRgb.b}, ${0.35 * Math.min(hoverMultiplier, 1.2)})`;
         }
     } else {
-        bgColor = `rgba(${bgBase[0]}, ${bgBase[1]}, ${bgBase[2]}, ${safeOpacity})`;
-        borderColor = `rgba(${isDarkMode ? '255,255,255' : '0,0,0'}, ${isDarkMode ? 0.1 : 0.05})`;
+        // ✅ 提高背景不透明度
+        bgColor = `rgba(${bgBase[0]}, ${bgBase[1]}, ${bgBase[2]}, ${Math.max(safeOpacity, 0.88)})`;
+        borderColor = `rgba(${isDarkMode ? '255,255,255' : '0,0,0'}, ${isDarkMode ? 0.15 : 0.08})`;
         boxShadow = isFlat ? 'none' : (isDarkMode
             ? `0 ${8 * shadowMultiplier}px ${32 * shadowMultiplier}px -${8 * shadowMultiplier}px rgba(0,0,0,${0.5 * Math.min(shadowMultiplier, 1)})`
             : `0 ${8 * shadowMultiplier}px ${32 * shadowMultiplier}px -${8 * shadowMultiplier}px rgba(0,0,0,${0.1 * Math.min(shadowMultiplier, 1.5)})`);
@@ -336,8 +337,9 @@ export const SiteCard = React.memo(function SiteCard({
                     backgroundColor: bgColor,
                     borderColor: borderColor,
                     boxShadow: boxShadow,
-                    backdropFilter: `blur(${Math.min((settings.cardBlur ?? 12) * 0.5, 3)}px)`,
-                    WebkitBackdropFilter: `blur(${Math.min((settings.cardBlur ?? 12) * 0.5, 3)}px)`
+                    // ✅ 移除毛玻璃效果，让卡片更清晰
+                    backdropFilter: 'none',
+                    WebkitBackdropFilter: 'none'
                 }}
             >
                 {settings.colorfulCards && (

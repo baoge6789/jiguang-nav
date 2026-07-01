@@ -22,7 +22,7 @@ export function Footer({ isDarkMode, appConfig, isSticky }: FooterProps) {
 
     return (
         <footer
-            className={`w-full transition-all duration-300 border-t ${isSticky ? 'fixed bottom-0 left-0 right-0 z-50 backdrop-blur-xl shadow-[0_-4px_20px_-4px_rgba(0,0,0,0.05)]' : 'relative mt-auto'} ${isDarkMode ? 'bg-slate-900/90 border-white/5 text-slate-400' : 'bg-white/90 border-slate-100 text-slate-500'}`}>
+            className={`w-full transition-all duration-300 border-t ${isSticky ? 'fixed bottom-0 left-0 right-0 z-50 shadow-[0_-4px_20px_-4px_rgba(0,0,0,0.05)]' : 'relative mt-auto'} ${isDarkMode ? 'bg-slate-800/90 border-white/10 text-slate-400' : 'bg-white/90 border-slate-200/50 text-slate-500'}`}>
             <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 py-2 sm:py-3 md:py-4">
                 <div className="flex flex-col md:flex-row justify-between items-center gap-2 sm:gap-3 md:gap-8">
                     <div className="flex flex-col md:flex-row items-center gap-2 sm:gap-3 md:gap-6 text-center md:text-left">

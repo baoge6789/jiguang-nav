@@ -47,9 +47,9 @@ export function Header({
             className={`${layoutSettings.stickyHeader ? 'fixed top-0 left-0 right-0 z-50' : 'relative z-40'} w-full transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] ${isScrolled ? 'pt-1.5 sm:pt-2 pb-2 px-2 sm:px-4' : 'pt-3 sm:pt-4 md:pt-6 pb-2 px-2 sm:px-4'}`}>
             <div
                 className={`mx-auto transition-all duration-300 ${layoutSettings.isWideMode ? 'max-w-[98%]' : 'max-w-7xl'}`}>
-                <div className={`relative flex items-center justify-between px-1 sm:px-6 rounded-2xl backdrop-blur-2xl border shadow-xl shadow-indigo-500/5 transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] overflow-visible
-                        ${isDarkMode ? 'bg-slate-900/80 border-white/10' : 'bg-white/80 border-white/40 ring-1 ring-white/50'}
-                        ${isScrolled ? 'py-2 bg-opacity-90 shadow-lg' : 'py-3'}
+                <div className={`relative flex items-center justify-between px-1 sm:px-6 rounded-2xl border shadow-xl shadow-indigo-500/5 transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] overflow-visible
+                        ${isDarkMode ? 'bg-slate-800/90 border-white/15' : 'bg-white/90 border-slate-200/50 ring-1 ring-slate-200/30'}
+                        ${isScrolled ? 'py-2 shadow-lg' : 'py-3'}
                     `}>
 
                     {/* Logo */}
@@ -88,7 +88,7 @@ export function Header({
                     <div
                         className={`flex-1 max-w-2xl mx-1 sm:mx-4 md:mx-8 min-w-0 relative group transition-all duration-500 ${isSearchFocused ? 'z-50 scale-[1.02]' : 'z-20'} ${isScrolled ? 'md:mx-12' : ''}`}>
                         <div
-                            className={`relative flex items-center rounded-full transition-all duration-300 ${isSearchFocused ? (isDarkMode ? 'bg-slate-800 shadow-2xl shadow-indigo-500/20 border-indigo-500/50' : 'bg-white shadow-2xl shadow-indigo-500/20 border-indigo-500/50') : (isDarkMode ? 'bg-black/20 hover:bg-black/30 border border-white/5' : 'bg-slate-100/50 hover:bg-white/80 border border-transparent hover:shadow-lg hover:shadow-indigo-500/5')}`}>
+                            className={`relative flex items-center rounded-full transition-all duration-300 ${isSearchFocused ? (isDarkMode ? 'bg-slate-700 shadow-2xl shadow-indigo-500/20 border-indigo-500/50' : 'bg-white shadow-2xl shadow-indigo-500/20 border-indigo-500/50') : (isDarkMode ? 'bg-slate-700/50 hover:bg-slate-700 border border-white/10' : 'bg-slate-100/80 hover:bg-white border border-slate-200/50 hover:shadow-lg hover:shadow-indigo-500/5')}`}>
                             <div className="relative shrink-0 pl-1">
                                 <button onClick={() => setIsEngineMenuOpen(!isEngineMenuOpen)}
                                     className={`flex items-center gap-2 pl-3 pr-2 py-2.5 rounded-l-full text-sm font-medium transition-all active:scale-95 ${isDarkMode ? 'text-slate-400 hover:text-white' : 'text-slate-500 hover:text-indigo-600'}`}>
