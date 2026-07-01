@@ -732,7 +732,7 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
             {/* 卡片2：天气 */}
             <TiltCard className="group min-w-0">
                 <div className={`${cardBase} overflow-hidden h-[120px] sm:h-[120px] md:h-[130px]`}>
-                    <GradientBorder isDarkMode={isDarkMode} />
+                    <GradientBorder isDarkMode={isDarkMode} customColor={widgetConfig?.customColors?.weather} />
                     <WeatherParticles code={weather.code} />
                     <div className="flex flex-col justify-center h-full z-10 min-w-[80px] flex-shrink-0">
                         <div className="flex items-center gap-1.5 mb-1">
