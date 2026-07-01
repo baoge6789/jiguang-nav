@@ -101,7 +101,7 @@ function DroppableHomeBreadcrumb({ onClick, isDarkMode, children, isActive }: an
         flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-200 border cursor-pointer select-none shrink-0
         ${isActive
           ? (isDarkMode
-              ? 'bg-indigo-500/30 border-indigo-500/50 text-indigo-300 shadow-sm'
+              ? 'bg-indigo-500/30 border-indigo-500/50 text-white shadow-sm'  // ✅ 改成 text-white
               : 'bg-indigo-100 border-indigo-300 text-indigo-700 shadow-sm'
             )
           : (isOver
