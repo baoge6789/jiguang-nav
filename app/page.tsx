@@ -101,14 +101,14 @@ function DroppableHomeBreadcrumb({ onClick, isDarkMode, children, isActive }: an
         flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-200 border cursor-pointer select-none shrink-0
         ${isActive
           ? (isDarkMode
-              ? 'bg-indigo-500/30 border-indigo-500/50 text-white shadow-sm'  // ✅ 改成 text-white
+              ? 'bg-indigo-500/30 border-indigo-500/50 text-white shadow-sm'  // ✅ 激活时白色文字
               : 'bg-indigo-100 border-indigo-300 text-indigo-700 shadow-sm'
             )
           : (isOver
               ? 'bg-green-100 border-green-300 text-green-700 shadow-md scale-105 ring-2 ring-green-200'
               : (isDarkMode
-                  ? 'bg-white/10 border-white/15 text-white hover:bg-white/20 hover:border-white/30'
-                  : 'bg-slate-50 border-slate-200 text-slate-600 hover:text-indigo-600 hover:border-indigo-200 hover:bg-indigo-50 hover:shadow-sm'
+                  ? 'bg-white/15 border-white/25 text-white hover:bg-white/25 hover:border-white/35'  // ✅ 默认白色文字
+                  : 'bg-white border-slate-200 text-slate-700 hover:text-indigo-600 hover:border-indigo-200 hover:bg-indigo-50 hover:shadow-sm'
                 )
             )
         }
