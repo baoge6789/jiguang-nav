@@ -107,7 +107,7 @@ function DroppableHomeBreadcrumb({ onClick, isDarkMode, children, isActive }: an
           : (isOver
               ? 'bg-green-100 border-green-300 text-green-700 shadow-md scale-105 ring-2 ring-green-200'
               : (isDarkMode
-                ? 'bg-indigo-500/20 border-indigo-500/20 text-indigo-300 hover:bg-indigo-500/30 hover:border-indigo-500/40'
+                ? 'bg-white/5 border-white/10 text-slate-400 hover:text-slate-200 hover:bg-white/10'
                 : 'bg-white border-slate-200 text-slate-600 hover:text-indigo-600 hover:border-indigo-200 hover:bg-indigo-50 hover:shadow-sm')
             )
         }
