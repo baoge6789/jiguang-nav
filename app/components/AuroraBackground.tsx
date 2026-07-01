@@ -15,16 +15,17 @@ export function AuroraBackground({ isDarkMode, layoutSettings }: AuroraBackgroun
         setIsLoaded(false);
     }, [layoutSettings?.bgUrl]);
 
-    // Default Aurora Layer (Always rendered as base)
+    // ✅ 极光层 - 透明度大幅降低，减少模糊感
     const defaultAurora = (
         <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
             <div
-                className={`absolute top-[-20%] left-[-10%] w-[70%] h-[70%] rounded-full ${isDarkMode ? 'opacity-90' : 'opacity-50'}`}
-                style={{ background: 'radial-gradient(circle, rgba(99,102,241,0.18) 0%, transparent 70%)' }} />
+                className={`absolute top-[-20%] left-[-10%] w-[70%] h-[70%] rounded-full ${isDarkMode ? 'opacity-40' : 'opacity-20'}`}
+                style={{ background: 'radial-gradient(circle, rgba(99,102,241,0.12) 0%, transparent 70%)' }} />
             <div
-                className={`absolute bottom-[-10%] right-[-20%] w-[60%] h-[60%] rounded-full ${isDarkMode ? 'opacity-90' : 'opacity-50'}`}
-                style={{ background: 'radial-gradient(circle, rgba(6,182,212,0.18) 0%, transparent 70%)' }} />
-            <div className="absolute inset-0 opacity-[0.08] brightness-100 contrast-150 mix-blend-overlay"
+                className={`absolute bottom-[-10%] right-[-20%] w-[60%] h-[60%] rounded-full ${isDarkMode ? 'opacity-40' : 'opacity-20'}`}
+                style={{ background: 'radial-gradient(circle, rgba(6,182,212,0.10) 0%, transparent 70%)' }} />
+            {/* ✅ 噪点图层 - 透明度大幅降低 */}
+            <div className="absolute inset-0 opacity-[0.02] brightness-100 contrast-150 mix-blend-overlay"
                 style={{ backgroundImage: `url("${NOISE_BASE64}")` }}></div>
         </div>
     );
@@ -49,6 +50,7 @@ export function AuroraBackground({ isDarkMode, layoutSettings }: AuroraBackgroun
 
             return (
                 <>
+                    {/* ✅ 极光层透明度降低 */}
                     {defaultAurora}
                     <div className={`fixed inset-0 z-0 pointer-events-none overflow-hidden transition-opacity duration-700 ease-in-out ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
                         {/* Use native img for upload paths to avoid Next.js Image optimization issues in Docker */}
@@ -70,7 +72,7 @@ export function AuroraBackground({ isDarkMode, layoutSettings }: AuroraBackgroun
                                 alt="Background"
                                 fill
                                 priority
-                                quality={90}
+                                quality={95}
                                 style={{
                                     objectFit: 'cover',
                                     objectPosition: `${bgX}% ${bgY}%`,
@@ -79,11 +81,13 @@ export function AuroraBackground({ isDarkMode, layoutSettings }: AuroraBackgroun
                                 onLoad={() => setIsLoaded(true)}
                             />
                         )}
+                        {/* ✅ 黑色遮罩透明度降低 */}
                         <div
                             className="absolute inset-0 bg-black transition-opacity duration-300"
-                            style={{ opacity: (layoutSettings.bgOpacity ?? 40) / 100 }}
+                            style={{ opacity: (layoutSettings.bgOpacity ?? 20) / 100 }}
                         />
-                        <div className="absolute inset-0 opacity-[0.05] pointer-events-none"
+                        {/* ✅ 噪点图层透明度降低 */}
+                        <div className="absolute inset-0 opacity-[0.02] pointer-events-none"
                             style={{ backgroundImage: `url("${NOISE_BASE64}")` }}></div>
                     </div>
                 </>
