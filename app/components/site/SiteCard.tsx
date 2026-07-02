@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import NextImage from 'next/image';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
@@ -42,6 +42,9 @@ export const SiteCard = React.memo(function SiteCard({
     const [hasError, setHasError] = useState(false);
     const [imgLoading, setImgLoading] = useState(true);
 
+    // 长按计时器
+    const longPressTimer = useRef<NodeJS.Timeout | null>(null);
+
     useEffect(() => {
         setIconState(0);
         setHasError(false);
@@ -75,6 +78,30 @@ export const SiteCard = React.memo(function SiteCard({
         setHasError(true);
     };
 
+    // 长按事件处理（手机端编辑）
+    const handleTouchStart = (e: React.TouchEvent) => {
+        if (site.type === 'folder' || !isLoggedIn) return;
+        
+        longPressTimer.current = setTimeout(() => {
+            onEdit && onEdit();
+            if (navigator.vibrate) navigator.vibrate(50);
+        }, 500);
+    };
+
+    const handleTouchEnd = () => {
+        if (longPressTimer.current) {
+            clearTimeout(longPressTimer.current);
+            longPressTimer.current = null;
+        }
+    };
+
+    const handleTouchMove = () => {
+        if (longPressTimer.current) {
+            clearTimeout(longPressTimer.current);
+            longPressTimer.current = null;
+        }
+    };
+
     const Icon = site.type === 'folder' ? Folder : (ICON_MAP[site.icon] || Globe);
     const brandRgb = hexToRgb(site.color || '#6366f1');
     const bgBase = isDarkMode ? [30, 41, 59] : [255, 255, 255];
@@ -100,20 +127,17 @@ export const SiteCard = React.memo(function SiteCard({
             const g = Math.round(bgBase[1] * (1 - mixRatio) + brandRgb.g * mixRatio);
             const b = Math.round(bgBase[2] * (1 - mixRatio) + brandRgb.b * mixRatio);
 
-            // ✅ 提高背景不透明度，移除毛玻璃
             bgColor = `rgba(${r}, ${g}, ${b}, ${Math.max(safeOpacity, 0.8)})`;
             borderColor = `rgba(${brandRgb.r}, ${brandRgb.g}, ${brandRgb.b}, ${isDarkMode ? 0.6 : 0.5})`;
             boxShadow = isFlat ? 'none' : `0 ${8 * shadowMultiplier}px ${32 * shadowMultiplier}px -${8 * shadowMultiplier}px rgba(${brandRgb.r}, ${brandRgb.g}, ${brandRgb.b}, ${0.4 * Math.min(shadowMultiplier, 1.2)})`;
             hoverBoxShadow = isFlat ? 'none' : `0 ${12 * hoverMultiplier}px ${40 * hoverMultiplier}px -${10 * hoverMultiplier}px rgba(${brandRgb.r}, ${brandRgb.g}, ${brandRgb.b}, ${0.5 * Math.min(hoverMultiplier, 1.2)})`;
         } else {
-            // ✅ 提高背景不透明度
             bgColor = `rgba(${brandRgb.r}, ${brandRgb.g}, ${brandRgb.b}, ${Math.max(safeOpacity, 0.85)})`;
             borderColor = `rgba(${brandRgb.r}, ${brandRgb.g}, ${brandRgb.b}, ${Math.min(safeOpacity + 0.3, 1)})`;
             boxShadow = isFlat ? 'none' : `0 ${8 * shadowMultiplier}px ${32 * shadowMultiplier}px -${8 * shadowMultiplier}px rgba(${brandRgb.r}, ${brandRgb.g}, ${brandRgb.b}, ${0.25 * Math.min(shadowMultiplier, 1.2)})`;
             hoverBoxShadow = isFlat ? 'none' : `0 ${12 * hoverMultiplier}px ${40 * hoverMultiplier}px -${10 * hoverMultiplier}px rgba(${brandRgb.r}, ${brandRgb.g}, ${brandRgb.b}, ${0.35 * Math.min(hoverMultiplier, 1.2)})`;
         }
     } else {
-        // ✅ 提高背景不透明度
         bgColor = `rgba(${bgBase[0]}, ${bgBase[1]}, ${bgBase[2]}, ${Math.max(safeOpacity, 0.88)})`;
         borderColor = `rgba(${isDarkMode ? '255,255,255' : '0,0,0'}, ${isDarkMode ? 0.15 : 0.08})`;
         boxShadow = isFlat ? 'none' : (isDarkMode
@@ -201,7 +225,7 @@ export const SiteCard = React.memo(function SiteCard({
     // ============================================================
     let renderIcon;
 
-    // 1. 最高优先级：Iconify 品牌图标（只要有 icon 且是 Iconify 格式，就渲染）
+    // 1. 最高优先级：Iconify 品牌图标
     if (isIconifyIcon(site.icon)) {
         renderIcon = (
             <div className="w-full h-full rounded-xl flex items-center justify-center bg-white dark:bg-slate-700 shadow-md">
@@ -330,6 +354,10 @@ export const SiteCard = React.memo(function SiteCard({
                 rel="noopener noreferrer"
                 onClick={handleClick}
                 onContextMenu={(e) => onContextMenu && onContextMenu(e, site.id)}
+                onTouchStart={handleTouchStart}
+                onTouchEnd={handleTouchEnd}
+                onTouchMove={handleTouchMove}
+                title={site.desc || site.name}
                 className={`group relative block h-full border transition-all duration-200 overflow-hidden isolate z-10 card-hover-target ${isLoggedIn ? 'cursor-grab active:cursor-grabbing' : 'cursor-pointer'} ${site.isHidden && isLoggedIn ? 'opacity-50 grayscale' : ''}`}
                 style={{
                     height: `var(--mobile-card-height, ${settings.cardHeight}px)`,
@@ -337,7 +365,6 @@ export const SiteCard = React.memo(function SiteCard({
                     backgroundColor: bgColor,
                     borderColor: borderColor,
                     boxShadow: boxShadow,
-                    // ✅ 移除毛玻璃效果，让卡片更清晰
                     backdropFilter: 'none',
                     WebkitBackdropFilter: 'none'
                 }}
@@ -364,7 +391,8 @@ export const SiteCard = React.memo(function SiteCard({
                                 <span
                                     className={`font-bold break-words line-clamp-2 text-xs sm:text-sm md:text-base leading-tight ${hasShadow ? 'text-shadow-sm' : ''}`}
                                     style={{ color: titleColorStyle, fontFamily: titleFontFamily, fontSize: titleFontSize ? `${titleFontSize}px` : undefined }}
-                                    title={site.name}>
+                                    title={site.name}
+                                >
                                     {site.name}
                                 </span>
 
@@ -374,21 +402,28 @@ export const SiteCard = React.memo(function SiteCard({
                             </div>
                         </div>
 
+                        {/* ✅ 三个点：登录后常驻显示，悬停背景加深 */}
                         <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
-                            {isLoggedIn ? (<button onClick={(e) => {
-                                e.stopPropagation();
-                                onEdit && onEdit();
-                            }}
-                                className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg hover:bg-black/5 dark:hover:bg-white/10 transition-all active:scale-95 shrink-0">
-                                <MoreHorizontal size={16} style={{ color: textColor }} /></button>) : (<ExternalLink size={14}
-                                    className="opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
-                                    style={{ color: textColor }} />)}
+                            {isLoggedIn ? (
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        onEdit && onEdit();
+                                    }}
+                                    className="p-1.5 rounded-lg transition-all active:scale-95 shrink-0 hover:bg-black/10 dark:hover:bg-white/20 text-slate-400 hover:text-slate-700 dark:text-slate-500 dark:hover:text-white"
+                                >
+                                    <MoreHorizontal size={16} />
+                                </button>
+                            ) : (
+                                <ExternalLink size={14} className="opacity-0 group-hover:opacity-100 transition-opacity shrink-0" style={{ color: textColor }} />
+                            )}
                         </div>
                     </div>
 
                     {showDesc && isStandardLayout && site.desc && (
                         <p className={`text-xs leading-relaxed line-clamp-2 opacity-70 mt-2 ${hasShadow ? 'text-shadow-sm' : ''}`}
-                            style={{ color: descColorStyle, fontFamily: descFontFamily, fontSize: descFontSize ? `${descFontSize}px` : undefined }}>
+                            style={{ color: descColorStyle, fontFamily: descFontFamily, fontSize: descFontSize ? `${descFontSize}px` : undefined }}
+                        >
                             {site.desc}
                         </p>
                     )}
@@ -403,9 +438,9 @@ export const SiteCard = React.memo(function SiteCard({
                             {childCount}
                         </div>
                     )}
-                </div >
-            </a >
-        </div >
+                </div>
+            </a>
+        </div>
     );
 });
 
