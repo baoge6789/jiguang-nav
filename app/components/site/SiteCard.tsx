@@ -78,7 +78,7 @@ export const SiteCard = React.memo(function SiteCard({
         setHasError(true);
     };
 
-    // 长按事件处理（手机端编辑）
+    // 长按事件处理（手机端编辑）- 文件夹不触发
     const handleTouchStart = (e: React.TouchEvent) => {
         if (site.type === 'folder' || !isLoggedIn) return;
         
@@ -402,8 +402,8 @@ export const SiteCard = React.memo(function SiteCard({
                             </div>
                         </div>
 
-                        {/* ✅ 三个点：登录后常驻显示，悬停背景加深 */}
-                        <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
+                        {/* ✅ 三个点：登录后常驻显示，悬停背景加深，文件夹靠上对齐 */}
+                        <div className={`flex items-center gap-1 sm:gap-1.5 shrink-0 ${site.type === 'folder' ? 'self-start mt-0.5' : ''}`}>
                             {isLoggedIn ? (
                                 <button
                                     onClick={(e) => {
@@ -428,7 +428,7 @@ export const SiteCard = React.memo(function SiteCard({
                         </p>
                     )}
                     
-                    {/* ✅ 数量移到右下角 */}
+                    {/* ✅ 数量角标 - 右下角 */}
                     {site.type === 'folder' && childCount !== undefined && childCount > 0 && (
                         <div className="absolute bottom-2 right-3 flex items-center justify-center min-w-[20px] h-[20px] px-1.5 rounded-full text-[10px] font-bold text-white shadow-lg"
                             style={{
