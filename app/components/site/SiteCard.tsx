@@ -334,6 +334,7 @@ export const SiteCard = React.memo(function SiteCard({
     );
 
     const showCount = site.type === 'folder' && (childCount || 0) > 0;
+    const isShortName = site.name && site.name.length <= 5;
 
     return (
         <div
@@ -387,9 +388,9 @@ export const SiteCard = React.memo(function SiteCard({
                                 </div>
                             </div>
 
-                            <div className={`flex min-w-0 overflow-hidden ${isRowLayout ? 'flex-row items-baseline gap-1 sm:gap-2 flex-1' : 'flex-col'}`}>
+                            <div className={`flex min-w-0 overflow-hidden ${isRowLayout ? 'flex-row items-baseline gap-1 sm:gap-2 flex-1' : 'flex-col'} ${isShortName ? 'items-center w-full' : ''}`}>
                                 <span
-                                    className={`font-bold break-words line-clamp-2 text-xs sm:text-sm md:text-base leading-tight ${hasShadow ? 'text-shadow-sm' : ''} ${site.name && site.name.length <= 5 ? 'text-center flex-1' : 'text-left'}`}
+                                    className={`font-bold break-words line-clamp-2 text-xs sm:text-sm md:text-base leading-tight ${hasShadow ? 'text-shadow-sm' : ''} ${isShortName ? 'text-center w-full' : 'text-left'}`}
                                     style={{ color: titleColorStyle, fontFamily: titleFontFamily, fontSize: titleFontSize ? `${titleFontSize}px` : undefined }}
                                     title={site.name}
                                 >
