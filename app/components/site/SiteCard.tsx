@@ -382,7 +382,7 @@ export const SiteCard = React.memo(function SiteCard({
                     <div className={`flex ${isStandardLayout ? 'items-start' : 'items-center'} justify-between w-full ${gapClass}`}>
                         <div className={`flex items-center ${gapClass} min-w-0 flex-1 overflow-hidden`}>
                             <div className="relative shrink-0" style={{ width: iconSizePx, height: iconSizePx }}>
-                                <div className="w-full h-full rounded-xl overflow-hidden">
+                                <div className={`w-full h-full rounded-xl overflow-hidden ${site.type === 'folder' ? 'mt-1 ml-1' : ''}`}>
                                     {renderIcon}
                                 </div>
                             </div>
@@ -428,9 +428,9 @@ export const SiteCard = React.memo(function SiteCard({
                         </p>
                     )}
                     
-                    {/* ✅ 数量角标 - 右下角 */}
+                    {/* ✅ 数量角标 - 左上角 */}
                     {site.type === 'folder' && childCount !== undefined && childCount > 0 && (
-                        <div className="absolute bottom-2 right-3 flex items-center justify-center min-w-[20px] h-[20px] px-1.5 rounded-full text-[10px] font-bold text-white shadow-lg"
+                        <div className="absolute top-2 left-2 flex items-center justify-center min-w-[20px] h-[20px] px-1.5 rounded-full text-[10px] font-bold text-white shadow-lg z-20"
                             style={{
                                 backgroundColor: site.color || '#6366f1',
                                 boxShadow: `0 2px 8px -1px rgba(${brandRgb.r}, ${brandRgb.g}, ${brandRgb.b}, 0.5)`
