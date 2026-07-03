@@ -303,18 +303,24 @@ export const SiteCard = React.memo(function SiteCard({
         const firstLetter = site.name ? site.name.charAt(0).toUpperCase() : '?';
         const IconComponent = site.type === 'folder' ? Folder : (ICON_MAP[site.icon] || Globe);
         
-        // 判断是否是图库图标
+        // 判断是否是图库图标或文件夹
         const isLibraryIcon = site.iconType === 'library' || site.type === 'folder';
+        
+        // ✅ 图标大小不变，背景缩小
+        const iconSize = iconSizePx * 0.6;        // 图标保持原来大小
+        const containerSize = iconSizePx * 0.7;   // 背景缩小到70%
         
         renderIcon = (
             <div
-                className="w-full h-full rounded-xl flex items-center justify-center text-white shadow-md font-bold relative"
+                className="flex items-center justify-center text-white shadow-md font-bold relative rounded-xl"
                 style={{ 
                     backgroundColor: site.color || '#6366f1',
-                    fontSize: iconSizePx * 0.5
+                    width: containerSize,
+                    height: containerSize,
+                    fontSize: containerSize * 0.4
                 }}
             >
-                {isLibraryIcon && IconComponent ? <IconComponent size={iconSizePx * 0.6} /> : firstLetter}
+                {isLibraryIcon && IconComponent ? <IconComponent size={iconSize} /> : firstLetter}
             </div>
         );
     }
@@ -436,9 +442,9 @@ export const SiteCard = React.memo(function SiteCard({
                         </p>
                     )}
                     
-                    {/* ✅ 数量角标 - 左上角 */}
+                    {/* ✅ 数量角标 - 左上角，背景缩小，数字保持14px */}
                     {site.type === 'folder' && childCount !== undefined && childCount > 0 && (
-                        <div className="absolute top-0 left-0 flex items-center justify-center min-w-[28px] h-[28px] px-1.5 rounded-full text-[14px] font-bold text-white shadow-lg z-20"
+                        <div className="absolute top-0 left-0 flex items-center justify-center min-w-[20px] h-[20px] px-1 rounded-full text-[14px] font-bold text-white shadow-lg z-20"
                             style={{
                                 backgroundColor: site.color || '#6366f1',
                                 boxShadow: `0 2px 8px -1px rgba(${brandRgb.r}, ${brandRgb.g}, ${brandRgb.b}, 0.5)`
