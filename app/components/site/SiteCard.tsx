@@ -434,14 +434,14 @@ if (!renderIcon) {
                     
                     {/* ✅ 数量角标 - 左上角 */}
                     {site.type === 'folder' && childCount !== undefined && childCount > 0 && (
-                        <div className="absolute top-2 left-2 flex items-center justify-center min-w-[20px] h-[20px] px-1.5 rounded-full text-[10px] font-bold text-white shadow-lg z-20"
-                            style={{
-                                backgroundColor: site.color || '#6366f1',
-                                boxShadow: `0 2px 8px -1px rgba(${brandRgb.r}, ${brandRgb.g}, ${brandRgb.b}, 0.5)`
-                            }}>
-                            {childCount}
-                        </div>
-                    )}
+    <div className="absolute top-0 left-0 flex items-center justify-center min-w-[24px] h-[24px] px-1.5 rounded-full text-[12px] font-bold text-white shadow-lg z-20"
+        style={{
+            backgroundColor: site.color || '#6366f1',
+            boxShadow: `0 2px 8px -1px rgba(${brandRgb.r}, ${brandRgb.g}, ${brandRgb.b}, 0.5)`
+        }}>
+        {childCount}
+    </div>
+)}
                 </div>
             </a>
         </div>
