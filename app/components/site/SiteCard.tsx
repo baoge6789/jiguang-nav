@@ -299,31 +299,31 @@ export const SiteCard = React.memo(function SiteCard({
     }
 
     // 4. 兜底：Lucide 图库图标或首字母
-    if (!renderIcon) {
-        const firstLetter = site.name ? site.name.charAt(0).toUpperCase() : '?';
-        const IconComponent = site.type === 'folder' ? Folder : (ICON_MAP[site.icon] || Globe);
-        
-        // 判断是否是图库图标或文件夹
-        const isLibraryIcon = site.iconType === 'library' || site.type === 'folder';
-        
-        // ✅ 图标大小不变，背景缩小
-        const iconSize = iconSizePx * 0.6;        // 图标保持原来大小
-        const containerSize = iconSizePx * 0.7;   // 背景缩小到70%
-        
-        renderIcon = (
-            <div
-                className="flex items-center justify-center text-white shadow-md font-bold relative rounded-xl"
-                style={{ 
-                    backgroundColor: site.color || '#6366f1',
-                    width: containerSize,
-                    height: containerSize,
-                    fontSize: containerSize * 0.4
-                }}
-            >
-                {isLibraryIcon && IconComponent ? <IconComponent size={iconSize} /> : firstLetter}
-            </div>
-        );
-    }
+if (!renderIcon) {
+    const firstLetter = site.name ? site.name.charAt(0).toUpperCase() : '?';
+    const IconComponent = site.type === 'folder' ? Folder : (ICON_MAP[site.icon] || Globe);
+    
+    // 判断是否是图库图标或文件夹
+    const isLibraryIcon = site.iconType === 'library' || site.type === 'folder';
+    
+    // ✅ 图标和背景一起缩小
+    const containerSize = iconSizePx * 0.7;        // 背景缩小到70%
+    const iconSize = containerSize * 0.6;          // 图标同步缩小
+    
+    renderIcon = (
+        <div
+            className="flex items-center justify-center text-white shadow-md font-bold relative rounded-xl"
+            style={{ 
+                backgroundColor: site.color || '#6366f1',
+                width: containerSize,
+                height: containerSize,
+                fontSize: containerSize * 0.4
+            }}
+        >
+            {isLibraryIcon && IconComponent ? <IconComponent size={iconSize} /> : firstLetter}
+        </div>
+    );
+}
 
     // Layout Modes
     const isRowLayout = height < 75;
