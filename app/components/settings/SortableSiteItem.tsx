@@ -6,18 +6,16 @@ import NextImage from 'next/image';
 import { FAVICON_PROVIDERS, hexToRgb } from '@/lib/utils';
 import { ICON_MAP } from '@/lib/constants';
 import { useOnlineStatus } from '@/app/hooks/useOnlineStatus';
-// SiteCard imports: import { hexToRgb, getAccessibleTextColor, shouldUseTextShadow, FAVICON_PROVIDERS } from '@/lib/utils';
-// SiteCard imports: import { ICON_MAP, FONTS } from '@/lib/constants';
 import { Globe } from 'lucide-react';
 
 interface SortableSiteItemProps {
     site: any;
-    sites?: any[]; // Full list to find children
+    sites?: any[];
     isDarkMode: boolean;
     onEdit: (site: any) => void;
     onDelete: (site: any) => void;
     onToggleHidden: (site: any) => void;
-    onAddToFolder?: (parentId: string, category: string) => void; // New: add site/folder to this folder
+    onAddToFolder?: (parentId: string, category: string) => void;
 }
 
 export function SortableSiteItem({ site, sites, isDarkMode, onEdit, onDelete, onToggleHidden, onAddToFolder }: SortableSiteItemProps) {
@@ -31,7 +29,7 @@ export function SortableSiteItem({ site, sites, isDarkMode, onEdit, onDelete, on
         transform,
         transition,
         isDragging
-    } = useSortable({ id: site.id, data: { text: site.name, type: site.type } }); // Add data for drag helpers
+    } = useSortable({ id: site.id, data: { text: site.name, type: site.type } });
 
     const style = {
         transform: CSS.Transform.toString(transform),
@@ -42,13 +40,10 @@ export function SortableSiteItem({ site, sites, isDarkMode, onEdit, onDelete, on
     const isFolder = site.type === 'folder';
     const childrenSites = isFolder && sites ? sites.filter(s => s.parentId === site.id).sort((a, b) => a.order - b.order) : [];
 
-    // Icon Logic (Simplified from SiteCard)
-    // Icon Logic (Standardized with SiteCard)
     const Icon = ICON_MAP[site.icon] || Globe;
     const [iconState, setIconState] = useState(0);
     const [hasError, setHasError] = useState(false);
 
-    // Reset state when icon config changes
     React.useEffect(() => {
         setIconState(0);
         setHasError(false);
@@ -60,14 +55,12 @@ export function SortableSiteItem({ site, sites, isDarkMode, onEdit, onDelete, on
 
     if (site.type !== 'folder') {
         if (site.iconType === 'auto') {
-            // Auto: Cache -> Online
             const hasLocalCache = site.icon && (site.icon.startsWith('/') || site.icon.startsWith('http'));
 
             if (!hasError && hasLocalCache) {
                 currentSrc = site.icon;
                 showImage = true;
             } else {
-                // Online Fetch (Providers) - only if URL is valid
                 const hasValidUrl = site.url && site.url.trim() && site.url !== '#';
                 if (isOnline && hasValidUrl) {
                     let providerIndex = iconState;
@@ -78,7 +71,6 @@ export function SortableSiteItem({ site, sites, isDarkMode, onEdit, onDelete, on
                     if (providerIndex >= 0 && providerIndex < FAVICON_PROVIDERS.length) {
                         try {
                             const domain = new URL(site.url).hostname;
-                            // Don't fetch for localhost or invalid domains
                             if (domain && domain !== 'localhost' && domain.includes('.')) {
                                 currentSrc = FAVICON_PROVIDERS[providerIndex](domain);
                                 showImage = true;
@@ -88,7 +80,6 @@ export function SortableSiteItem({ site, sites, isDarkMode, onEdit, onDelete, on
                 }
             }
         } else if (site.iconType === 'upload') {
-            // Upload: File -> Text
             if (site.customIconUrl && !hasError) {
                 currentSrc = site.customIconUrl;
                 showImage = true;
@@ -116,22 +107,18 @@ export function SortableSiteItem({ site, sites, isDarkMode, onEdit, onDelete, on
         );
     } else {
         const firstLetter = site.name ? site.name.charAt(0).toUpperCase() : '?';
-
-        // Determine what to show inside the icon container
         let iconContent;
         if (isFolder) {
             iconContent = isExpanded ? <FolderOpen size={14} /> : <Folder size={14} />;
         } else if (site.iconType === 'library') {
-            // Only use Icon from library if iconType is explicitly 'library'
             iconContent = Icon ? <Icon size={14} /> : <Globe size={14} />;
         } else {
-            // For 'auto' and 'upload' fallback, show first letter
             iconContent = firstLetter;
         }
 
         renderIcon = (
             <div
-                className="w-6 h-6 rounded-md flex items-center justify-center text-white text-xs font-bold"
+                className="w-6 h-6 rounded-md flex items-center justify-center text-white text-xs font-bold shrink-0"
                 style={{ backgroundColor: site.color || '#6366f1' }}
             >
                 {iconContent}
@@ -140,25 +127,26 @@ export function SortableSiteItem({ site, sites, isDarkMode, onEdit, onDelete, on
     }
 
     return (
-        <div ref={setNodeRef} style={style} className={`flex flex-col mb-2 ${site.parentId ? 'ml-6' : ''}`}>
+        <div ref={setNodeRef} style={style} className={`flex flex-col mb-2 ${site.parentId ? 'ml-3 sm:ml-6' : ''}`}>
             {/* Main Item Row */}
-            <div className={`flex items-center justify-between p-2 rounded-lg border ${isDarkMode ? 'bg-white/5 border-white/5' : 'bg-white border-slate-100'} ${site.isHidden ? 'opacity-60' : ''}`}>
-                <div className="flex items-center gap-3 overflow-hidden">
-                    <div {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing text-slate-400 hover:text-indigo-500">
+            <div className={`flex flex-col sm:flex-row sm:items-center justify-between p-2 rounded-lg border gap-2 ${isDarkMode ? 'bg-white/5 border-white/5' : 'bg-white border-slate-100'} ${site.isHidden ? 'opacity-60' : ''}`}>
+                {/* 左侧：图标 + 名称 */}
+                <div className="flex items-center gap-3 overflow-hidden min-w-0 flex-1">
+                    <div {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing text-slate-400 hover:text-indigo-500 shrink-0">
                         <GripVertical size={14} />
                     </div>
                     {isFolder && (
-                        <button onClick={() => setIsExpanded(!isExpanded)} className="p-0.5 rounded hover:bg-black/10 dark:hover:bg-white/10">
+                        <button onClick={() => setIsExpanded(!isExpanded)} className="p-0.5 rounded hover:bg-black/10 dark:hover:bg-white/10 shrink-0">
                             {isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
                         </button>
                     )}
                     {renderIcon}
-                    <div className="flex flex-col min-w-0">
-                        <div className="flex items-center gap-2">
+                    <div className="flex flex-col min-w-0 flex-1">
+                        <div className="flex items-center gap-2 flex-wrap">
                             <span className={`text-sm font-medium truncate ${site.isHidden ? 'line-through decoration-2 decoration-slate-400/50' : ''}`}>{site.name}</span>
                             {isFolder && childrenSites.length > 0 && (
                                 <div
-                                    className="flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[9px] font-bold text-white shadow-sm leading-none"
+                                    className="flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[9px] font-bold text-white shadow-sm leading-none shrink-0"
                                     style={{
                                         backgroundColor: site.color || '#6366f1',
                                         boxShadow: `0 1px 6px -1px rgba(${hexToRgb(site.color || '#6366f1').r}, ${hexToRgb(site.color || '#6366f1').g}, ${hexToRgb(site.color || '#6366f1').b}, 0.5)`
@@ -171,8 +159,9 @@ export function SortableSiteItem({ site, sites, isDarkMode, onEdit, onDelete, on
                         {!isFolder && <span className="text-[10px] text-slate-400 truncate max-w-[150px]">{site.url}</span>}
                     </div>
                 </div>
-                <div className="flex items-center gap-1 shrink-0">
-                    {/* Add to folder button - only for folders */}
+
+                {/* ✅ 右侧按钮组：换行 + 间距缩小 */}
+                <div className="flex items-center gap-0.5 sm:gap-1 shrink-0 flex-wrap justify-end">
                     {isFolder && onAddToFolder && (
                         <button
                             onClick={() => onAddToFolder(site.id, site.category)}
