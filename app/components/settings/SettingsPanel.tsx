@@ -1841,62 +1841,62 @@ export function SettingsPanel({
                                                             </div>
 
                                                             {expandedCategories.includes(cat) && (
-  <div className="mt-3 pl-0 sm:pl-4 md:pl-8 pr-2 animate-in slide-in-from-top-2 fade-in duration-200 overflow-x-auto whitespace-nowrap">
-                                                                    <SortableContext
-                                                                        items={sites.filter((s: any) => s.category === cat && !s.parentId).map((s: any) => s.id)}
-                                                                        strategy={verticalListSortingStrategy}
-                                                                    >
-                                                                        <div className="space-y-1">
-                                                                            {sites.filter((s: any) => s.category === cat && !s.parentId).map((site: any) => (
-                                                                                <SortableSiteItem
-                                                                                    key={site.id}
-                                                                                    site={site}
-                                                                                    sites={sites}
-                                                                                    isDarkMode={isDarkMode}
-                                                                                    onEdit={(targetSite) => {
-                                                                                        setEditingSite(targetSite);
-                                                                                        setIsModalOpen(true);
-                                                                                    }}
-                                                                                    onDelete={(targetSite: any) => {
-                                                                                        onDeleteSite(targetSite);
-                                                                                    }}
-                                                                                    onToggleHidden={(s: any) => {
-                                                                                        const target = s.id ? s : site;
-                                                                                        const updated = { ...target, isHidden: !target.isHidden };
-                                                                                        setSites(sites.map(s => s.id === target.id ? updated : s));
-                                                                                    }}
-                                                                                    onAddToFolder={(parentId: string, category: string) => {
-                                                                                        setEditingSite({
-                                                                                            id: null,
-                                                                                            name: '',
-                                                                                            url: '',
-                                                                                            desc: '',
-                                                                                            category: category,
-                                                                                            color: getRandomColor(),
-                                                                                            icon: 'Globe',
-                                                                                            iconType: 'auto',
-                                                                                            customIconUrl: '',
-                                                                                            titleColor: '',
-                                                                                            descColor: '',
-                                                                                            titleFont: '',
-                                                                                            descFont: '',
-                                                                                            titleSize: '',
-                                                                                            descSize: '',
-                                                                                            isHidden: false,
-                                                                                            type: 'site',
-                                                                                            parentId: parentId
-                                                                                        });
-                                                                                        setIsModalOpen(true);
-                                                                                    }}
-                                                                                />
-                                                                            ))}
-                                                                            {sites.filter((s: any) => s.category === cat && !s.parentId).length === 0 && (
-                                                                                <div className="text-xs text-center py-2 opacity-50 border border-dashed rounded-lg">暂无根站点</div>
-                                                                            )}
-                                                                        </div>
-                                                                    </SortableContext>
-                                                                </div>
-                                                            )}
+  <div className="mt-3 pl-0 sm:pl-4 md:pl-8 pr-2 animate-in slide-in-from-top-2 fade-in duration-200">
+    <SortableContext
+      items={sites.filter((s: any) => s.category === cat && !s.parentId).map((s: any) => s.id)}
+      strategy={verticalListSortingStrategy}
+    >
+      <div className="space-y-1">
+        {sites.filter((s: any) => s.category === cat && !s.parentId).map((site: any) => (
+          <SortableSiteItem
+            key={site.id}
+            site={site}
+            sites={sites}
+            isDarkMode={isDarkMode}
+            onEdit={(targetSite) => {
+              setEditingSite(targetSite);
+              setIsModalOpen(true);
+            }}
+            onDelete={(targetSite: any) => {
+              onDeleteSite(targetSite);
+            }}
+            onToggleHidden={(s: any) => {
+              const target = s.id ? s : site;
+              const updated = { ...target, isHidden: !target.isHidden };
+              setSites(sites.map(s => s.id === target.id ? updated : s));
+            }}
+            onAddToFolder={(parentId: string, category: string) => {
+              setEditingSite({
+                id: null,
+                name: '',
+                url: '',
+                desc: '',
+                category: category,
+                color: getRandomColor(),
+                icon: 'Globe',
+                iconType: 'auto',
+                customIconUrl: '',
+                titleColor: '',
+                descColor: '',
+                titleFont: '',
+                descFont: '',
+                titleSize: '',
+                descSize: '',
+                isHidden: false,
+                type: 'site',
+                parentId: parentId
+              });
+              setIsModalOpen(true);
+            }}
+          />
+        ))}
+        {sites.filter((s: any) => s.category === cat && !s.parentId).length === 0 && (
+          <div className="text-xs text-center py-2 opacity-50 border border-dashed rounded-lg">暂无根站点</div>
+        )}
+      </div>
+    </SortableContext>
+  </div>
+)}
                                                         </div>
                                                     </SortableCategoryItem>
                                                 ))}
