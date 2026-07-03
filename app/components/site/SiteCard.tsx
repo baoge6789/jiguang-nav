@@ -299,21 +299,25 @@ export const SiteCard = React.memo(function SiteCard({
     }
 
     // 4. 兜底：Lucide 图库图标或首字母
-if (!renderIcon) {
-    const firstLetter = site.name ? site.name.charAt(0).toUpperCase() : '?';
-    const IconComponent = site.type === 'folder' ? Folder : (ICON_MAP[site.icon] || Globe);
-    renderIcon = (
-        <div
-            className="w-full h-full rounded-xl flex items-center justify-center font-bold relative"
-            style={{ 
-                fontSize: iconSizePx * 0.5,
-                color: site.type === 'folder' ? (site.color || '#6366f1') : '#ffffff'
-            }}
-        >
-            {(site.type === 'folder' || site.iconType === 'library') && IconComponent ? <IconComponent size={iconSizePx * 0.6} /> : firstLetter}
-        </div>
-    );
-}
+    if (!renderIcon) {
+        const firstLetter = site.name ? site.name.charAt(0).toUpperCase() : '?';
+        const IconComponent = site.type === 'folder' ? Folder : (ICON_MAP[site.icon] || Globe);
+        
+        // 判断是否是图库图标
+        const isLibraryIcon = site.iconType === 'library' || site.type === 'folder';
+        
+        renderIcon = (
+            <div
+                className="w-full h-full rounded-xl flex items-center justify-center text-white shadow-md font-bold relative"
+                style={{ 
+                    backgroundColor: site.color || '#6366f1',
+                    fontSize: iconSizePx * 0.5
+                }}
+            >
+                {isLibraryIcon && IconComponent ? <IconComponent size={iconSizePx * 0.6} /> : firstLetter}
+            </div>
+        );
+    }
 
     // Layout Modes
     const isRowLayout = height < 75;
@@ -434,14 +438,14 @@ if (!renderIcon) {
                     
                     {/* ✅ 数量角标 - 左上角 */}
                     {site.type === 'folder' && childCount !== undefined && childCount > 0 && (
-    <div className="absolute top-0 left-0 flex items-center justify-center min-w-[20px] h-[20px] px-1.5 rounded-full text-[14px] font-bold text-white shadow-lg z-20"
-        style={{
-            backgroundColor: site.color || '#6366f1',
-            boxShadow: `0 2px 8px -1px rgba(${brandRgb.r}, ${brandRgb.g}, ${brandRgb.b}, 0.5)`
-        }}>
-        {childCount}
-    </div>
-)}
+                        <div className="absolute top-0 left-0 flex items-center justify-center min-w-[28px] h-[28px] px-1.5 rounded-full text-[14px] font-bold text-white shadow-lg z-20"
+                            style={{
+                                backgroundColor: site.color || '#6366f1',
+                                boxShadow: `0 2px 8px -1px rgba(${brandRgb.r}, ${brandRgb.g}, ${brandRgb.b}, 0.5)`
+                            }}>
+                            {childCount}
+                        </div>
+                    )}
                 </div>
             </a>
         </div>
