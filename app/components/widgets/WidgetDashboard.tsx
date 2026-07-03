@@ -753,7 +753,7 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
         </div>
         <div className="z-10 pl-3 border-l border-white/10 dark:border-white/5 h-full flex flex-col justify-center gap-1.5 flex-1 min-w-0">
             {/* ✅ AQI / UV - 强制一行显示，手机端缩小字体和间距 */}
-            <div className="flex items-center gap-1 sm:gap-2 text-[9px] sm:text-xs -ml-2 flex-nowrap">
+            <div className="flex items-center gap-1 sm:gap-2 text-[9px] sm:text-xs -ml-3 flex-nowrap">
                 <div className="flex items-center gap-0.5 sm:gap-1 shrink-0">
                     <Shield size={9} className="text-green-500 shrink-0 sm:w-3 sm:h-3" />
                     <span className={`${isDarkMode ? 'opacity-50' : 'text-slate-500'}`}>AQI</span>
@@ -767,11 +767,15 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                     {weather.uv !== null && <span className={`${isDarkMode ? 'opacity-60' : 'text-slate-600'}`}>{getUVDesc(weather.uv)}</span>}
                 </div>
             </div>
-            {weather.daily?.length > 0 && <DailyForecast data={weather.daily} />}
+            {/* ✅ 6天预报 - 往右移一点 */}
+            {weather.daily?.length > 0 && (
+                <div className="ml-1">
+                    <DailyForecast data={weather.daily} />
+                </div>
+            )}
         </div>
     </div>
 </TiltCard>
-
             {/* 卡片3：工具 */}
             <TiltCard className="group">
                 <div className={cardBase}>
