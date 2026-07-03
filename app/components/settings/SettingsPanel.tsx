@@ -1841,7 +1841,7 @@ export function SettingsPanel({
                                                             </div>
 
                                                             {expandedCategories.includes(cat) && (
-                                                                <div className="mt-3 pl-8 pr-2 animate-in slide-in-from-top-2 fade-in duration-200">
+                                                        <div className="mt-3 pl-2 sm:pl-4 md:pl-8 pr-2 animate-in slide-in-from-top-2 fade-in duration-200">
                                                                     <SortableContext
                                                                         items={sites.filter((s: any) => s.category === cat && !s.parentId).map((s: any) => s.id)}
                                                                         strategy={verticalListSortingStrategy}
