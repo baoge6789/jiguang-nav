@@ -127,11 +127,12 @@ export function SortableSiteItem({ site, sites, isDarkMode, onEdit, onDelete, on
     }
 
     return (
-        <div ref={setNodeRef} style={style} className={`flex flex-col mb-2 ${site.parentId ? 'ml-3 sm:ml-6' : ''}`}>
+        // ✅ 外层容器：移除缩进，缩进移到左侧内容区域
+        <div ref={setNodeRef} style={style} className="flex flex-col mb-2">
             {/* Main Item Row */}
             <div className={`flex flex-col sm:flex-row sm:items-center justify-between p-2 rounded-lg border gap-2 ${isDarkMode ? 'bg-white/5 border-white/5' : 'bg-white border-slate-100'} ${site.isHidden ? 'opacity-60' : ''}`}>
-                {/* 左侧：图标 + 名称 */}
-                <div className="flex items-center gap-3 overflow-hidden min-w-0 flex-1">
+                {/* ✅ 左侧内容：缩进加在这里，只影响拖拽手柄+图标+名称，手机缩进2，电脑缩进4 */}
+                <div className={`flex items-center gap-3 overflow-hidden min-w-0 flex-1 ${site.parentId ? 'ml-2 sm:ml-4' : ''}`}>
                     <div {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing text-slate-400 hover:text-indigo-500 shrink-0">
                         <GripVertical size={14} />
                     </div>
@@ -160,8 +161,8 @@ export function SortableSiteItem({ site, sites, isDarkMode, onEdit, onDelete, on
                     </div>
                 </div>
 
-                {/* ✅ 右侧按钮组：换行 + 间距缩小 */}
-                <div className="flex items-center gap-0.5 sm:gap-1 shrink-0 flex-wrap justify-end">
+                {/* ✅ 右侧按钮组：位置固定，不受缩进影响，一行显示 */}
+                <div className="flex items-center gap-0.5 sm:gap-1 shrink-0">
                     {isFolder && onAddToFolder && (
                         <button
                             onClick={() => onAddToFolder(site.id, site.category)}
