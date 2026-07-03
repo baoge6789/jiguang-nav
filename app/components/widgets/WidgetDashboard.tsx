@@ -631,7 +631,7 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
     const pomodoroSecs = pomodoroTime % 60;
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-[0.8fr_1.2fr_1fr] gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* 卡片1：时钟 */}
             <TiltCard className="group">
                 <div className={cardBase}>
