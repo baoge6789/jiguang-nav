@@ -396,7 +396,7 @@ if (!renderIcon) {
                     <div className={`flex ${isStandardLayout ? 'items-start' : 'items-center'} justify-between w-full ${gapClass}`}>
                         <div className={`flex items-center ${gapClass} min-w-0 flex-1 overflow-hidden`}>
                             <div className="relative shrink-0" style={{ width: iconSizePx, height: iconSizePx }}>
-                                <div className={`w-full h-full rounded-xl overflow-hidden ${site.type === 'folder' ? 'mt-1 ml-1' : ''}`}>
+                                <div className={`w-full h-full rounded-xl overflow-hidden ${site.type === 'folder' ? 'mt-1 ml-2' : ''}`}>
                                     {renderIcon}
                                 </div>
                             </div>
