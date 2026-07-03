@@ -299,18 +299,21 @@ export const SiteCard = React.memo(function SiteCard({
     }
 
     // 4. 兜底：Lucide 图库图标或首字母
-    if (!renderIcon) {
-        const firstLetter = site.name ? site.name.charAt(0).toUpperCase() : '?';
-        const IconComponent = site.type === 'folder' ? Folder : (ICON_MAP[site.icon] || Globe);
-        renderIcon = (
-            <div
-                className="w-full h-full rounded-xl flex items-center justify-center text-white shadow-md font-bold relative"
-                style={{ backgroundColor: site.color || '#6366f1', fontSize: iconSizePx * 0.5 }}
-            >
-                {(site.type === 'folder' || site.iconType === 'library') && IconComponent ? <IconComponent size={iconSizePx * 0.6} /> : firstLetter}
-            </div>
-        );
-    }
+if (!renderIcon) {
+    const firstLetter = site.name ? site.name.charAt(0).toUpperCase() : '?';
+    const IconComponent = site.type === 'folder' ? Folder : (ICON_MAP[site.icon] || Globe);
+    renderIcon = (
+        <div
+            className="w-full h-full rounded-xl flex items-center justify-center font-bold relative"
+            style={{ 
+                fontSize: iconSizePx * 0.5,
+                color: site.type === 'folder' ? (site.color || '#6366f1') : '#ffffff'
+            }}
+        >
+            {(site.type === 'folder' || site.iconType === 'library') && IconComponent ? <IconComponent size={iconSizePx * 0.6} /> : firstLetter}
+        </div>
+    );
+}
 
     // Layout Modes
     const isRowLayout = height < 75;
