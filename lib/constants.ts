@@ -90,8 +90,8 @@ export const FONTS = [
 
 // --- Config ---
 export const DEFAULT_APP_CONFIG = {
-    siteTitle: '极光导航',
-    logoText: '极光',
+    siteTitle: '自由导航',
+    logoText: '自由',
     logoHighlight: '导航',
     logoImage: '/logo.png',
     footerText: '© {year} JiGuang. Build your own start page.',
