@@ -216,6 +216,10 @@ export function WidgetDashboard({ isDarkMode, sitesCount, widgetStyle = 'B', wid
     const addTodo = () => {
         console.log('addTodo 被调用');
         if (!newTodo.trim()) return;
+        if (todos.length >= 2) {
+            console.log('最多只能添加2条待办');
+            return;
+        }
         const newItem = {
             id: Date.now().toString() + Math.random().toString(36).substring(2),
             text: newTodo.trim(),
@@ -238,6 +242,10 @@ export function WidgetDashboard({ isDarkMode, sitesCount, widgetStyle = 'B', wid
     const addCountdown = () => {
         console.log('addCountdown 被调用');
         if (!newCountdownLabel.trim() || !newCountdownDate) return;
+        if (countdowns.length >= 2) {
+            console.log('最多只能添加2条倒计时');
+            return;
+        }
         const newItem = {
             id: Date.now().toString() + Math.random().toString(36).substring(2),
             label: newCountdownLabel.trim(),
