@@ -957,7 +957,6 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                                                     </div>
                                                 )}
                                             </div>
-                                            {/* ✅ 加号按钮独立 */}
                                             <button 
                                                 onClick={() => setIsAddingTodo(true)} 
                                                 className="absolute bottom-2 right-2 w-7 h-7 flex items-center justify-center rounded-full bg-emerald-500 text-white shadow-lg hover:scale-110 active:scale-95 transition-all z-10 border border-white/10"
@@ -1029,7 +1028,6 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                                                     </div>
                                                 )}
                                             </div>
-                                            {/* ✅ 加号按钮独立 */}
                                             <button 
                                                 onClick={() => setIsAddingCountdown(true)} 
                                                 className="absolute bottom-2 right-2 w-7 h-7 flex items-center justify-center rounded-full bg-emerald-500 text-white shadow-lg hover:scale-110 active:scale-95 transition-all z-10 border border-white/10"
