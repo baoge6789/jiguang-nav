@@ -911,22 +911,22 @@ export function WidgetDashboard({ isDarkMode, sitesCount, widgetStyle = 'B', wid
 
                             {/* ========== 待办模式 ========== */}
                             {toolsMode === 'todo' && (
-                                <div className="flex-1 flex flex-col h-full overflow-hidden relative">
+                                <div className="flex-1 flex flex-col h-full relative">
                                     {isAddingTodo ? (
-                                        <div className="absolute inset-x-1 top-1 bottom-auto z-10 bg-zinc-900 flex flex-col justify-center gap-1.5 p-1.5 rounded-xl border border-white/40 ring-1 ring-white/10 shadow-2xl" style={{ height: '80px' }}>
+                                        <div className="absolute inset-x-1 -top-16 bottom-auto z-20 bg-slate-800 border border-indigo-500/50 rounded-xl shadow-2xl p-2" style={{ height: '70px' }}>
                                             <input
                                                 type="text"
                                                 value={newTodo}
                                                 onChange={(e) => setNewTodo(e.target.value)}
                                                 autoFocus
                                                 placeholder="输入待办..."
-                                                className="w-full h-7 bg-black/50 text-white text-xs px-2 rounded-lg outline-none focus:bg-black/70 transition-colors border border-white/10 focus:border-emerald-500 placeholder:text-white/40"
+                                                className="w-full h-7 bg-white/20 text-white text-xs px-2 rounded-lg outline-none focus:bg-white/30 transition-colors border border-white/20 focus:border-emerald-500 placeholder:text-white/40"
                                             />
-                                            <div className="flex gap-1.5">
-                                                <button onClick={addTodo} className="flex-1 h-6 flex items-center justify-center bg-emerald-600 text-white text-[10px] rounded hover:bg-emerald-500 transition-colors border border-white/5">
+                                            <div className="flex gap-1.5 mt-1">
+                                                <button onClick={addTodo} className="flex-1 h-6 flex items-center justify-center bg-emerald-500 text-white text-[10px] rounded hover:bg-emerald-400 transition-colors">
                                                     <Check size={14} />
                                                 </button>
-                                                <button onClick={() => setIsAddingTodo(false)} className="flex-1 h-6 flex items-center justify-center bg-white/10 text-white text-[10px] rounded hover:bg-white/20 transition-colors border border-white/5">
+                                                <button onClick={() => setIsAddingTodo(false)} className="flex-1 h-6 flex items-center justify-center bg-white/20 text-white text-[10px] rounded hover:bg-white/30 transition-colors">
                                                     <X size={14} />
                                                 </button>
                                             </div>
@@ -974,28 +974,28 @@ export function WidgetDashboard({ isDarkMode, sitesCount, widgetStyle = 'B', wid
 
                             {/* ========== 倒计时模式 ========== */}
                             {toolsMode === 'countdown' && (
-                                <div className="flex-1 flex flex-col h-full overflow-hidden relative">
+                                <div className="flex-1 flex flex-col h-full relative">
                                     {isAddingCountdown ? (
-                                        <div className="absolute inset-x-1 top-1 bottom-auto z-10 bg-zinc-900 flex flex-col justify-center gap-1.5 p-1.5 rounded-xl border border-white/40 ring-1 ring-white/10 shadow-2xl" style={{ height: '100px' }}>
+                                        <div className="absolute inset-x-1 -top-20 bottom-auto z-20 bg-slate-800 border border-indigo-500/50 rounded-xl shadow-2xl p-2" style={{ height: '90px' }}>
                                             <input
                                                 type="text"
                                                 value={newCountdownLabel}
                                                 onChange={(e) => setNewCountdownLabel(e.target.value)}
                                                 autoFocus
                                                 placeholder="事件 (例: 生日)"
-                                                className="w-full h-7 bg-black/50 text-white text-xs px-2 rounded-lg outline-none focus:bg-black/70 transition-colors border border-white/10 focus:border-emerald-500 placeholder:text-white/40"
+                                                className="w-full h-7 bg-white/20 text-white text-xs px-2 rounded-lg outline-none focus:bg-white/30 transition-colors border border-white/20 focus:border-emerald-500 placeholder:text-white/40"
                                             />
-                                            <div className="flex gap-1.5 items-center">
+                                            <div className="flex gap-1.5 items-center mt-1">
                                                 <input
                                                     type="date"
                                                     value={newCountdownDate}
                                                     onChange={(e) => setNewCountdownDate(e.target.value)}
-                                                    className="flex-1 h-7 bg-black/50 text-white text-[10px] px-1 rounded-lg outline-none focus:bg-black/70 transition-colors border border-white/10 focus:border-emerald-500 [&::-webkit-calendar-picker-indicator]:invert [&::-webkit-calendar-picker-indicator]:scale-75"
+                                                    className="flex-1 h-7 bg-white/20 text-white text-[10px] px-1 rounded-lg outline-none focus:bg-white/30 transition-colors border border-white/20 focus:border-emerald-500 [&::-webkit-calendar-picker-indicator]:invert [&::-webkit-calendar-picker-indicator]:scale-75"
                                                 />
-                                                <button onClick={addCountdown} className="w-8 h-7 flex items-center justify-center bg-emerald-600 text-white rounded hover:bg-emerald-500 transition-colors border border-white/5">
+                                                <button onClick={addCountdown} className="w-8 h-7 flex items-center justify-center bg-emerald-500 text-white rounded hover:bg-emerald-400 transition-colors">
                                                     <Check size={14} />
                                                 </button>
-                                                <button onClick={() => setIsAddingCountdown(false)} className="w-8 h-7 flex items-center justify-center bg-white/10 text-white rounded hover:bg-white/20 transition-colors border border-white/5">
+                                                <button onClick={() => setIsAddingCountdown(false)} className="w-8 h-7 flex items-center justify-center bg-white/20 text-white rounded hover:bg-white/30 transition-colors">
                                                     <X size={14} />
                                                 </button>
                                             </div>
