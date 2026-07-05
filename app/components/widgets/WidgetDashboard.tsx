@@ -937,7 +937,7 @@ export function WidgetDashboard({ isDarkMode, sitesCount, widgetStyle = 'B', wid
                                             {todos.map(todo => (
                                                 <div
                                                     key={todo.id}
-                                                    className="flex items-center gap-1 px-2 py-1.5 bg-white/20 dark:bg-white/10 rounded-md hover:bg-white/30 dark:hover:bg-white/20 transition-colors max-w-full border border-white/20 dark:border-white/10 cursor-context-menu"
+                                                    className="flex items-center gap-2 px-2 py-1.5 bg-white/90 dark:bg-slate-800/90 rounded-lg hover:bg-white dark:hover:bg-slate-700 transition-colors border border-slate-200 dark:border-slate-700 shadow-sm cursor-context-menu"
                                                     onContextMenu={(e) => handleRightClick(e, todo, 'todo')}
                                                     onTouchStart={() => handleLongPressStart(todo, 'todo')}
                                                     onTouchEnd={handleLongPressEnd}
@@ -945,11 +945,11 @@ export function WidgetDashboard({ isDarkMode, sitesCount, widgetStyle = 'B', wid
                                                 >
                                                     <button
                                                         onClick={() => toggleTodo(todo.id)}
-                                                        className={`shrink-0 w-4 h-4 rounded flex items-center justify-center transition-all border ${todo.done ? 'bg-emerald-500 border-emerald-500 text-white' : 'border-white/40 hover:border-emerald-500 text-transparent'}`}
+                                                        className={`shrink-0 w-4 h-4 rounded flex items-center justify-center transition-all border ${todo.done ? 'bg-emerald-500 border-emerald-500 text-white' : 'border-slate-300 dark:border-slate-500 hover:border-emerald-500 text-transparent'}`}
                                                     >
                                                         <Check size={10} strokeWidth={4} />
                                                     </button>
-                                                    <span className={`text-[11px] truncate flex-1 text-white ${todo.done ? 'line-through opacity-40' : ''}`}>{todo.text}</span>
+                                                    <span className={`text-xs truncate flex-1 ${todo.done ? 'line-through opacity-40 text-slate-400' : 'text-slate-700 dark:text-slate-200'}`}>{todo.text}</span>
                                                 </div>
                                             ))}
                                             {todos.length === 0 && (
@@ -1010,19 +1010,19 @@ export function WidgetDashboard({ isDarkMode, sitesCount, widgetStyle = 'B', wid
                                                 return (
                                                     <div
                                                         key={cd.id}
-                                                        className="flex items-center justify-between p-2 rounded-lg bg-white/15 dark:bg-white/10 border border-white/20 dark:border-white/10 hover:border-emerald-500/30 transition-all min-h-[44px] cursor-context-menu"
+                                                        className="flex flex-col p-2 rounded-lg bg-white/90 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 shadow-sm hover:border-emerald-500/50 transition-all cursor-context-menu"
                                                         onContextMenu={(e) => handleRightClick(e, cd, 'countdown')}
                                                         onTouchStart={() => handleLongPressStart(cd, 'countdown')}
                                                         onTouchEnd={handleLongPressEnd}
                                                         onTouchMove={handleLongPressEnd}
                                                     >
-                                                        <div className="flex items-center gap-2 min-w-0 flex-1">
-                                                            <span className="text-[11px] font-bold text-white truncate leading-none tracking-tight">{cd.label}</span>
-                                                            <span className="text-[10px] opacity-60 font-medium tracking-tighter leading-none shrink-0 text-white">{new Date(cd.date).toLocaleDateString('zh-CN', { month: '2-digit', day: '2-digit' }).replace('/', '-')}</span>
-                                                            <div className="flex items-baseline leading-none shrink-0">
-                                                                <span className="text-base font-bold text-emerald-400 tracking-tighter">{daysLeft}</span>
-                                                                <span className="text-[9px] ml-0.5 font-normal text-white/40 transform translate-y-[-1px]">天</span>
-                                                            </div>
+                                                        <div className="flex items-center justify-between">
+                                                            <span className="text-xs font-medium truncate text-slate-700 dark:text-slate-200 flex-1">{cd.label}</span>
+                                                            <span className="text-[10px] opacity-50 text-slate-500 dark:text-slate-400 shrink-0 ml-2">{new Date(cd.date).toLocaleDateString('zh-CN', { month: '2-digit', day: '2-digit' }).replace('/', '-')}</span>
+                                                        </div>
+                                                        <div className="flex items-center gap-1 mt-1">
+                                                            <span className="text-sm font-bold text-emerald-500">{daysLeft}</span>
+                                                            <span className="text-[9px] text-slate-400 dark:text-slate-500">天后</span>
                                                         </div>
                                                     </div>
                                                 );
