@@ -211,44 +211,44 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
     };
 
     // ============================================================
+    // 待办操作
     // ============================================================
-// 待办操作
-// ============================================================
-const addTodo = () => {
-    if (!newTodo.trim()) return;
-    const newItem = {
-        id: Date.now().toString() + Math.random().toString(36).substring(2),
-        text: newTodo.trim(),
-        done: false
+    const addTodo = () => {
+        if (!newTodo.trim()) return;
+        const newItem = {
+            id: Date.now().toString() + Math.random().toString(36).substring(2),
+            text: newTodo.trim(),
+            done: false
+        };
+        const newTodos = [...todos, newItem];
+        setTodos(newTodos);
+        localStorage.setItem('aurora_todos', JSON.stringify(newTodos));
+        setNewTodo('');
+        setIsAddingTodo(false);
     };
-    const newTodos = [...todos, newItem];
-    setTodos(newTodos);
-    localStorage.setItem('aurora_todos', JSON.stringify(newTodos));
-    setNewTodo('');
-    setIsAddingTodo(false);
-};
 
-const toggleTodo = (id: string) => {
-    setTodos(prev => prev.map(t => t.id === id ? { ...t, done: !t.done } : t));
-};
-
-// ============================================================
-// 倒计时操作
-// ============================================================
-const addCountdown = () => {
-    if (!newCountdownLabel.trim() || !newCountdownDate) return;
-    const newItem = {
-        id: Date.now().toString() + Math.random().toString(36).substring(2),
-        label: newCountdownLabel.trim(),
-        date: newCountdownDate
+    const toggleTodo = (id: string) => {
+        setTodos(prev => prev.map(t => t.id === id ? { ...t, done: !t.done } : t));
     };
-    const newCountdowns = [...countdowns, newItem];
-    setCountdowns(newCountdowns);
-    localStorage.setItem('aurora_countdowns', JSON.stringify(newCountdowns));
-    setNewCountdownLabel('');
-    setNewCountdownDate('');
-    setIsAddingCountdown(false);
-};
+
+    // ============================================================
+    // 倒计时操作
+    // ============================================================
+    const addCountdown = () => {
+        if (!newCountdownLabel.trim() || !newCountdownDate) return;
+        const newItem = {
+            id: Date.now().toString() + Math.random().toString(36).substring(2),
+            label: newCountdownLabel.trim(),
+            date: newCountdownDate
+        };
+        const newCountdowns = [...countdowns, newItem];
+        setCountdowns(newCountdowns);
+        localStorage.setItem('aurora_countdowns', JSON.stringify(newCountdowns));
+        setNewCountdownLabel('');
+        setNewCountdownDate('');
+        setIsAddingCountdown(false);
+    };
+
     // ============================================================
     // 天气
     // ============================================================
@@ -733,53 +733,52 @@ const addCountdown = () => {
                 </div>
             </TiltCard>
 
-{/* 卡片2：天气 */}
-<TiltCard className="group min-w-0">
-    <div className={`${cardBase} overflow-hidden h-[120px] sm:h-[120px] md:h-[130px]`}>
-        <GradientBorder isDarkMode={isDarkMode} customColor={widgetConfig?.customColors?.weather} />
-        <WeatherParticles code={weather.code} />
-        <div className="flex flex-col justify-center h-full z-10 min-w-[80px] flex-shrink-0">
-            <div className="flex items-center gap-1.5 mb-1">
-                <MapPin size={12} className="text-cyan-500 shrink-0" />
-                <span className={`text-xs font-medium truncate max-w-[80px] sm:max-w-[140px] ${isDarkMode ? 'opacity-70' : 'text-slate-700'}`}>{locationName}</span>
-            </div>
-            <div className="flex items-center gap-2">
-                <span className="text-2xl md:text-3xl font-bold leading-none text-slate-900 dark:text-white">{weather.temp}°</span>
-                {getWeatherIcon(weather.code, 32)}
-            </div>
-            <div className="flex items-center gap-2 mt-1 text-xs flex-wrap">
-                <span className={`${isDarkMode ? 'opacity-70' : 'text-slate-700'}`}>{getWeatherDesc(weather.code)}</span>
-                <span className={`${isDarkMode ? 'opacity-50' : 'text-slate-500'}`}>体感 {weather.feelsLike}°</span>
-            </div>
-            <div className="text-xs text-cyan-600 dark:text-cyan-400 font-medium mt-0.5 truncate">
-                {getClothingAdvice(weather.feelsLike || weather.temp || 20)}
-            </div>
-        </div>
-        <div className="z-10 pl-3 border-l border-white/10 dark:border-white/5 h-full flex flex-col justify-center gap-1.5 flex-1 min-w-0">
-            {/* ✅ AQI / UV - 强制一行显示，手机端缩小字体和间距 */}
-            <div className="flex items-center gap-0 sm:gap-2 text-[9px] sm:text-xs -ml-3 flex-nowrap">
-                <div className="flex items-center gap-0.5 sm:gap-1 shrink-0">
-                    <Shield size={9} className="text-green-500 shrink-0 sm:w-3 sm:h-3" />
-                    <span className={`${isDarkMode ? 'opacity-50' : 'text-slate-500'}`}>AQI</span>
-                    <span className="font-bold text-slate-900 dark:text-white">{weather.aqi || '--'}</span>
-                    {weather.aqi && <span className={`${isDarkMode ? 'opacity-60' : 'text-slate-600'}`}>{getAQIDesc(weather.aqi)}</span>}
+            {/* 卡片2：天气 */}
+            <TiltCard className="group min-w-0">
+                <div className={`${cardBase} overflow-hidden h-[120px] sm:h-[120px] md:h-[130px]`}>
+                    <GradientBorder isDarkMode={isDarkMode} customColor={widgetConfig?.customColors?.weather} />
+                    <WeatherParticles code={weather.code} />
+                    <div className="flex flex-col justify-center h-full z-10 min-w-[80px] flex-shrink-0">
+                        <div className="flex items-center gap-1.5 mb-1">
+                            <MapPin size={12} className="text-cyan-500 shrink-0" />
+                            <span className={`text-xs font-medium truncate max-w-[80px] sm:max-w-[140px] ${isDarkMode ? 'opacity-70' : 'text-slate-700'}`}>{locationName}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <span className="text-2xl md:text-3xl font-bold leading-none text-slate-900 dark:text-white">{weather.temp}°</span>
+                            {getWeatherIcon(weather.code, 32)}
+                        </div>
+                        <div className="flex items-center gap-2 mt-1 text-xs flex-wrap">
+                            <span className={`${isDarkMode ? 'opacity-70' : 'text-slate-700'}`}>{getWeatherDesc(weather.code)}</span>
+                            <span className={`${isDarkMode ? 'opacity-50' : 'text-slate-500'}`}>体感 {weather.feelsLike}°</span>
+                        </div>
+                        <div className="text-xs text-cyan-600 dark:text-cyan-400 font-medium mt-0.5 truncate">
+                            {getClothingAdvice(weather.feelsLike || weather.temp || 20)}
+                        </div>
+                    </div>
+                    <div className="z-10 pl-3 border-l border-white/10 dark:border-white/5 h-full flex flex-col justify-center gap-1.5 flex-1 min-w-0">
+                        <div className="flex items-center gap-0 sm:gap-2 text-[9px] sm:text-xs -ml-3 flex-nowrap">
+                            <div className="flex items-center gap-0.5 sm:gap-1 shrink-0">
+                                <Shield size={9} className="text-green-500 shrink-0 sm:w-3 sm:h-3" />
+                                <span className={`${isDarkMode ? 'opacity-50' : 'text-slate-500'}`}>AQI</span>
+                                <span className="font-bold text-slate-900 dark:text-white">{weather.aqi || '--'}</span>
+                                {weather.aqi && <span className={`${isDarkMode ? 'opacity-60' : 'text-slate-600'}`}>{getAQIDesc(weather.aqi)}</span>}
+                            </div>
+                            <div className="flex items-center gap-0.5 sm:gap-1 shrink-0">
+                                <Sun size={9} className="text-amber-500 shrink-0 sm:w-3 sm:h-3" />
+                                <span className={`${isDarkMode ? 'opacity-50' : 'text-slate-500'}`}>UV</span>
+                                <span className="font-bold text-slate-900 dark:text-white">{weather.uv || '--'}</span>
+                                {weather.uv !== null && <span className={`${isDarkMode ? 'opacity-60' : 'text-slate-600'}`}>{getUVDesc(weather.uv)}</span>}
+                            </div>
+                        </div>
+                        {weather.daily?.length > 0 && (
+                            <div className="ml-1">
+                                <DailyForecast data={weather.daily} />
+                            </div>
+                        )}
+                    </div>
                 </div>
-                <div className="flex items-center gap-0.5 sm:gap-1 shrink-0">
-                    <Sun size={9} className="text-amber-500 shrink-0 sm:w-3 sm:h-3" />
-                    <span className={`${isDarkMode ? 'opacity-50' : 'text-slate-500'}`}>UV</span>
-                    <span className="font-bold text-slate-900 dark:text-white">{weather.uv || '--'}</span>
-                    {weather.uv !== null && <span className={`${isDarkMode ? 'opacity-60' : 'text-slate-600'}`}>{getUVDesc(weather.uv)}</span>}
-                </div>
-            </div>
-            {/* ✅ 6天预报 - 往右移一点 */}
-            {weather.daily?.length > 0 && (
-                <div className="ml-1">
-                    <DailyForecast data={weather.daily} />
-                </div>
-            )}
-        </div>
-    </div>
-</TiltCard>
+            </TiltCard>
+
             {/* 卡片3：工具 */}
             <TiltCard className="group">
                 <div className={cardBase}>
@@ -812,7 +811,6 @@ const addCountdown = () => {
                         <div>
                             {toolsMode === 'stock' && (
                                 <div className="flex-1 flex flex-col justify-center h-full overflow-visible relative">
-                                    {/* 左移按钮 */}
                                     <button
                                         onClick={() => {
                                             const container = document.getElementById('stock-scroll-container');
@@ -827,7 +825,6 @@ const addCountdown = () => {
                                         </svg>
                                     </button>
                                     
-                                    {/* 滚动容器 */}
                                     <div 
                                         id="stock-scroll-container"
                                         className="flex flex-row flex-nowrap items-center gap-2 overflow-x-auto overflow-y-visible no-scrollbar w-full h-full snap-x snap-mandatory scroll-smooth"
@@ -894,7 +891,6 @@ const addCountdown = () => {
                                         </div>
                                     </div>
                                     
-                                    {/* 右移按钮 */}
                                     <button
                                         onClick={() => {
                                             const container = document.getElementById('stock-scroll-container');
@@ -911,150 +907,137 @@ const addCountdown = () => {
                                 </div>
                             )}
 
+                            {/* ========== 待办模式 ========== */}
                             {toolsMode === 'todo' && (
                                 <div className="flex-1 flex flex-col h-full overflow-hidden relative">
-                                    <div>
-                                        {isAddingTodo ? (
-                                            <div
-                                                className="absolute inset-x-1 top-1 bottom-1 z-10 bg-zinc-900 flex flex-col justify-center gap-1.5 p-1.5 rounded-xl border border-white/40 ring-1 ring-white/10 shadow-2xl"
-                                            >
-                                                <input
-                                                    type="text"
-                                                    value={newTodo}
-                                                    onChange={(e) => setNewTodo(e.target.value)}
-                                                    autoFocus
-                                                    placeholder="输入待办..."
-                                                    className="w-full h-7 bg-black/50 text-white text-xs px-2 rounded-lg outline-none focus:bg-black/70 transition-colors border border-white/10 focus:border-emerald-500 placeholder:text-white/40"
-                                                />
-                                                <div className="flex gap-1.5">
-                                                    <button onClick={addTodo} className="flex-1 h-6 flex items-center justify-center bg-emerald-600 text-white text-[10px] rounded hover:bg-emerald-500 transition-colors border border-white/5">
-                                                        <Check size={14} />
-                                                    </button>
-                                                   <button 
-    onClick={(e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        console.log('点击了加号按钮');
-        setIsAddingTodo(true);
-    }} 
-    className="absolute bottom-2 right-2 w-7 h-7 flex items-center justify-center rounded-full bg-emerald-500 text-white shadow-lg hover:scale-110 active:scale-95 transition-all z-10 border border-white/10"
->
-    <Plus size={16} />
-</button>
-                                                </div>
+                                    {isAddingTodo ? (
+                                        <div className="absolute inset-x-1 top-1 bottom-1 z-10 bg-zinc-900 flex flex-col justify-center gap-1.5 p-1.5 rounded-xl border border-white/40 ring-1 ring-white/10 shadow-2xl">
+                                            <input
+                                                type="text"
+                                                value={newTodo}
+                                                onChange={(e) => setNewTodo(e.target.value)}
+                                                autoFocus
+                                                placeholder="输入待办..."
+                                                className="w-full h-7 bg-black/50 text-white text-xs px-2 rounded-lg outline-none focus:bg-black/70 transition-colors border border-white/10 focus:border-emerald-500 placeholder:text-white/40"
+                                            />
+                                            <div className="flex gap-1.5">
+                                                <button onClick={addTodo} className="flex-1 h-6 flex items-center justify-center bg-emerald-600 text-white text-[10px] rounded hover:bg-emerald-500 transition-colors border border-white/5">
+                                                    <Check size={14} />
+                                                </button>
+                                                <button onClick={() => setIsAddingTodo(false)} className="flex-1 h-6 flex items-center justify-center bg-white/10 text-white text-[10px] rounded hover:bg-white/20 transition-colors border border-white/5">
+                                                    <X size={14} />
+                                                </button>
                                             </div>
-                                        ) : (
-                                            <div className="flex flex-col h-full">
-                                                <div className="flex-1 overflow-y-auto custom-scrollbar flex flex-wrap content-start gap-1 pr-1">
-                                                    {todos.map(todo => (
-                                                        <div
-                                                            key={todo.id}
-                                                            className="flex items-center gap-1 px-2 py-1.5 bg-black/5 dark:bg-white/10 rounded-md hover:bg-black/10 dark:hover:bg-white/20 transition-colors max-w-full border border-black/10 dark:border-white/10 cursor-context-menu"
-                                                            onContextMenu={(e) => handleRightClick(e, todo, 'todo')}
-                                                            onTouchStart={() => handleLongPressStart(todo, 'todo')}
-                                                            onTouchEnd={handleLongPressEnd}
-                                                            onTouchMove={handleLongPressEnd}
+                                        </div>
+                                    ) : (
+                                        <div className="flex flex-col h-full">
+                                            <div className="flex-1 overflow-y-auto custom-scrollbar flex flex-wrap content-start gap-1 pr-1">
+                                                {todos.map(todo => (
+                                                    <div
+                                                        key={todo.id}
+                                                        className="flex items-center gap-1 px-2 py-1.5 bg-black/5 dark:bg-white/10 rounded-md hover:bg-black/10 dark:hover:bg-white/20 transition-colors max-w-full border border-black/10 dark:border-white/10 cursor-context-menu"
+                                                        onContextMenu={(e) => handleRightClick(e, todo, 'todo')}
+                                                        onTouchStart={() => handleLongPressStart(todo, 'todo')}
+                                                        onTouchEnd={handleLongPressEnd}
+                                                        onTouchMove={handleLongPressEnd}
+                                                    >
+                                                        <button
+                                                            onClick={() => toggleTodo(todo.id)}
+                                                            className={`shrink-0 w-4 h-4 rounded flex items-center justify-center transition-all border ${todo.done ? 'bg-emerald-500 border-emerald-500 text-white' : 'border-black/20 dark:border-white/40 hover:border-emerald-500 text-transparent'}`}
                                                         >
-                                                            <button
-                                                                onClick={() => toggleTodo(todo.id)}
-                                                                className={`shrink-0 w-4 h-4 rounded flex items-center justify-center transition-all border ${todo.done ? 'bg-emerald-500 border-emerald-500 text-white' : 'border-black/20 dark:border-white/40 hover:border-emerald-500 text-transparent'}`}
-                                                            >
-                                                                <Check size={10} strokeWidth={4} />
-                                                            </button>
-                                                            <span className={`text-[11px] truncate flex-1 ${todo.done ? 'line-through opacity-40' : ''}`}>{todo.text}</span>
-                                                        </div>
-                                                    ))}
-                                                    {todos.length === 0 && (
-                                                        <div className="w-full h-full flex flex-col items-center justify-center opacity-30">
-                                                            <CheckSquare size={20} className="mb-1" />
-                                                            <p className="text-[10px]">列表为空</p>
-                                                        </div>
-                                                    )}
-                                                </div>
-                                                <button 
-    onClick={(e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        console.log('点击了倒计时加号按钮');
-        setIsAddingCountdown(true);
-    }} 
-    className="absolute bottom-2 right-2 w-7 h-7 flex items-center justify-center rounded-full bg-emerald-500 text-white shadow-lg hover:scale-110 active:scale-95 transition-all z-10 border border-white/10"
->
-    <Plus size={16} />
-</button>               </div>
-                                        )}
-                                    </div>
+                                                            <Check size={10} strokeWidth={4} />
+                                                        </button>
+                                                        <span className={`text-[11px] truncate flex-1 ${todo.done ? 'line-through opacity-40' : ''}`}>{todo.text}</span>
+                                                    </div>
+                                                ))}
+                                                {todos.length === 0 && (
+                                                    <div className="w-full h-full flex flex-col items-center justify-center opacity-30">
+                                                        <CheckSquare size={20} className="mb-1" />
+                                                        <p className="text-[10px]">列表为空</p>
+                                                    </div>
+                                                )}
+                                            </div>
+                                            {/* ✅ 加号按钮独立 */}
+                                            <button 
+                                                onClick={() => setIsAddingTodo(true)} 
+                                                className="absolute bottom-2 right-2 w-7 h-7 flex items-center justify-center rounded-full bg-emerald-500 text-white shadow-lg hover:scale-110 active:scale-95 transition-all z-10 border border-white/10"
+                                            >
+                                                <Plus size={16} />
+                                            </button>
+                                        </div>
+                                    )}
                                 </div>
                             )}
 
+                            {/* ========== 倒计时模式 ========== */}
                             {toolsMode === 'countdown' && (
                                 <div className="flex-1 flex flex-col h-full overflow-hidden relative">
-                                    <div>
-                                        {isAddingCountdown ? (
-                                            <div
-                                                className="absolute inset-x-1 top-1 bottom-1 z-10 bg-zinc-900 flex flex-col justify-center gap-1.5 p-1.5 rounded-xl border border-white/40 ring-1 ring-white/10 shadow-2xl"
-                                            >
+                                    {isAddingCountdown ? (
+                                        <div className="absolute inset-x-1 top-1 bottom-1 z-10 bg-zinc-900 flex flex-col justify-center gap-1.5 p-1.5 rounded-xl border border-white/40 ring-1 ring-white/10 shadow-2xl">
+                                            <input
+                                                type="text"
+                                                value={newCountdownLabel}
+                                                onChange={(e) => setNewCountdownLabel(e.target.value)}
+                                                autoFocus
+                                                placeholder="事件 (例: 生日)"
+                                                className="w-full h-6 bg-black/50 text-white text-xs px-2 rounded-lg outline-none focus:bg-black/70 transition-colors border border-white/10 focus:border-emerald-500 placeholder:text-white/40"
+                                            />
+                                            <div className="flex gap-1.5 items-center">
                                                 <input
-                                                    type="text"
-                                                    value={newCountdownLabel}
-                                                    onChange={(e) => setNewCountdownLabel(e.target.value)}
-                                                    autoFocus
-                                                    placeholder="事件 (例: 生日)"
-                                                    className="w-full h-6 bg-black/50 text-white text-xs px-2 rounded-lg outline-none focus:bg-black/70 transition-colors border border-white/10 focus:border-emerald-500 placeholder:text-white/40"
+                                                    type="date"
+                                                    value={newCountdownDate}
+                                                    onChange={(e) => setNewCountdownDate(e.target.value)}
+                                                    className="flex-1 h-6 bg-black/50 text-white text-[10px] px-1 rounded-lg outline-none focus:bg-black/70 transition-colors border border-white/10 focus:border-emerald-500 [&::-webkit-calendar-picker-indicator]:invert [&::-webkit-calendar-picker-indicator]:scale-75"
                                                 />
-                                                <div className="flex gap-1.5 items-center">
-                                                    <input
-                                                        type="date"
-                                                        value={newCountdownDate}
-                                                        onChange={(e) => setNewCountdownDate(e.target.value)}
-                                                        className="flex-1 h-6 bg-black/50 text-white text-[10px] px-1 rounded-lg outline-none focus:bg-black/70 transition-colors border border-white/10 focus:border-emerald-500 [&::-webkit-calendar-picker-indicator]:invert [&::-webkit-calendar-picker-indicator]:scale-75"
-                                                    />
-                                                    <button onClick={addCountdown} className="w-8 h-6 flex items-center justify-center bg-emerald-600 text-white rounded hover:bg-emerald-500 transition-colors border border-white/5">
-                                                        <Check size={14} />
-                                                    </button>
-                                                    <button onClick={() => setIsAddingCountdown(false)} className="w-8 h-6 flex items-center justify-center bg-white/10 text-white rounded hover:bg-white/20 transition-colors border border-white/5">
-                                                        <X size={14} />
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        ) : (
-                                            <div className="flex flex-col h-full">
-                                                <div className="flex-1 overflow-y-auto custom-scrollbar grid grid-cols-4 gap-1 pr-9 content-start pb-9">
-                                                    {countdowns.map(cd => {
-                                                        const daysLeft = Math.max(0, Math.ceil((new Date(cd.date).getTime() - Date.now()) / (1000 * 60 * 60 * 24)));
-                                                        return (
-                                                            <div
-                                                                key={cd.id}
-                                                                className="flex items-center justify-between p-2 rounded-lg bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 hover:border-emerald-500/30 transition-all min-h-[44px] cursor-context-menu"
-                                                                onContextMenu={(e) => handleRightClick(e, cd, 'countdown')}
-                                                                onTouchStart={() => handleLongPressStart(cd, 'countdown')}
-                                                                onTouchEnd={handleLongPressEnd}
-                                                                onTouchMove={handleLongPressEnd}
-                                                            >
-                                                                <div className="flex items-center gap-2 min-w-0 flex-1">
-                                                                    <span className="text-[11px] font-medium opacity-80 truncate leading-none tracking-tight">{cd.label}</span>
-                                                                    <span className="text-[10px] opacity-40 font-medium tracking-tighter leading-none shrink-0">{new Date(cd.date).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' }).replace('/', '-')}</span>
-                                                                    <div className="flex items-baseline leading-none shrink-0">
-                                                                        <span className="text-base font-bold text-emerald-400 tracking-tighter">{daysLeft}</span>
-                                                                        <span className="text-[9px] ml-0.5 font-normal text-white/40 transform translate-y-[-1px]">天</span>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        );
-                                                    })}
-                                                    {countdowns.length === 0 && (
-                                                        <div className="col-span-3 h-full flex flex-col items-center justify-center opacity-30 py-4">
-                                                            <CalendarClock size={20} className="mb-1" />
-                                                            <p className="text-[10px]">添加倒计时</p>
-                                                        </div>
-                                                    )}
-                                                </div>
-                                                <button onClick={() => setIsAddingCountdown(true)} className="absolute bottom-2 right-2 w-7 h-7 flex items-center justify-center rounded-full bg-emerald-500 text-white shadow-lg hover:scale-110 active:scale-95 transition-all z-10 border border-white/10">
-                                                    <Plus size={16} />
+                                                <button onClick={addCountdown} className="w-8 h-6 flex items-center justify-center bg-emerald-600 text-white rounded hover:bg-emerald-500 transition-colors border border-white/5">
+                                                    <Check size={14} />
+                                                </button>
+                                                <button onClick={() => setIsAddingCountdown(false)} className="w-8 h-6 flex items-center justify-center bg-white/10 text-white rounded hover:bg-white/20 transition-colors border border-white/5">
+                                                    <X size={14} />
                                                 </button>
                                             </div>
-                                        )}
-                                    </div>
+                                        </div>
+                                    ) : (
+                                        <div className="flex flex-col h-full">
+                                            <div className="flex-1 overflow-y-auto custom-scrollbar grid grid-cols-4 gap-1 pr-9 content-start pb-9">
+                                                {countdowns.map(cd => {
+                                                    const daysLeft = Math.max(0, Math.ceil((new Date(cd.date).getTime() - Date.now()) / (1000 * 60 * 60 * 24)));
+                                                    return (
+                                                        <div
+                                                            key={cd.id}
+                                                            className="flex items-center justify-between p-2 rounded-lg bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 hover:border-emerald-500/30 transition-all min-h-[44px] cursor-context-menu"
+                                                            onContextMenu={(e) => handleRightClick(e, cd, 'countdown')}
+                                                            onTouchStart={() => handleLongPressStart(cd, 'countdown')}
+                                                            onTouchEnd={handleLongPressEnd}
+                                                            onTouchMove={handleLongPressEnd}
+                                                        >
+                                                            <div className="flex items-center gap-2 min-w-0 flex-1">
+                                                                <span className="text-[11px] font-medium opacity-80 truncate leading-none tracking-tight">{cd.label}</span>
+                                                                <span className="text-[10px] opacity-40 font-medium tracking-tighter leading-none shrink-0">{new Date(cd.date).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' }).replace('/', '-')}</span>
+                                                                <div className="flex items-baseline leading-none shrink-0">
+                                                                    <span className="text-base font-bold text-emerald-400 tracking-tighter">{daysLeft}</span>
+                                                                    <span className="text-[9px] ml-0.5 font-normal text-white/40 transform translate-y-[-1px]">天</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    );
+                                                })}
+                                                {countdowns.length === 0 && (
+                                                    <div className="col-span-3 h-full flex flex-col items-center justify-center opacity-30 py-4">
+                                                        <CalendarClock size={20} className="mb-1" />
+                                                        <p className="text-[10px]">添加倒计时</p>
+                                                    </div>
+                                                )}
+                                            </div>
+                                            {/* ✅ 加号按钮独立 */}
+                                            <button 
+                                                onClick={() => setIsAddingCountdown(true)} 
+                                                className="absolute bottom-2 right-2 w-7 h-7 flex items-center justify-center rounded-full bg-emerald-500 text-white shadow-lg hover:scale-110 active:scale-95 transition-all z-10 border border-white/10"
+                                            >
+                                                <Plus size={16} />
+                                            </button>
+                                        </div>
+                                    )}
                                 </div>
                             )}
                         </div>
