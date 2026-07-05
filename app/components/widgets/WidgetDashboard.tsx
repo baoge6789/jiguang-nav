@@ -211,40 +211,44 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
     };
 
     // ============================================================
-    // 待办操作
     // ============================================================
-    const addTodo = () => {
-        if (!newTodo.trim()) return;
-        const newItem = {
-            id: Date.now().toString() + Math.random().toString(36).substring(2),
-            text: newTodo.trim(),
-            done: false
-        };
-        setTodos(prev => [...prev, newItem]);
-        setNewTodo('');
-        setIsAddingTodo(false);
+// 待办操作
+// ============================================================
+const addTodo = () => {
+    if (!newTodo.trim()) return;
+    const newItem = {
+        id: Date.now().toString() + Math.random().toString(36).substring(2),
+        text: newTodo.trim(),
+        done: false
     };
+    const newTodos = [...todos, newItem];
+    setTodos(newTodos);
+    localStorage.setItem('aurora_todos', JSON.stringify(newTodos));
+    setNewTodo('');
+    setIsAddingTodo(false);
+};
 
-    const toggleTodo = (id: string) => {
-        setTodos(prev => prev.map(t => t.id === id ? { ...t, done: !t.done } : t));
+const toggleTodo = (id: string) => {
+    setTodos(prev => prev.map(t => t.id === id ? { ...t, done: !t.done } : t));
+};
+
+// ============================================================
+// 倒计时操作
+// ============================================================
+const addCountdown = () => {
+    if (!newCountdownLabel.trim() || !newCountdownDate) return;
+    const newItem = {
+        id: Date.now().toString() + Math.random().toString(36).substring(2),
+        label: newCountdownLabel.trim(),
+        date: newCountdownDate
     };
-
-    // ============================================================
-    // 倒计时操作
-    // ============================================================
-    const addCountdown = () => {
-        if (!newCountdownLabel.trim() || !newCountdownDate) return;
-        const newItem = {
-            id: Date.now().toString() + Math.random().toString(36).substring(2),
-            label: newCountdownLabel.trim(),
-            date: newCountdownDate
-        };
-        setCountdowns(prev => [...prev, newItem]);
-        setNewCountdownLabel('');
-        setNewCountdownDate('');
-        setIsAddingCountdown(false);
-    };
-
+    const newCountdowns = [...countdowns, newItem];
+    setCountdowns(newCountdowns);
+    localStorage.setItem('aurora_countdowns', JSON.stringify(newCountdowns));
+    setNewCountdownLabel('');
+    setNewCountdownDate('');
+    setIsAddingCountdown(false);
+};
     // ============================================================
     // 天气
     // ============================================================
