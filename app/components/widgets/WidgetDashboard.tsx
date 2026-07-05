@@ -969,15 +969,17 @@ export function WidgetDashboard({ isDarkMode, sitesCount, widgetStyle = 'B', wid
                                             </div>
                                         )}
                                     </div>
-                                    <button 
-                                        onClick={() => {
-                                            console.log('加号被点击');
-                                            setIsAddingTodo(true);
-                                        }} 
-                                        className="absolute bottom-2 right-2 w-7 h-7 flex items-center justify-center rounded-full bg-emerald-500 text-white shadow-lg hover:scale-110 active:scale-95 transition-all z-10 border border-white/10"
-                                    >
-                                        <Plus size={16} />
-                                    </button>
+                                    {todos.length < 2 && (
+                                        <button 
+                                            onClick={() => {
+                                                console.log('加号被点击');
+                                                setIsAddingTodo(true);
+                                            }} 
+                                            className="absolute bottom-2 right-2 w-7 h-7 flex items-center justify-center rounded-full bg-emerald-500 text-white shadow-lg hover:scale-110 active:scale-95 transition-all z-10 border border-white/10"
+                                        >
+                                            <Plus size={16} />
+                                        </button>
+                                    )}
                                 </div>
                             )}
 
@@ -1045,15 +1047,17 @@ export function WidgetDashboard({ isDarkMode, sitesCount, widgetStyle = 'B', wid
                                             </div>
                                         )}
                                     </div>
-                                    <button 
-                                        onClick={() => {
-                                            console.log('倒计时加号被点击');
-                                            setIsAddingCountdown(true);
-                                        }} 
-                                        className="absolute bottom-2 right-2 w-7 h-7 flex items-center justify-center rounded-full bg-emerald-500 text-white shadow-lg hover:scale-110 active:scale-95 transition-all z-10 border border-white/10"
-                                    >
-                                        <Plus size={16} />
-                                    </button>
+                                    {countdowns.length < 2 && (
+                                        <button 
+                                            onClick={() => {
+                                                console.log('倒计时加号被点击');
+                                                setIsAddingCountdown(true);
+                                            }} 
+                                            className="absolute bottom-2 right-2 w-7 h-7 flex items-center justify-center rounded-full bg-emerald-500 text-white shadow-lg hover:scale-110 active:scale-95 transition-all z-10 border border-white/10"
+                                        >
+                                            <Plus size={16} />
+                                        </button>
+                                    )}
                                 </div>
                             )}
                         </div>
