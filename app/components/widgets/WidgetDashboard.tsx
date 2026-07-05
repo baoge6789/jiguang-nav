@@ -942,11 +942,11 @@ export function WidgetDashboard({ isDarkMode, sitesCount, widgetStyle = 'B', wid
                                     ) : null}
                                     <div className={`flex-1 flex flex-col ${isAddingTodo ? 'pt-[74px]' : 'justify-center'}`}>
                                         {todos.length > 0 ? (
-                                            <div className="flex flex-col gap-1">
+                                            <div className="grid grid-cols-2 gap-1">
                                                 {todos.map(todo => (
                                                     <div
                                                         key={todo.id}
-                                                        className="flex items-center gap-2 px-2 py-1.5 bg-white/90 dark:bg-slate-800/90 rounded-lg hover:bg-white dark:hover:bg-slate-700 transition-colors border border-slate-200 dark:border-slate-700 shadow-sm cursor-context-menu"
+                                                        className="flex items-center gap-2 px-2 py-2.5 rounded-lg bg-white/90 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 shadow-sm hover:border-emerald-500/50 transition-all cursor-context-menu"
                                                         onContextMenu={(e) => handleRightClick(e, todo, 'todo')}
                                                         onTouchStart={() => handleLongPressStart(todo, 'todo')}
                                                         onTouchEnd={handleLongPressEnd}
