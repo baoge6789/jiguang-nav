@@ -933,11 +933,11 @@ export function WidgetDashboard({ isDarkMode, sitesCount, widgetStyle = 'B', wid
                                         </div>
                                     ) : null}
                                     <div className="flex flex-col h-full">
-                                        <div className="flex-1 overflow-y-auto custom-scrollbar flex flex-wrap content-start gap-1 pr-1">
+                                        <div className="flex-1 overflow-y-auto custom-scrollbar flex flex-col gap-1 pr-1">
                                             {todos.map(todo => (
                                                 <div
                                                     key={todo.id}
-                                                    className="flex items-center gap-1 px-2 py-1.5 bg-black/5 dark:bg-white/10 rounded-md hover:bg-black/10 dark:hover:bg-white/20 transition-colors max-w-full border border-black/10 dark:border-white/10 cursor-context-menu"
+                                                    className="flex items-center gap-1 px-2 py-1.5 bg-white/20 dark:bg-white/10 rounded-md hover:bg-white/30 dark:hover:bg-white/20 transition-colors max-w-full border border-white/20 dark:border-white/10 cursor-context-menu"
                                                     onContextMenu={(e) => handleRightClick(e, todo, 'todo')}
                                                     onTouchStart={() => handleLongPressStart(todo, 'todo')}
                                                     onTouchEnd={handleLongPressEnd}
@@ -945,11 +945,11 @@ export function WidgetDashboard({ isDarkMode, sitesCount, widgetStyle = 'B', wid
                                                 >
                                                     <button
                                                         onClick={() => toggleTodo(todo.id)}
-                                                        className={`shrink-0 w-4 h-4 rounded flex items-center justify-center transition-all border ${todo.done ? 'bg-emerald-500 border-emerald-500 text-white' : 'border-black/20 dark:border-white/40 hover:border-emerald-500 text-transparent'}`}
+                                                        className={`shrink-0 w-4 h-4 rounded flex items-center justify-center transition-all border ${todo.done ? 'bg-emerald-500 border-emerald-500 text-white' : 'border-white/40 hover:border-emerald-500 text-transparent'}`}
                                                     >
                                                         <Check size={10} strokeWidth={4} />
                                                     </button>
-                                                    <span className={`text-[11px] truncate flex-1 ${todo.done ? 'line-through opacity-40' : ''}`}>{todo.text}</span>
+                                                    <span className={`text-[11px] truncate flex-1 text-white ${todo.done ? 'line-through opacity-40' : ''}`}>{todo.text}</span>
                                                 </div>
                                             ))}
                                             {todos.length === 0 && (
@@ -976,28 +976,30 @@ export function WidgetDashboard({ isDarkMode, sitesCount, widgetStyle = 'B', wid
                             {toolsMode === 'countdown' && (
                                 <div className="flex-1 flex flex-col h-full relative">
                                     {isAddingCountdown ? (
-                                        <div className="absolute inset-x-1 -top-20 bottom-auto z-20 bg-slate-800 border border-indigo-500/50 rounded-xl shadow-2xl p-2" style={{ height: '90px' }}>
-                                            <input
-                                                type="text"
-                                                value={newCountdownLabel}
-                                                onChange={(e) => setNewCountdownLabel(e.target.value)}
-                                                autoFocus
-                                                placeholder="事件 (例: 生日)"
-                                                className="w-full h-7 bg-white/20 text-white text-xs px-2 rounded-lg outline-none focus:bg-white/30 transition-colors border border-white/20 focus:border-emerald-500 placeholder:text-white/40"
-                                            />
-                                            <div className="flex gap-1.5 items-center mt-1">
+                                        <div className="absolute inset-x-1 top-0 bottom-auto z-20 bg-slate-800 border border-indigo-500/50 rounded-xl shadow-2xl p-2" style={{ height: '95px' }}>
+                                            <div className="flex flex-col gap-1">
                                                 <input
-                                                    type="date"
-                                                    value={newCountdownDate}
-                                                    onChange={(e) => setNewCountdownDate(e.target.value)}
-                                                    className="flex-1 h-7 bg-white/20 text-white text-[10px] px-1 rounded-lg outline-none focus:bg-white/30 transition-colors border border-white/20 focus:border-emerald-500 [&::-webkit-calendar-picker-indicator]:invert [&::-webkit-calendar-picker-indicator]:scale-75"
+                                                    type="text"
+                                                    value={newCountdownLabel}
+                                                    onChange={(e) => setNewCountdownLabel(e.target.value)}
+                                                    autoFocus
+                                                    placeholder="事件名称..."
+                                                    className="w-full h-7 bg-white/20 text-white text-xs px-2 rounded-lg outline-none focus:bg-white/30 transition-colors border border-white/20 focus:border-emerald-500 placeholder:text-white/40"
                                                 />
-                                                <button onClick={addCountdown} className="w-8 h-7 flex items-center justify-center bg-emerald-500 text-white rounded hover:bg-emerald-400 transition-colors">
-                                                    <Check size={14} />
-                                                </button>
-                                                <button onClick={() => setIsAddingCountdown(false)} className="w-8 h-7 flex items-center justify-center bg-white/20 text-white rounded hover:bg-white/30 transition-colors">
-                                                    <X size={14} />
-                                                </button>
+                                                <div className="flex gap-1.5 items-center">
+                                                    <input
+                                                        type="date"
+                                                        value={newCountdownDate}
+                                                        onChange={(e) => setNewCountdownDate(e.target.value)}
+                                                        className="flex-1 h-7 bg-white/20 text-white text-[10px] px-1 rounded-lg outline-none focus:bg-white/30 transition-colors border border-white/20 focus:border-emerald-500 [&::-webkit-calendar-picker-indicator]:invert [&::-webkit-calendar-picker-indicator]:scale-75"
+                                                    />
+                                                    <button onClick={addCountdown} className="w-8 h-7 flex items-center justify-center bg-emerald-500 text-white rounded hover:bg-emerald-400 transition-colors">
+                                                        <Check size={14} />
+                                                    </button>
+                                                    <button onClick={() => setIsAddingCountdown(false)} className="w-8 h-7 flex items-center justify-center bg-white/20 text-white rounded hover:bg-white/30 transition-colors">
+                                                        <X size={14} />
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
                                     ) : null}
@@ -1008,15 +1010,15 @@ export function WidgetDashboard({ isDarkMode, sitesCount, widgetStyle = 'B', wid
                                                 return (
                                                     <div
                                                         key={cd.id}
-                                                        className="flex items-center justify-between p-2 rounded-lg bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 hover:border-emerald-500/30 transition-all min-h-[44px] cursor-context-menu"
+                                                        className="flex items-center justify-between p-2 rounded-lg bg-white/15 dark:bg-white/10 border border-white/20 dark:border-white/10 hover:border-emerald-500/30 transition-all min-h-[44px] cursor-context-menu"
                                                         onContextMenu={(e) => handleRightClick(e, cd, 'countdown')}
                                                         onTouchStart={() => handleLongPressStart(cd, 'countdown')}
                                                         onTouchEnd={handleLongPressEnd}
                                                         onTouchMove={handleLongPressEnd}
                                                     >
                                                         <div className="flex items-center gap-2 min-w-0 flex-1">
-                                                            <span className="text-[11px] font-medium opacity-80 truncate leading-none tracking-tight">{cd.label}</span>
-                                                            <span className="text-[10px] opacity-40 font-medium tracking-tighter leading-none shrink-0">{new Date(cd.date).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' }).replace('/', '-')}</span>
+                                                            <span className="text-[11px] font-bold text-white truncate leading-none tracking-tight">{cd.label}</span>
+                                                            <span className="text-[10px] opacity-60 font-medium tracking-tighter leading-none shrink-0 text-white">{new Date(cd.date).toLocaleDateString('zh-CN', { month: '2-digit', day: '2-digit' }).replace('/', '-')}</span>
                                                             <div className="flex items-baseline leading-none shrink-0">
                                                                 <span className="text-base font-bold text-emerald-400 tracking-tighter">{daysLeft}</span>
                                                                 <span className="text-[9px] ml-0.5 font-normal text-white/40 transform translate-y-[-1px]">天</span>
