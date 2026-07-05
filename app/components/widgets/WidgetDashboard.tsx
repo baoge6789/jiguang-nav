@@ -101,7 +101,7 @@ const SOLAR_TERMS = [
     { name: '冬至', date: '2026-12-22' },
 ];
 
-export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode, sitesCount, widgetStyle = 'B', widgetConfig }: WidgetDashboardProps) {
+export function WidgetDashboard({ isDarkMode, sitesCount, widgetStyle = 'B', widgetConfig }: WidgetDashboardProps) {
     const [time, setTime] = useState<Date | null>(null);
     const [locationName, setLocationName] = useState('本地');
     const [weather, setWeather] = useState<any>({
@@ -214,6 +214,7 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
     // 待办操作
     // ============================================================
     const addTodo = () => {
+        console.log('addTodo 被调用');
         if (!newTodo.trim()) return;
         const newItem = {
             id: Date.now().toString() + Math.random().toString(36).substring(2),
@@ -235,6 +236,7 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
     // 倒计时操作
     // ============================================================
     const addCountdown = () => {
+        console.log('addCountdown 被调用');
         if (!newCountdownLabel.trim() || !newCountdownDate) return;
         const newItem = {
             id: Date.now().toString() + Math.random().toString(36).substring(2),
@@ -907,7 +909,7 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                                 </div>
                             )}
 
-                                                        {/* ========== 待办模式 ========== */}
+                            {/* ========== 待办模式 ========== */}
                             {toolsMode === 'todo' && (
                                 <div className="flex-1 flex flex-col h-full overflow-hidden relative">
                                     {isAddingTodo ? (
@@ -929,46 +931,48 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                                                 </button>
                                             </div>
                                         </div>
-                                    ) : (
-                                        <div className="flex flex-col h-full">
-                                            <div className="flex-1 overflow-y-auto custom-scrollbar flex flex-wrap content-start gap-1 pr-1">
-                                                {todos.map(todo => (
-                                                    <div
-                                                        key={todo.id}
-                                                        className="flex items-center gap-1 px-2 py-1.5 bg-black/5 dark:bg-white/10 rounded-md hover:bg-black/10 dark:hover:bg-white/20 transition-colors max-w-full border border-black/10 dark:border-white/10 cursor-context-menu"
-                                                        onContextMenu={(e) => handleRightClick(e, todo, 'todo')}
-                                                        onTouchStart={() => handleLongPressStart(todo, 'todo')}
-                                                        onTouchEnd={handleLongPressEnd}
-                                                        onTouchMove={handleLongPressEnd}
+                                    ) : null}
+                                    <div className="flex flex-col h-full">
+                                        <div className="flex-1 overflow-y-auto custom-scrollbar flex flex-wrap content-start gap-1 pr-1">
+                                            {todos.map(todo => (
+                                                <div
+                                                    key={todo.id}
+                                                    className="flex items-center gap-1 px-2 py-1.5 bg-black/5 dark:bg-white/10 rounded-md hover:bg-black/10 dark:hover:bg-white/20 transition-colors max-w-full border border-black/10 dark:border-white/10 cursor-context-menu"
+                                                    onContextMenu={(e) => handleRightClick(e, todo, 'todo')}
+                                                    onTouchStart={() => handleLongPressStart(todo, 'todo')}
+                                                    onTouchEnd={handleLongPressEnd}
+                                                    onTouchMove={handleLongPressEnd}
+                                                >
+                                                    <button
+                                                        onClick={() => toggleTodo(todo.id)}
+                                                        className={`shrink-0 w-4 h-4 rounded flex items-center justify-center transition-all border ${todo.done ? 'bg-emerald-500 border-emerald-500 text-white' : 'border-black/20 dark:border-white/40 hover:border-emerald-500 text-transparent'}`}
                                                     >
-                                                        <button
-                                                            onClick={() => toggleTodo(todo.id)}
-                                                            className={`shrink-0 w-4 h-4 rounded flex items-center justify-center transition-all border ${todo.done ? 'bg-emerald-500 border-emerald-500 text-white' : 'border-black/20 dark:border-white/40 hover:border-emerald-500 text-transparent'}`}
-                                                        >
-                                                            <Check size={10} strokeWidth={4} />
-                                                        </button>
-                                                        <span className={`text-[11px] truncate flex-1 ${todo.done ? 'line-through opacity-40' : ''}`}>{todo.text}</span>
-                                                    </div>
-                                                ))}
-                                                {todos.length === 0 && (
-                                                    <div className="w-full h-full flex flex-col items-center justify-center opacity-30">
-                                                        <CheckSquare size={20} className="mb-1" />
-                                                        <p className="text-[10px]">列表为空</p>
-                                                    </div>
-                                                )}
-                                            </div>
-                                            <button 
-                                                onClick={() => setIsAddingTodo(true)} 
-                                                className="absolute bottom-2 right-2 w-7 h-7 flex items-center justify-center rounded-full bg-emerald-500 text-white shadow-lg hover:scale-110 active:scale-95 transition-all z-10 border border-white/10"
-                                            >
-                                                <Plus size={16} />
-                                            </button>
+                                                        <Check size={10} strokeWidth={4} />
+                                                    </button>
+                                                    <span className={`text-[11px] truncate flex-1 ${todo.done ? 'line-through opacity-40' : ''}`}>{todo.text}</span>
+                                                </div>
+                                            ))}
+                                            {todos.length === 0 && (
+                                                <div className="w-full h-full flex flex-col items-center justify-center opacity-30">
+                                                    <CheckSquare size={20} className="mb-1" />
+                                                    <p className="text-[10px]">列表为空</p>
+                                                </div>
+                                            )}
                                         </div>
-                                    )}
+                                        <button 
+                                            onClick={() => {
+                                                console.log('加号被点击');
+                                                setIsAddingTodo(true);
+                                            }} 
+                                            className="absolute bottom-2 right-2 w-7 h-7 flex items-center justify-center rounded-full bg-emerald-500 text-white shadow-lg hover:scale-110 active:scale-95 transition-all z-10 border border-white/10"
+                                        >
+                                            <Plus size={16} />
+                                        </button>
+                                    </div>
                                 </div>
                             )}
 
-                                                        {/* ========== 倒计时模式 ========== */}
+                            {/* ========== 倒计时模式 ========== */}
                             {toolsMode === 'countdown' && (
                                 <div className="flex-1 flex flex-col h-full overflow-hidden relative">
                                     {isAddingCountdown ? (
@@ -996,46 +1000,48 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                                                 </button>
                                             </div>
                                         </div>
-                                    ) : (
-                                        <div className="flex flex-col h-full">
-                                            <div className="flex-1 overflow-y-auto custom-scrollbar grid grid-cols-4 gap-1 pr-9 content-start pb-9">
-                                                {countdowns.map(cd => {
-                                                    const daysLeft = Math.max(0, Math.ceil((new Date(cd.date).getTime() - Date.now()) / (1000 * 60 * 60 * 24)));
-                                                    return (
-                                                        <div
-                                                            key={cd.id}
-                                                            className="flex items-center justify-between p-2 rounded-lg bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 hover:border-emerald-500/30 transition-all min-h-[44px] cursor-context-menu"
-                                                            onContextMenu={(e) => handleRightClick(e, cd, 'countdown')}
-                                                            onTouchStart={() => handleLongPressStart(cd, 'countdown')}
-                                                            onTouchEnd={handleLongPressEnd}
-                                                            onTouchMove={handleLongPressEnd}
-                                                        >
-                                                            <div className="flex items-center gap-2 min-w-0 flex-1">
-                                                                <span className="text-[11px] font-medium opacity-80 truncate leading-none tracking-tight">{cd.label}</span>
-                                                                <span className="text-[10px] opacity-40 font-medium tracking-tighter leading-none shrink-0">{new Date(cd.date).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' }).replace('/', '-')}</span>
-                                                                <div className="flex items-baseline leading-none shrink-0">
-                                                                    <span className="text-base font-bold text-emerald-400 tracking-tighter">{daysLeft}</span>
-                                                                    <span className="text-[9px] ml-0.5 font-normal text-white/40 transform translate-y-[-1px]">天</span>
-                                                                </div>
+                                    ) : null}
+                                    <div className="flex flex-col h-full">
+                                        <div className="flex-1 overflow-y-auto custom-scrollbar grid grid-cols-4 gap-1 pr-9 content-start pb-9">
+                                            {countdowns.map(cd => {
+                                                const daysLeft = Math.max(0, Math.ceil((new Date(cd.date).getTime() - Date.now()) / (1000 * 60 * 60 * 24)));
+                                                return (
+                                                    <div
+                                                        key={cd.id}
+                                                        className="flex items-center justify-between p-2 rounded-lg bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 hover:border-emerald-500/30 transition-all min-h-[44px] cursor-context-menu"
+                                                        onContextMenu={(e) => handleRightClick(e, cd, 'countdown')}
+                                                        onTouchStart={() => handleLongPressStart(cd, 'countdown')}
+                                                        onTouchEnd={handleLongPressEnd}
+                                                        onTouchMove={handleLongPressEnd}
+                                                    >
+                                                        <div className="flex items-center gap-2 min-w-0 flex-1">
+                                                            <span className="text-[11px] font-medium opacity-80 truncate leading-none tracking-tight">{cd.label}</span>
+                                                            <span className="text-[10px] opacity-40 font-medium tracking-tighter leading-none shrink-0">{new Date(cd.date).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' }).replace('/', '-')}</span>
+                                                            <div className="flex items-baseline leading-none shrink-0">
+                                                                <span className="text-base font-bold text-emerald-400 tracking-tighter">{daysLeft}</span>
+                                                                <span className="text-[9px] ml-0.5 font-normal text-white/40 transform translate-y-[-1px]">天</span>
                                                             </div>
                                                         </div>
-                                                    );
-                                                })}
-                                                {countdowns.length === 0 && (
-                                                    <div className="col-span-3 h-full flex flex-col items-center justify-center opacity-30 py-4">
-                                                        <CalendarClock size={20} className="mb-1" />
-                                                        <p className="text-[10px]">添加倒计时</p>
                                                     </div>
-                                                )}
-                                            </div>
-                                            <button 
-                                                onClick={() => setIsAddingCountdown(true)} 
-                                                className="absolute bottom-2 right-2 w-7 h-7 flex items-center justify-center rounded-full bg-emerald-500 text-white shadow-lg hover:scale-110 active:scale-95 transition-all z-10 border border-white/10"
-                                            >
-                                                <Plus size={16} />
-                                            </button>
+                                                );
+                                            })}
+                                            {countdowns.length === 0 && (
+                                                <div className="col-span-3 h-full flex flex-col items-center justify-center opacity-30 py-4">
+                                                    <CalendarClock size={20} className="mb-1" />
+                                                    <p className="text-[10px]">添加倒计时</p>
+                                                </div>
+                                            )}
                                         </div>
-                                    )}
+                                        <button 
+                                            onClick={() => {
+                                                console.log('倒计时加号被点击');
+                                                setIsAddingCountdown(true);
+                                            }} 
+                                            className="absolute bottom-2 right-2 w-7 h-7 flex items-center justify-center rounded-full bg-emerald-500 text-white shadow-lg hover:scale-110 active:scale-95 transition-all z-10 border border-white/10"
+                                        >
+                                            <Plus size={16} />
+                                        </button>
+                                    </div>
                                 </div>
                             )}
                         </div>
@@ -1044,4 +1050,4 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
             </TiltCard>
         </div>
     );
-});
+}
