@@ -930,9 +930,17 @@ const addCountdown = () => {
                                                     <button onClick={addTodo} className="flex-1 h-6 flex items-center justify-center bg-emerald-600 text-white text-[10px] rounded hover:bg-emerald-500 transition-colors border border-white/5">
                                                         <Check size={14} />
                                                     </button>
-                                                    <button onClick={() => setIsAddingTodo(false)} className="flex-1 h-6 flex items-center justify-center bg-white/10 text-white text-[10px] rounded hover:bg-white/20 transition-colors border border-white/5">
-                                                        <X size={14} />
-                                                    </button>
+                                                   <button 
+    onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log('点击了加号按钮');
+        setIsAddingTodo(true);
+    }} 
+    className="absolute bottom-2 right-2 w-7 h-7 flex items-center justify-center rounded-full bg-emerald-500 text-white shadow-lg hover:scale-110 active:scale-95 transition-all z-10 border border-white/10"
+>
+    <Plus size={16} />
+</button>
                                                 </div>
                                             </div>
                                         ) : (
@@ -963,10 +971,17 @@ const addCountdown = () => {
                                                         </div>
                                                     )}
                                                 </div>
-                                                <button onClick={() => setIsAddingTodo(true)} className="absolute bottom-2 right-2 w-7 h-7 flex items-center justify-center rounded-full bg-emerald-500 text-white shadow-lg hover:scale-110 active:scale-95 transition-all z-10 border border-white/10">
-                                                    <Plus size={16} />
-                                                </button>
-                                            </div>
+                                                <button 
+    onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log('点击了倒计时加号按钮');
+        setIsAddingCountdown(true);
+    }} 
+    className="absolute bottom-2 right-2 w-7 h-7 flex items-center justify-center rounded-full bg-emerald-500 text-white shadow-lg hover:scale-110 active:scale-95 transition-all z-10 border border-white/10"
+>
+    <Plus size={16} />
+</button>               </div>
                                         )}
                                     </div>
                                 </div>
