@@ -945,8 +945,8 @@ export function WidgetDashboard({ isDarkMode, sitesCount, widgetStyle = 'B', wid
                                             <div className="grid grid-cols-2 gap-1">
                                                 {todos.map(todo => (
                                                     <div
-                                                        key={todo.id}
-                                                        className="flex items-center gap-2 px-2 py-2.5 rounded-lg bg-white/90 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 shadow-sm hover:border-emerald-500/50 transition-all cursor-context-menu"
+    key={todo.id}
+    className="flex items-center gap-2 px-2 h-[60px] rounded-lg bg-white/90 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 shadow-sm hover:border-emerald-500/50 transition-all cursor-context-menu"
                                                         onContextMenu={(e) => handleRightClick(e, todo, 'todo')}
                                                         onTouchStart={() => handleLongPressStart(todo, 'todo')}
                                                         onTouchEnd={handleLongPressEnd}
