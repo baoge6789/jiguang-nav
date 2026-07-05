@@ -907,11 +907,11 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                                 </div>
                             )}
 
-                            {/* ========== 待办模式 ========== */}
+                                                        {/* ========== 待办模式 ========== */}
                             {toolsMode === 'todo' && (
                                 <div className="flex-1 flex flex-col h-full overflow-hidden relative">
                                     {isAddingTodo ? (
-                                        <div className="absolute inset-x-1 top-1 bottom-1 z-10 bg-zinc-900 flex flex-col justify-center gap-1.5 p-1.5 rounded-xl border border-white/40 ring-1 ring-white/10 shadow-2xl">
+                                        <div className="absolute inset-x-1 top-1 bottom-auto z-10 bg-zinc-900 flex flex-col justify-center gap-1.5 p-1.5 rounded-xl border border-white/40 ring-1 ring-white/10 shadow-2xl" style={{ height: '80px' }}>
                                             <input
                                                 type="text"
                                                 value={newTodo}
@@ -972,26 +972,26 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                             {toolsMode === 'countdown' && (
                                 <div className="flex-1 flex flex-col h-full overflow-hidden relative">
                                     {isAddingCountdown ? (
-                                        <div className="absolute inset-x-1 top-1 bottom-1 z-10 bg-zinc-900 flex flex-col justify-center gap-1.5 p-1.5 rounded-xl border border-white/40 ring-1 ring-white/10 shadow-2xl">
+                                        <div className="absolute inset-x-1 top-1 bottom-auto z-10 bg-zinc-900 flex flex-col justify-center gap-1.5 p-1.5 rounded-xl border border-white/40 ring-1 ring-white/10 shadow-2xl" style={{ height: '100px' }}>
                                             <input
                                                 type="text"
                                                 value={newCountdownLabel}
                                                 onChange={(e) => setNewCountdownLabel(e.target.value)}
                                                 autoFocus
                                                 placeholder="事件 (例: 生日)"
-                                                className="w-full h-6 bg-black/50 text-white text-xs px-2 rounded-lg outline-none focus:bg-black/70 transition-colors border border-white/10 focus:border-emerald-500 placeholder:text-white/40"
+                                                className="w-full h-7 bg-black/50 text-white text-xs px-2 rounded-lg outline-none focus:bg-black/70 transition-colors border border-white/10 focus:border-emerald-500 placeholder:text-white/40"
                                             />
                                             <div className="flex gap-1.5 items-center">
                                                 <input
                                                     type="date"
                                                     value={newCountdownDate}
                                                     onChange={(e) => setNewCountdownDate(e.target.value)}
-                                                    className="flex-1 h-6 bg-black/50 text-white text-[10px] px-1 rounded-lg outline-none focus:bg-black/70 transition-colors border border-white/10 focus:border-emerald-500 [&::-webkit-calendar-picker-indicator]:invert [&::-webkit-calendar-picker-indicator]:scale-75"
+                                                    className="flex-1 h-7 bg-black/50 text-white text-[10px] px-1 rounded-lg outline-none focus:bg-black/70 transition-colors border border-white/10 focus:border-emerald-500 [&::-webkit-calendar-picker-indicator]:invert [&::-webkit-calendar-picker-indicator]:scale-75"
                                                 />
-                                                <button onClick={addCountdown} className="w-8 h-6 flex items-center justify-center bg-emerald-600 text-white rounded hover:bg-emerald-500 transition-colors border border-white/5">
+                                                <button onClick={addCountdown} className="w-8 h-7 flex items-center justify-center bg-emerald-600 text-white rounded hover:bg-emerald-500 transition-colors border border-white/5">
                                                     <Check size={14} />
                                                 </button>
-                                                <button onClick={() => setIsAddingCountdown(false)} className="w-8 h-6 flex items-center justify-center bg-white/10 text-white rounded hover:bg-white/20 transition-colors border border-white/5">
+                                                <button onClick={() => setIsAddingCountdown(false)} className="w-8 h-7 flex items-center justify-center bg-white/10 text-white rounded hover:bg-white/20 transition-colors border border-white/5">
                                                     <X size={14} />
                                                 </button>
                                             </div>
@@ -1038,10 +1038,4 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                                     )}
                                 </div>
                             )}
-                        </div>
-                    </div>
-                </div>
-            </TiltCard>
-        </div>
-    );
 });
