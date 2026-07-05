@@ -933,26 +933,29 @@ export function WidgetDashboard({ isDarkMode, sitesCount, widgetStyle = 'B', wid
                                         </div>
                                     ) : null}
                                     <div className="flex flex-col h-full">
-                                        <div className="flex-1 overflow-y-auto custom-scrollbar flex flex-col gap-1 pr-1">
-                                            {todos.map(todo => (
-                                                <div
-                                                    key={todo.id}
-                                                    className="flex items-center gap-2 px-2 py-1.5 bg-white/90 dark:bg-slate-800/90 rounded-lg hover:bg-white dark:hover:bg-slate-700 transition-colors border border-slate-200 dark:border-slate-700 shadow-sm cursor-context-menu"
-                                                    onContextMenu={(e) => handleRightClick(e, todo, 'todo')}
-                                                    onTouchStart={() => handleLongPressStart(todo, 'todo')}
-                                                    onTouchEnd={handleLongPressEnd}
-                                                    onTouchMove={handleLongPressEnd}
-                                                >
-                                                    <button
-                                                        onClick={() => toggleTodo(todo.id)}
-                                                        className={`shrink-0 w-4 h-4 rounded flex items-center justify-center transition-all border ${todo.done ? 'bg-emerald-500 border-emerald-500 text-white' : 'border-slate-300 dark:border-slate-500 hover:border-emerald-500 text-transparent'}`}
-                                                    >
-                                                        <Check size={10} strokeWidth={4} />
-                                                    </button>
-                                                    <span className={`text-xs truncate flex-1 ${todo.done ? 'line-through opacity-40 text-slate-400' : 'text-slate-700 dark:text-slate-200'}`}>{todo.text}</span>
+                                        <div className="flex-1 overflow-y-auto custom-scrollbar pr-1">
+                                            {todos.length > 0 ? (
+                                                <div className="flex flex-col gap-1">
+                                                    {todos.map(todo => (
+                                                        <div
+                                                            key={todo.id}
+                                                            className="flex items-center gap-2 px-2 py-1.5 bg-white/90 dark:bg-slate-800/90 rounded-lg hover:bg-white dark:hover:bg-slate-700 transition-colors border border-slate-200 dark:border-slate-700 shadow-sm cursor-context-menu"
+                                                            onContextMenu={(e) => handleRightClick(e, todo, 'todo')}
+                                                            onTouchStart={() => handleLongPressStart(todo, 'todo')}
+                                                            onTouchEnd={handleLongPressEnd}
+                                                            onTouchMove={handleLongPressEnd}
+                                                        >
+                                                            <button
+                                                                onClick={() => toggleTodo(todo.id)}
+                                                                className={`shrink-0 w-4 h-4 rounded flex items-center justify-center transition-all border ${todo.done ? 'bg-emerald-500 border-emerald-500 text-white' : 'border-slate-300 dark:border-slate-500 hover:border-emerald-500 text-transparent'}`}
+                                                            >
+                                                                <Check size={10} strokeWidth={4} />
+                                                            </button>
+                                                            <span className={`text-xs truncate flex-1 ${todo.done ? 'line-through opacity-40 text-slate-400' : 'text-slate-700 dark:text-slate-200'}`}>{todo.text}</span>
+                                                        </div>
+                                                    ))}
                                                 </div>
-                                            ))}
-                                            {todos.length === 0 && (
+                                            ) : (
                                                 <div className="w-full h-full flex flex-col items-center justify-center opacity-30">
                                                     <CheckSquare size={20} className="mb-1" />
                                                     <p className="text-[10px]">列表为空</p>
@@ -1004,13 +1007,13 @@ export function WidgetDashboard({ isDarkMode, sitesCount, widgetStyle = 'B', wid
                                         </div>
                                     ) : null}
                                     <div className="flex flex-col h-full">
-                                        <div className="flex-1 overflow-y-auto custom-scrollbar grid grid-cols-4 gap-1 pr-9 content-start pb-9">
+                                        <div className="flex-1 overflow-y-auto custom-scrollbar grid grid-cols-2 gap-1 pr-9 content-start pb-9">
                                             {countdowns.map(cd => {
                                                 const daysLeft = Math.max(0, Math.ceil((new Date(cd.date).getTime() - Date.now()) / (1000 * 60 * 60 * 24)));
                                                 return (
                                                     <div
                                                         key={cd.id}
-                                                        className="flex flex-col p-2 rounded-lg bg-white/90 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 shadow-sm hover:border-emerald-500/50 transition-all cursor-context-menu"
+                                                        className="flex flex-col p-2.5 rounded-lg bg-white/90 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 shadow-sm hover:border-emerald-500/50 transition-all cursor-context-menu"
                                                         onContextMenu={(e) => handleRightClick(e, cd, 'countdown')}
                                                         onTouchStart={() => handleLongPressStart(cd, 'countdown')}
                                                         onTouchEnd={handleLongPressEnd}
@@ -1028,7 +1031,7 @@ export function WidgetDashboard({ isDarkMode, sitesCount, widgetStyle = 'B', wid
                                                 );
                                             })}
                                             {countdowns.length === 0 && (
-                                                <div className="col-span-3 h-full flex flex-col items-center justify-center opacity-30 py-4">
+                                                <div className="col-span-2 h-full flex flex-col items-center justify-center opacity-30 py-4">
                                                     <CalendarClock size={20} className="mb-1" />
                                                     <p className="text-[10px]">添加倒计时</p>
                                                 </div>
