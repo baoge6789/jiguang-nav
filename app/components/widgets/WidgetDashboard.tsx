@@ -968,7 +968,7 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                                 </div>
                             )}
 
-                            {/* ========== 倒计时模式 ========== */}
+                                                        {/* ========== 倒计时模式 ========== */}
                             {toolsMode === 'countdown' && (
                                 <div className="flex-1 flex flex-col h-full overflow-hidden relative">
                                     {isAddingCountdown ? (
@@ -1038,4 +1038,10 @@ export const WidgetDashboard = React.memo(function WidgetDashboard({ isDarkMode,
                                     )}
                                 </div>
                             )}
+                        </div>
+                    </div>
+                </div>
+            </TiltCard>
+        </div>
+    );
 });
