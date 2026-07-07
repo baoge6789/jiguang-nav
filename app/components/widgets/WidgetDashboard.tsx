@@ -690,7 +690,7 @@ export function WidgetDashboard({ isDarkMode, sitesCount, widgetStyle = 'B', wid
                             )}
 
                             {timeMode === 'world' && (
-                                <div className="grid grid-cols-2 gap-x-4 gap-y-1">
+                                <div className="grid grid-cols-2 gap-x-[18px] gap-y-1">
                                     {worldClocks.slice(0, 6).map((tz, idx) => {
                                         const timeFormatter = new Intl.DateTimeFormat('zh-CN', {
                                             hour: '2-digit',
