@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { Search, LayoutGrid, X, ChevronDown, Plus, Settings, User, LogOut, LogIn, Command, List } from 'lucide-react';
+import { Search, LayoutGrid, X, ChevronDown, Plus, Settings, User, LogOut, LogIn, Command } from 'lucide-react';
 import { SEARCH_ENGINES } from '@/lib/utils';
 import { ThemeToggle } from './ThemeToggle';
 import { ActionButton } from '@/app/components/ui/ActionButton';
@@ -163,21 +163,21 @@ export function Header({
                         </div>
                     </div>
 
-                    {/* Actions - 已移除前台添加按钮 */}
+                    {/* Actions */}
                     <div className="flex items-center gap-0.5 sm:gap-1 md:gap-2 shrink-0 pr-0.5 sm:pr-1 z-50">
                         <ThemeToggle isDarkMode={isDarkMode} toggleTheme={() => setIsDarkMode(!isDarkMode)} />
 
-                        {/* ✅ 新增：目录树跳转按钮 */}
+                        {/* ✅ 目录树跳转按钮（用 🪾） */}
                         <a
                             href="/tree.html"
-                            className={`p-2 rounded-lg transition-all active:scale-95 ${
+                            className={`p-2 rounded-lg transition-all active:scale-95 flex items-center justify-center ${
                                 isDarkMode
                                     ? 'text-slate-400 hover:text-white hover:bg-white/10'
                                     : 'text-slate-500 hover:text-indigo-600 hover:bg-slate-100'
                             }`}
                             title="目录树"
                         >
-                            <List size={18} />
+                            <span style={{ fontSize: '18px', lineHeight: 1 }}>🪾</span>
                         </a>
 
                         {isLoggedIn && (
