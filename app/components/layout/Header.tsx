@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { Search, LayoutGrid, X, ChevronDown, Plus, Settings, User, LogOut, LogIn, Command } from 'lucide-react';
+import { Search, LayoutGrid, X, ChevronDown, Plus, Settings, User, LogOut, LogIn, Command, List } from 'lucide-react';
 import { SEARCH_ENGINES } from '@/lib/utils';
 import { ThemeToggle } from './ThemeToggle';
 import { ActionButton } from '@/app/components/ui/ActionButton';
@@ -86,7 +86,7 @@ export function Header({
 
                     {/* Search Bar */}
                     <div
-                        className={`flex-1 max-w-2xl mx-1 sm:mx-4 md:mx-8 min-w-0 relative group transition-all duration-500 ${isSearchFocused ? 'z-50 scale-[1.02]' : 'z-20'} ${isScrolled ? 'md:mx-12' : ''}`}>
+                        className={`flex-1 max-w-lg mx-1 sm:mx-4 md:mx-8 min-w-0 relative group transition-all duration-500 ${isSearchFocused ? 'z-50 scale-[1.02]' : 'z-20'} ${isScrolled ? 'md:mx-12' : ''}`}>
                         <div
                             className={`relative flex items-center rounded-full transition-all duration-300 ${isSearchFocused ? (isDarkMode ? 'bg-slate-700 shadow-2xl shadow-indigo-500/20 border-indigo-500/50' : 'bg-white shadow-2xl shadow-indigo-500/20 border-indigo-500/50') : (isDarkMode ? 'bg-slate-700/50 hover:bg-slate-700 border border-white/10' : 'bg-slate-100/80 hover:bg-white border border-slate-200/50 hover:shadow-lg hover:shadow-indigo-500/5')}`}>
                             <div className="relative shrink-0 pl-1">
@@ -166,6 +166,20 @@ export function Header({
                     {/* Actions - 已移除前台添加按钮 */}
                     <div className="flex items-center gap-0.5 sm:gap-1 md:gap-2 shrink-0 pr-0.5 sm:pr-1 z-50">
                         <ThemeToggle isDarkMode={isDarkMode} toggleTheme={() => setIsDarkMode(!isDarkMode)} />
+
+                        {/* ✅ 新增：目录树跳转按钮 */}
+                        <a
+                            href="/tree.html"
+                            className={`p-2 rounded-lg transition-all active:scale-95 ${
+                                isDarkMode
+                                    ? 'text-slate-400 hover:text-white hover:bg-white/10'
+                                    : 'text-slate-500 hover:text-indigo-600 hover:bg-slate-100'
+                            }`}
+                            title="目录树"
+                        >
+                            <List size={18} />
+                        </a>
+
                         {isLoggedIn && (
                             <>
                                 <ActionButton icon={Settings} onClick={() => setIsSettingsOpen(!isSettingsOpen)}
