@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>目录树 - 极光导航</title>
     <link rel="icon" href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQGcfFwzWpsxJQbvG_o2Jl7sQ5UaSxyUapsARECaoAEFg&s" />
-    
+
     <!-- markmap CDN -->
     <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
     <script src="https://cdn.jsdelivr.net/npm/markmap-view@0.15.4"></script>
@@ -33,9 +33,7 @@
         /* 顶部栏 */
         .topbar {
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
+            top: 0; left: 0; right: 0;
             z-index: 100;
             display: flex;
             align-items: center;
@@ -81,81 +79,144 @@
             transition: all 0.2s;
         }
 
-        .btn:hover {
-            background: #f1f5f9;
-            transform: translateY(-1px);
-        }
+        .btn:hover { background: #f1f5f9; transform: translateY(-1px); }
 
         body.dark .btn {
             background: #1a1d27;
             border-color: #2d313e;
             color: #cbd5e1;
         }
-
-        body.dark .btn:hover {
-            background: #252936;
-        }
+        body.dark .btn:hover { background: #252936; }
 
         .btn-primary {
             background: linear-gradient(135deg, #818cf8, #a78bfa);
             color: #fff;
             border: none;
         }
+        .btn-primary:hover { background: linear-gradient(135deg, #6366f1, #8b5cf6); }
 
-        .btn-primary:hover {
-            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        .btn-active {
+            background: #eef2ff !important;
+            color: #6366f1 !important;
+            border-color: #c7d2fe !important;
+        }
+        body.dark .btn-active {
+            background: rgba(99, 102, 241, 0.15) !important;
+            color: #a5b4fc !important;
+            border-color: rgba(99, 102, 241, 0.3) !important;
         }
 
-        /* 画布 */
+        /* 画布 / 内容区 */
+        .view-container {
+            width: 100%;
+            height: 100%;
+            padding-top: 64px;
+        }
+        .view-container.hidden { display: none; }
+
+        /* 思维导图 */
         #mindmap {
             width: 100%;
             height: 100%;
-            padding-top: 60px;
+        }
+        .markmap-node > circle { cursor: pointer; }
+
+        /* 树形列表视图 */
+        #treeview {
+            overflow-y: auto;
+            padding: 20px;
+        }
+        .tree-wrap {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+        }
+        body.dark .tree-wrap {
+            background: #1a1d27;
+            border-color: #2d313e;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
         }
 
-        /* 加载状态 */
-        .loading {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+        .category-block { margin-bottom: 20px; }
+        .category-block:last-child { margin-bottom: 0; }
+
+        .category-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            padding: 0 4px;
+        }
+        .category-title .dot {
+            width: 4px; height: 18px;
+            border-radius: 4px;
+            flex-shrink: 0;
+        }
+        .category-title h3 { font-size: 15px; font-weight: 700; }
+        .category-title .count { font-size: 12px; opacity: 0.5; }
+
+        .tree-list {
+            border-radius: 10px;
+            border: 1px solid #f1f5f9;
+            padding: 6px;
+        }
+        body.dark .tree-list {
+            border-color: #2d313e;
+            background: rgba(15, 17, 23, 0.5);
+        }
+
+        .tree-node { user-select: none; }
+
+        .tree-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.15s;
+            font-size: 14px;
+        }
+        .tree-row:hover { background: #f1f5f9; }
+        body.dark .tree-row:hover { background: rgba(255, 255, 255, 0.05); }
+
+        .tree-row .arrow {
+            width: 14px; height: 14px;
+            flex-shrink: 0;
+            opacity: 0.5;
+            transition: transform 0.2s;
+        }
+        .tree-row .arrow.expanded { transform: rotate(90deg); }
+        .tree-row .arrow.placeholder { visibility: hidden; }
+
+        .tree-row .icon { width: 16px; height: 16px; flex-shrink: 0; }
+        .tree-row .name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .tree-row .count { font-size: 11px; opacity: 0.4; }
+        .tree-row.hidden-item { opacity: 0.5; }
+        .tree-row .hidden-mark { font-size: 11px; opacity: 0.5; }
+
+        .children { overflow: hidden; }
+
+        /* 加载 / 空状态 */
+        .loading, .empty {
             text-align: center;
+            padding: 60px 0;
             color: #94a3b8;
-            z-index: 50;
         }
-
         .spinner {
-            width: 36px;
-            height: 36px;
+            width: 36px; height: 36px;
             margin: 0 auto 12px;
             border: 3px solid #e2e8f0;
             border-top-color: #818cf8;
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
         }
-
-        body.dark .spinner {
-            border-color: #2d313e;
-            border-top-color: #818cf8;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* 节点样式覆盖 */
-        .markmap-node > circle {
-            cursor: pointer;
-        }
-
-        /* 站点节点可点击 */
-        .markmap-node[data-url] {
-            cursor: pointer;
-        }
-
-        .markmap-node[data-url]:hover {
-            text-decoration: underline;
-        }
+        body.dark .spinner { border-color: #2d313e; border-top-color: #818cf8; }
+        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
@@ -164,22 +225,44 @@
     <div class="topbar">
         <h1>🪾 目录树</h1>
         <div class="actions">
-            <a href="/" class="btn btn-primary">← 返回卡片模式</a>
-            <button class="btn" id="fitBtn">🔍 适应屏幕</button>
+            <a href="/" class="btn btn-primary">← 返回</a>
+            <button class="btn btn-active" id="viewToggleBtn">📋 目录列表</button>
             <button class="btn" id="themeBtn">🌙</button>
         </div>
     </div>
 
-    <!-- 加载 -->
-    <div class="loading" id="loading">
-        <div class="spinner"></div>
-        <p>正在加载数据...</p>
+    <!-- 思维导图视图 -->
+    <div class="view-container" id="mindmapView">
+        <svg id="mindmap"></svg>
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>正在加载数据...</p>
+        </div>
     </div>
 
-    <!-- 画布 -->
-    <svg id="mindmap"></svg>
+    <!-- 树形列表视图 -->
+    <div class="view-container hidden" id="treeView">
+        <div id="treeview">
+            <div class="loading">
+                <div class="spinner"></div>
+                <p>正在加载数据...</p>
+            </div>
+        </div>
+    </div>
 
     <script>
+        // ============================================================
+        // 全局数据
+        // ============================================================
+        let allSites = [];
+        let allCategories = [];
+        let allHiddenCategories = [];
+        let categoryColorsMap = {};
+        let markmapInstance = null;
+        let currentView = 'mindmap'; // 'mindmap' | 'tree'
+        let markmapRendered = false;
+        let treeRendered = false;
+
         // ============================================================
         // 主题
         // ============================================================
@@ -191,9 +274,9 @@
             document.body.classList.toggle('dark', dark);
             themeBtn.textContent = dark ? '☀️' : '🌙';
             localStorage.setItem('aurora_theme', dark ? 'dark' : 'light');
-            // 重新渲染
-            if (window.__markmap && window.__markmapData) {
-                renderMindmap(window.__markmapData, dark);
+            // 重新渲染思维导图（颜色需要重绘）
+            if (markmapRendered && allSites.length) {
+                renderMindmap();
             }
         }
 
@@ -204,40 +287,79 @@
         });
 
         // ============================================================
-        // 生成 markmap 数据（Markdown 格式）
+        // 视图切换
         // ============================================================
-        function buildMarkdown(sites, categories, hiddenCategories) {
-            // 判断是否登录
-            const isLoggedIn = localStorage.getItem('aurora_is_logged_in') === 'true';
+        const viewToggleBtn = document.getElementById('viewToggleBtn');
+        const mindmapView = document.getElementById('mindmapView');
+        const treeView = document.getElementById('treeView');
+        const treeviewInner = document.getElementById('treeview');
 
-            // 过滤隐藏
-            let filteredSites = sites;
-            if (!isLoggedIn) {
-                filteredSites = sites.filter(s => !s.isHidden);
+        viewToggleBtn.addEventListener('click', () => {
+            currentView = currentView === 'mindmap' ? 'tree' : 'mindmap';
+
+            if (currentView === 'mindmap') {
+                mindmapView.classList.remove('hidden');
+                treeView.classList.add('hidden');
+                viewToggleBtn.textContent = '📋 目录列表';
+                // 首次切回时若未渲染则渲染
+                if (!markmapRendered && allSites.length) renderMindmap();
+            } else {
+                mindmapView.classList.add('hidden');
+                treeView.classList.remove('hidden');
+                viewToggleBtn.textContent = '🌳 思维导图';
+                // 首次切到树形列表时渲染
+                if (!treeRendered && allSites.length) renderTreeView();
             }
+        });
 
-            const visibleCategories = isLoggedIn
-                ? categories
-                : categories.filter(c => !hiddenCategories.includes(c));
+        // ============================================================
+        // 图标 SVG
+        // ============================================================
+        const FOLDER_SVG = '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>';
+        const LINK_SVG = '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>';
 
-            // markmap 用 markdown 生成树
-            // 根节点
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        // ============================================================
+        // 过滤数据（按登录状态）
+        // ============================================================
+        function getFilteredData() {
+            const isLoggedIn = localStorage.getItem('aurora_is_logged_in') === 'true';
+            const sites = isLoggedIn ? allSites : allSites.filter(s => !s.isHidden);
+            const categories = isLoggedIn
+                ? allCategories
+                : allCategories.filter(c => !allHiddenCategories.includes(c));
+            return { sites, categories, isLoggedIn };
+        }
+
+        // ============================================================
+        // 思维导图：生成 Markdown
+        // ============================================================
+        function buildMarkdown() {
+            const { sites, categories } = getFilteredData();
+
             let md = '# 极光导航\n';
 
-            visibleCategories.forEach(cat => {
-                const rootNodes = filteredSites
+            categories.forEach(cat => {
+                const rootNodes = sites
                     .filter(s => s.category === cat && !s.parentId)
                     .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
 
                 if (rootNodes.length === 0) return;
 
-                // 分类节点
                 md += `## ${cat}\n`;
 
-                // 递归渲染
                 function renderNode(node, indent) {
                     const isFolder = node.type === 'folder';
-                    const children = filteredSites
+                    const children = sites
                         .filter(s => s.parentId === node.id)
                         .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
 
@@ -245,8 +367,8 @@
                     if (isFolder) {
                         md += `${prefix}📁 ${node.name}\n`;
                     } else {
-                        // 站点用 markdown 链接格式，点击可跳转
-                        md += `${prefix}[🔗 ${node.name}](${node.url})\n`;
+                        // 用纯文本，不用 markdown 链接，避免 <a> 默认行为导致重复打开
+                        md += `${prefix}🔗 ${node.name}\u0000${node.url}\n`;
                     }
 
                     if (isFolder && children.length > 0) {
@@ -261,68 +383,182 @@
         }
 
         // ============================================================
-        // 渲染导图
+        // 思维导图：渲染
         // ============================================================
-        let markmapInstance = null;
-
-        function renderMindmap(mdData, isDark) {
+        function renderMindmap() {
             const svg = document.getElementById('mindmap');
-            const { Markmap } = window.markmap;
-            const { Transformer } = window.markmap;
+            const { Markmap, Transformer } = window.markmap;
 
-            // 清空
+            const mdData = buildMarkdown();
+
             svg.innerHTML = '';
 
-            // 转换 markdown
             const transformer = new Transformer();
             const { root } = transformer.transform(mdData);
 
-            // 创建实例
             if (markmapInstance) {
                 markmapInstance.destroy();
             }
 
             markmapInstance = Markmap.create(svg, {
                 duration: 300,
-                spacingHorizontal: 80,
-                spacingVertical: 8,
+                spacingHorizontal: 100,
+                spacingVertical: 10,
                 paddingX: 16,
-                initialExpandLevel: -1, // 全部展开
-                color: (node) => {
-                    // 用分类颜色
-                    return '#818cf8';
-                },
+                initialExpandLevel: -1,
+                color: () => '#818cf8',
             }, root);
 
-            window.__markmap = markmapInstance;
-            window.__markmapData = mdData;
+            markmapRendered = true;
 
-            // 适应屏幕
-            setTimeout(() => {
-                markmapInstance.fit();
-            }, 100);
-
-            // 绑定点击事件（点击站点节点打开链接）
+            // 绑定点击事件：只在新标签页打开一次
             setTimeout(() => {
                 svg.querySelectorAll('.markmap-node').forEach(node => {
-                    const link = node.querySelector('a');
-                    if (link) {
-                        node.style.cursor = 'pointer';
-                        node.addEventListener('click', (e) => {
-                            e.stopPropagation();
-                            window.open(link.href, '_blank');
-                        });
+                    // 找到节点文本
+                    const textEl = node.querySelector('text') || node.querySelector('foreignObject');
+                    const rawText = node.textContent || '';
+                    // 用 \u0000 分隔的 url 解析
+                    const parts = rawText.split('\u0000');
+                    if (parts.length >= 2) {
+                        const url = parts[1].trim();
+                        if (url) {
+                            node.style.cursor = 'pointer';
+                            // 先移除所有已有监听（避免重复）
+                            const newHandler = (e) => {
+                                e.stopPropagation();
+                                e.preventDefault();
+                                window.open(url, '_blank');
+                            };
+                            // 用 onclick 覆盖，天然只触发一次
+                            node.onclick = newHandler;
+                        }
                     }
                 });
-            }, 500);
+            }, 400);
         }
 
         // ============================================================
-        // 适应屏幕按钮
+        // 树形列表：渲染
         // ============================================================
-        document.getElementById('fitBtn').addEventListener('click', () => {
-            if (markmapInstance) markmapInstance.fit();
-        });
+        function renderNode(node, allSites, level) {
+            const isFolder = node.type === 'folder';
+            const children = allSites
+                .filter(s => s.parentId === node.id)
+                .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+
+            const hasChildren = isFolder && children.length > 0;
+            const indent = level * 16;
+
+            let html = '<div class="tree-node">';
+            html += `<div class="tree-row ${node.isHidden ? 'hidden-item' : ''}" 
+                        data-id="${node.id}" 
+                        data-type="${node.type || 'site'}"
+                        data-url="${escapeHtml(node.url || '')}"
+                        data-folder="${isFolder ? '1' : '0'}"
+                        style="padding-left: ${8 + indent}px">`;
+
+            if (hasChildren) {
+                html += `<svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>`;
+            } else {
+                html += `<span class="arrow placeholder"></span>`;
+            }
+
+            if (isFolder) {
+                html += `<span style="color:${node.color || '#6366f1'}">${FOLDER_SVG}</span>`;
+            } else {
+                html += `<span style="color:${node.color || '#6366f1'}">${LINK_SVG}</span>`;
+            }
+
+            html += `<span class="name">${escapeHtml(node.name)}</span>`;
+
+            if (node.isHidden) {
+                html += `<span class="hidden-mark">👁️‍🗨️</span>`;
+            }
+
+            if (hasChildren) {
+                html += `<span class="count">${children.length}</span>`;
+            }
+
+            html += '</div>';
+
+            if (hasChildren) {
+                html += `<div class="children" data-parent="${node.id}" style="display:none">`;
+                children.forEach(child => {
+                    html += renderNode(child, allSites, level + 1);
+                });
+                html += `</div>`;
+            }
+
+            html += '</div>';
+            return html;
+        }
+
+        function renderTreeView() {
+            const { sites, categories } = getFilteredData();
+            const container = treeviewInner;
+
+            if (!sites || sites.length === 0) {
+                container.innerHTML = '<div class="empty">暂无数据</div>';
+                return;
+            }
+
+            let html = '<div class="tree-wrap">';
+
+            categories.forEach(cat => {
+                const rootNodes = sites
+                    .filter(s => s.category === cat && !s.parentId)
+                    .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+
+                if (rootNodes.length === 0) return;
+
+                const catColor = categoryColorsMap[cat] || '#6366f1';
+
+                html += '<div class="category-block">';
+                html += `<div class="category-title">
+                            <span class="dot" style="background:${catColor}"></span>
+                            <h3>${escapeHtml(cat)}</h3>
+                            <span class="count">(${rootNodes.length})</span>
+                        </div>`;
+                html += '<div class="tree-list">';
+                rootNodes.forEach(node => {
+                    html += renderNode(node, sites, 0);
+                });
+                html += '</div></div>';
+            });
+
+            html += '</div>';
+
+            if (html === '<div class="tree-wrap"></div>') {
+                html = '<div class="empty">暂无数据</div>';
+            }
+
+            container.innerHTML = html;
+
+            // 绑定事件
+            container.querySelectorAll('.tree-row').forEach(row => {
+                row.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const isFolder = row.dataset.folder === '1';
+                    const url = row.dataset.url;
+                    const id = row.dataset.id;
+
+                    if (isFolder) {
+                        const children = row.parentElement.querySelector(`.children[data-parent="${id}"]`);
+                        const arrow = row.querySelector('.arrow');
+                        if (children) {
+                            const isOpen = children.style.display !== 'none';
+                            children.style.display = isOpen ? 'none' : 'block';
+                            if (arrow) arrow.classList.toggle('expanded', !isOpen);
+                        }
+                    } else if (url) {
+                        // 只在新标签页打开一次
+                        window.open(url, '_blank');
+                    }
+                });
+            });
+
+            treeRendered = true;
+        }
 
         // ============================================================
         // 获取数据
@@ -333,28 +569,34 @@
                 if (!res.ok) throw new Error('API 请求失败');
                 const data = await res.json();
 
-                const categories = (data.categories || []).map(c => c.name);
-                const hiddenCategories = (data.categories || [])
+                allCategories = (data.categories || []).map(c => c.name);
+                allHiddenCategories = (data.categories || [])
                     .filter(c => c.isHidden)
                     .map(c => c.name);
 
-                const sites = data.sites || [];
+                categoryColorsMap = {};
+                (data.categories || []).forEach(c => {
+                    if (c.color) categoryColorsMap[c.name] = c.color;
+                });
 
-                // 生成 markdown
-                const md = buildMarkdown(sites, categories, hiddenCategories);
+                allSites = data.sites || [];
 
-                // 渲染
-                document.getElementById('loading').style.display = 'none';
-                renderMindmap(md, document.body.classList.contains('dark'));
+                // 隐藏 loading
+                const loadingEl = document.getElementById('loading');
+                if (loadingEl) loadingEl.style.display = 'none';
+
+                // 默认渲染思维导图
+                renderMindmap();
 
             } catch (e) {
                 console.error(e);
-                document.getElementById('loading').innerHTML =
-                    '<p>⚠️ 加载失败：' + e.message + '</p>';
+                const loadingEl = document.getElementById('loading');
+                if (loadingEl) {
+                    loadingEl.innerHTML = '<p>⚠️ 加载失败：' + escapeHtml(e.message) + '</p>';
+                }
             }
         }
 
-        // 等 DOM 和 markmap 库加载完成
         window.addEventListener('load', init);
     </script>
 
