@@ -274,8 +274,7 @@
             document.body.classList.toggle('dark', dark);
             themeBtn.textContent = dark ? '☀️' : '🌙';
             localStorage.setItem('aurora_theme', dark ? 'dark' : 'light');
-            // 重新渲染思维导图（颜色需要重绘）
-            if (markmapRendered && allSites.length) {
+            if (markmapRendered && allSites.length && currentView === 'mindmap') {
                 renderMindmap();
             }
         }
@@ -301,13 +300,11 @@
                 mindmapView.classList.remove('hidden');
                 treeView.classList.add('hidden');
                 viewToggleBtn.textContent = '📋 目录列表';
-                // 首次切回时若未渲染则渲染
                 if (!markmapRendered && allSites.length) renderMindmap();
             } else {
                 mindmapView.classList.add('hidden');
                 treeView.classList.remove('hidden');
                 viewToggleBtn.textContent = '🌳 思维导图';
-                // 首次切到树形列表时渲染
                 if (!treeRendered && allSites.length) renderTreeView();
             }
         });
@@ -367,8 +364,8 @@
                     if (isFolder) {
                         md += `${prefix}📁 ${node.name}\n`;
                     } else {
-                        // 用纯文本，不用 markdown 链接，避免 <a> 默认行为导致重复打开
-                        md += `${prefix}🔗 ${node.name}\u0000${node.url}\n`;
+                        // ✅ markdown 链接语法，节点显示干净
+                        md += `${prefix}[🔗 ${node.name}](${node.url})\n`;
                     }
 
                     if (isFolder && children.length > 0) {
@@ -411,28 +408,14 @@
 
             markmapRendered = true;
 
-            // 绑定点击事件：只在新标签页打开一次
+            // ✅ 只给 <a> 设 target=_blank，阻止冒泡，不额外绑 window.open
             setTimeout(() => {
-                svg.querySelectorAll('.markmap-node').forEach(node => {
-                    // 找到节点文本
-                    const textEl = node.querySelector('text') || node.querySelector('foreignObject');
-                    const rawText = node.textContent || '';
-                    // 用 \u0000 分隔的 url 解析
-                    const parts = rawText.split('\u0000');
-                    if (parts.length >= 2) {
-                        const url = parts[1].trim();
-                        if (url) {
-                            node.style.cursor = 'pointer';
-                            // 先移除所有已有监听（避免重复）
-                            const newHandler = (e) => {
-                                e.stopPropagation();
-                                e.preventDefault();
-                                window.open(url, '_blank');
-                            };
-                            // 用 onclick 覆盖，天然只触发一次
-                            node.onclick = newHandler;
-                        }
-                    }
+                svg.querySelectorAll('a').forEach(a => {
+                    a.setAttribute('target', '_blank');
+                    a.setAttribute('rel', 'noopener noreferrer');
+                    a.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                    });
                 });
             }, 400);
         }
@@ -534,7 +517,6 @@
 
             container.innerHTML = html;
 
-            // 绑定事件
             container.querySelectorAll('.tree-row').forEach(row => {
                 row.addEventListener('click', (e) => {
                     e.stopPropagation();
@@ -551,7 +533,6 @@
                             if (arrow) arrow.classList.toggle('expanded', !isOpen);
                         }
                     } else if (url) {
-                        // 只在新标签页打开一次
                         window.open(url, '_blank');
                     }
                 });
@@ -581,11 +562,9 @@
 
                 allSites = data.sites || [];
 
-                // 隐藏 loading
                 const loadingEl = document.getElementById('loading');
                 if (loadingEl) loadingEl.style.display = 'none';
 
-                // 默认渲染思维导图
                 renderMindmap();
 
             } catch (e) {
