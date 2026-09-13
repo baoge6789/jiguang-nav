@@ -108,10 +108,10 @@
 
         /* 画布 / 内容区 */
         .view-container {
-            width: 100%;
-            height: 100%;
-            padding-top: 64px;
-        }
+    width: 100%;
+    height: calc(100% - 64px);
+    margin-top: 64px;
+}
         .view-container.hidden { display: none; }
 
         /* 思维导图 */
@@ -121,11 +121,14 @@
         }
         .markmap-node > circle { cursor: pointer; }
 
-        /* 树形列表视图 */
-        #treeview {
-            overflow-y: auto;
-            padding: 20px;
-        }
+       /* 树形列表视图 */
+#treeView {
+    overflow-y: auto;
+}
+#treeview {
+    padding: 20px;
+    min-height: 100%;
+}
         .tree-wrap {
             max-width: 900px;
             margin: 0 auto;
