@@ -748,7 +748,6 @@ export function WidgetDashboard({ isDarkMode, sitesCount, widgetStyle = 'B', wid
                     </div>
                 </div>
             </TiltCard>
-
             <TiltCard className="group">
                 <div className={cardBase}>
                     <GradientBorder isDarkMode={isDarkMode} customColor={widgetConfig?.customColors?.tools} />
@@ -796,14 +795,19 @@ export function WidgetDashboard({ isDarkMode, sitesCount, widgetStyle = 'B', wid
 
                                     <div
                                         id="stock-scroll-container"
-                                        className="flex flex-row flex-nowrap items-center gap-2 overflow-x-auto overflow-y-visible no-scrollbar w-full h-full snap-x snap-mandatory scroll-smooth"
+                                        className="w-full h-full overflow-x-auto overflow-y-visible no-scrollbar snap-x snap-mandatory scroll-smooth"
                                         style={{
                                             scrollbarWidth: 'none',
                                             msOverflowStyle: 'none',
                                             WebkitOverflowScrolling: 'touch'
                                         }}
                                     >
-                                        <div className="flex flex-row flex-nowrap items-center gap-2 px-6">
+                                        <div
+                                            className="grid grid-flow-col gap-2 h-full py-1"
+                                            style={{
+                                                gridAutoColumns: 'calc((100% - 1rem) / 3)'
+                                            }}
+                                        >
                                             {marketData.length > 0 ? marketData.map(item => {
                                                 const percent = item.percent || 0;
                                                 const isUp = percent > 0;
@@ -818,23 +822,25 @@ export function WidgetDashboard({ isDarkMode, sitesCount, widgetStyle = 'B', wid
                                                 }
 
                                                 return (
-                                                    <div key={item.id} className={`flex-shrink-0 flex flex-col items-center justify-center py-2.5 px-4 rounded-xl min-w-[100px] max-w-[120px] snap-start border transition-all hover:scale-105 ${isDarkMode
-                                                        ? 'bg-slate-800/80 border-slate-700/50 shadow-lg shadow-black/30'
-                                                        : 'bg-white/90 border-slate-200/80 shadow-lg shadow-slate-200/50'
-                                                        }`}>
+                                                    <div key={item.id} className={`flex flex-col items-center justify-center py-2.5 px-2 rounded-xl w-full snap-start border transition-all hover:scale-105 ${
+                                                        isDarkMode
+                                                            ? 'bg-slate-800/80 border-slate-700/50 shadow-lg shadow-black/30'
+                                                            : 'bg-white/90 border-slate-200/80 shadow-lg shadow-slate-200/50'
+                                                    }`}>
                                                         <div className={`text-[10px] font-medium leading-none py-0.5 whitespace-nowrap ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>{item.name}</div>
                                                         {isNoData ? (
                                                             <div className={`font-medium tabular-nums text-[11px] leading-tight mb-0.5 text-center truncate w-full ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>无数据</div>
                                                         ) : (
                                                             <>
-                                                                <div className={`font-bold tabular-nums text-[14px] leading-tight mb-1 text-center truncate w-full ${isDarkMode ? 'text-white' : 'text-slate-800'}`} title={displayPrice?.toLocaleString()}>
+                                                                <div className={`font-bold tabular-nums text-[13px] leading-tight mb-1 text-center truncate w-full ${isDarkMode ? 'text-white' : 'text-slate-800'}`} title={displayPrice?.toLocaleString()}>
                                                                     {currencySymbol}{displayPrice?.toLocaleString(undefined, { minimumFractionDigits: fractionDigits, maximumFractionDigits: fractionDigits })}
                                                                 </div>
                                                                 {!isZero && (
-                                                                    <div className={`text-[10px] px-2 py-0.5 rounded-full font-medium leading-none ${isUp
-                                                                        ? 'bg-emerald-500/20 text-emerald-400'
-                                                                        : 'bg-red-500/20 text-red-400'
-                                                                        }`}>
+                                                                    <div className={`text-[10px] px-2 py-0.5 rounded-full font-medium leading-none ${
+                                                                        isUp
+                                                                            ? 'bg-emerald-500/20 text-emerald-400'
+                                                                            : 'bg-red-500/20 text-red-400'
+                                                                    }`}>
                                                                         {isUp ? '+' : ''}{percent.toFixed(2)}%
                                                                     </div>
                                                                 )}
@@ -843,11 +849,12 @@ export function WidgetDashboard({ isDarkMode, sitesCount, widgetStyle = 'B', wid
                                                     </div>
                                                 );
                                             }) : (
-                                                Array.from({ length: 5 }).map((_, i) => (
-                                                    <div key={i} className={`flex-shrink-0 flex flex-col items-center justify-center p-2 rounded-xl animate-pulse min-w-[100px] h-[60px] ${isDarkMode
-                                                        ? 'bg-slate-800/60 border border-slate-700/50'
-                                                        : 'bg-white/80 border border-slate-200/80'
-                                                        }`}>
+                                                Array.from({ length: 6 }).map((_, i) => (
+                                                    <div key={i} className={`flex flex-col items-center justify-center p-2 rounded-xl animate-pulse w-full h-[60px] ${
+                                                        isDarkMode
+                                                            ? 'bg-slate-800/60 border border-slate-700/50'
+                                                            : 'bg-white/80 border border-slate-200/80'
+                                                    }`}>
                                                         <div className="w-10 h-2 bg-white/10 rounded mb-0.5"></div>
                                                         <div className="w-12 h-3 bg-white/10 rounded mb-0.5"></div>
                                                         <div className="w-10 h-2 bg-white/10 rounded"></div>
