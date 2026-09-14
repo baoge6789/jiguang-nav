@@ -53,7 +53,7 @@ export default function WidgetsPage() {
             <div className="max-w-5xl mx-auto">
                 <div className="mb-4 flex items-center justify-between">
                     <h1 className={`text-lg font-bold ${isDarkMode ? 'text-white' : 'text-slate-800'}`}>
-                        卡片面板
+                        📊信息看板
                     </h1>
                     <a
                         href="/"
